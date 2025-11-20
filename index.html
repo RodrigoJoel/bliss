@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bliss Aromas & Bijouterie</title>
+
+  <!-- Font Awesome para iconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&family=Krona+One&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg: #fff8fb;
+      --text: #3a3a3a;
+      --accent: #f6a8c9; /* rosa principal */
+      --accent-dark: #e88aae;
+      --muted: #8a8a8a;
+      --card-bg: #ffffff;
+      --shadow: rgba(50,30,60,0.06);
+      --rounded: 12px;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family: "Montserrat", "Segoe UI", Tahoma, sans-serif;
+      background: linear-gradient(180deg,var(--bg),#fff);
+      color:var(--text);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      scroll-behavior:smooth;
+      line-height:1.45;
+    }
+
+    a{color:inherit;text-decoration:none}
+    .container{max-width:1200px;margin:0 auto;padding:0 20px}
+
+    /* Header */
+    header{
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(6px);
+      position:sticky;top:0;z-index:1200;
+      box-shadow: 0 4px 18px var(--shadow);
+    }
+
+    .logo-small {
+    width: 55px;      /* Tamaño chico del logo */
+    height: auto;
+    object-fit: contain;
+}
+    .top-bar{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
+    .logo{font-family:"Krona One",sans-serif;font-size:26px;color:var(--accent-dark);font-weight:700}
+    .logo span{color:var(--text);font-weight:500;margin-left:4px}
+    nav ul{display:flex;gap:22px;list-style:none;align-items:center}
+    nav a{color:var(--text);font-weight:500;padding:6px 4px;border-radius:6px}
+    nav a:hover{color:var(--accent-dark)}
+    .cta-btn{
+      background:var(--accent);
+      border:0;padding:8px 14px;border-radius:10px;color:#fff;font-weight:600;cursor:pointer;
+      box-shadow:0 6px 20px rgba(246,168,201,0.18);
+    }
+    .cta-btn:hover{background:var(--accent-dark)}
+
+    /* Welcome */
+    .welcome-section{
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0.35)),
+        url('https://images.unsplash.com/photo-1520697222867-7b9a3d7c6c8a?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+      padding:88px 0 70px;
+      text-align:center;
+      border-bottom: 1px solid rgba(0,0,0,0.04);
+    }
+    .welcome-label{display:inline-block;background:rgba(246,168,201,0.12);color:var(--accent-dark);padding:6px 14px;border-radius:999px;font-weight:600;margin-bottom:18px}
+    .welcome-title{font-family:"Krona One",sans-serif;font-size:46px;color:#3a2b3b;margin:12px 0 10px}
+    .welcome-sub{max-width:860px;margin:0 auto;color:var(--muted);font-size:17px}
+    .hero-buttons{margin-top:22px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+    .btn-soft{background:transparent;border:2px solid var(--accent);color:var(--accent-dark);padding:10px 20px;border-radius:999px;font-weight:600;cursor:pointer}
+    .btn-primary{background:var(--accent-dark);color:white;border:0;padding:10px 20px;border-radius:999px;font-weight:600;cursor:pointer}
+    .btn-soft:hover{background:rgba(246,168,201,0.06)}
+    .btn-primary:hover{transform:translateY(-3px)}
+
+    /* Products */
+    .products-section{padding:70px 0;background:transparent}
+    .products-header{text-align:center;margin-bottom:30px}
+    .products-title{font-size:32px;color:#3a2b3b;font-weight:700;display:inline-block}
+    .products-title::after{content:'';display:block;height:3px;width:90px;background:var(--accent);margin:12px auto 0;border-radius:4px}
+
+    .carousel-container{position:relative;overflow:hidden;padding:0 16px}
+    .carousel-track{display:flex;gap:18px;transition:transform .5s ease}
+    .product-card{
+      flex:0 0 calc(25% - 18px);
+      background:var(--card-bg);
+      border-radius:var(--rounded);
+      overflow:hidden;
+      box-shadow:0 8px 30px var(--shadow);
+      transition:transform .25s ease, box-shadow .25s ease;
+      min-width:220px;
+    }
+    .product-card:hover{transform:translateY(-8px)}
+    .product-media{height:200px;background:#f5f2f6;display:flex;align-items:center;justify-content:center}
+    .product-media img{width:100%;height:100%;object-fit:cover;display:block}
+    .product-info{padding:16px}
+    .product-name{font-weight:700;color:#392733;margin-bottom:8px}
+    .product-desc{color:var(--muted);font-size:14px;margin-bottom:12px}
+    .product-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .product-price{font-weight:800;color:var(--accent-dark)}
+    .add-btn{background:var(--accent);color:white;padding:8px 12px;border-radius:10px;border:0;font-weight:600;cursor:pointer}
+    .add-btn:hover{background:var(--accent-dark)}
+
+    .carousel-btn{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:999px;border:0;display:flex;align-items:center;justify-content:center;cursor:pointer;background:rgba(58,42,59,0.06)}
+    .carousel-btn.prev{left:8px}
+    .carousel-btn.next{right:8px}
+    .carousel-dots{display:flex;gap:8px;justify-content:center;margin-top:20px}
+
+    .dot{width:12px;height:12px;border-radius:50%;background:#eee;cursor:pointer}
+    .dot.active{background:var(--accent-dark)}
+
+    /* About */
+    .about-section{padding:70px 0;background:linear-gradient(180deg,#fff,#fff8fb)}
+    .about-container{display:flex;gap:36px;align-items:center;flex-wrap:wrap}
+    .about-image{flex:1;min-height:320px;border-radius:14px;overflow:hidden;box-shadow:0 12px 40px var(--shadow)}
+    .about-image img{width:100%;height:100%;object-fit:cover;display:block}
+    .about-content{flex:1;min-width:300px}
+    .about-title{font-size:28px;color:#3a2b3b;margin-bottom:12px;font-weight:700}
+    .about-text{color:var(--muted);margin-bottom:12px}
+
+    .features{display:flex;gap:16px;margin-top:18px;flex-wrap:wrap}
+    .feature{background:#fff;padding:14px;border-radius:10px;box-shadow:0 8px 20px var(--shadow);min-width:180px}
+
+    /* Footer */
+    footer{background:#3a2b3b;color:#fff;padding:50px 0 28px;margin-top:30px}
+    .footer-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+    .footer h4{color:var(--accent);margin-bottom:10px}
+    .socials{display:flex;gap:10px;margin-top:10px}
+    .socials a{display:inline-flex;width:40px;height:40px;align-items:center;justify-content:center;background:#4a3d47;border-radius:8px;color:#fff}
+    .footer-bottom{text-align:center;color:#d6cbd2;margin-top:20px;font-size:13px}
+
+    /* Responsive */
+    @media(max-width:1024px){
+      .product-card{flex:0 0 calc(33.333% - 18px)}
+      .footer-grid{grid-template-columns:repeat(2,1fr)}
+    }
+    @media(max-width:768px){
+      .top-bar{flex-direction:column;gap:12px}
+      .product-card{flex:0 0 calc(50% - 18px)}
+      .about-container{flex-direction:column}
+      .carousel-btn{display:none}
+    }
+    @media(max-width:480px){
+      .product-card{flex:0 0 100%}
+      .welcome-title{font-size:28px}
+    }
+  </style>
+</head>
+<body>
+  <header style="position:fixed;top:0;left:0;width:100%;z-index:1300;background:rgba(255,255,255,0.95);backdrop-filter:blur(6px);box-shadow:0 4px 18px var(--shadow);">
+    <div class="container top-bar" style="padding:12px 20px;">
+      <div style="display:flex;align-items:center;">
+        <img src="logo-bliss.png" alt="Bliss Logo" class="logo-small"
+             style="background:transparent;padding:0;border-radius:0;box-shadow:none;display:block;">
+      </div>
+
+      <nav>
+        <ul style="display:flex;gap:22px;list-style:none;align-items:center;margin:0;padding:0;">
+          <li><a href="#bienvenidos" onclick="document.querySelector('header').scrollIntoView({behavior:'smooth', block:'start'});">Inicio</a></li>
+          <li><a href="#productos">Productos</a></li>
+          <li><a href="#footer" onclick="event.preventDefault(); document.querySelector('footer').scrollIntoView({behavior:'smooth', block:'start'});" aria-label="Ir al pie de página">Contacto</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <script>
+    // Evita que el header fijo tape el contenido: ajusta padding-top dinámicamente
+    (function(){
+      const header = document.querySelector('header');
+      function adjustSpacing(){
+        const h = header.offsetHeight;
+        document.body.style.paddingTop = h + 'px';
+      }
+      window.addEventListener('resize', adjustSpacing);
+      // ejecutar después de que el layout esté listo
+      window.addEventListener('load', adjustSpacing);
+      adjustSpacing();
+    })();
+  </script>
+
+  <!-- WELCOME -->
+  <section class="welcome-section" id="bienvenidos" style="position:relative; overflow:hidden;">
+    <!-- Imagen de fondo que cubre toda la sección (reemplaza 'fondoBienvenida.png' por tu archivo) -->
+    <img src="fondoBIen.png" alt="" aria-hidden="true"
+         style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;opacity:0.95;z-index:0;">
+
+    <div class="container" style="position:relative;z-index:1;">
+      <div class="welcome-label">Novedades • Aromas & Bijou</div>
+      <h1 class="welcome-title">Placeres para tu hogar y tu estilo</h1>
+      <p class="welcome-sub">
+       "Un espacio donde los aromas se vuelven emociones y los accesorios realzan tu esencia. 
+       En Bliss creamos experiencias que equilibran tu energía y transforman cada rincón en un momento único. 
+       Conectá con lo que te inspira, dejá que cada fragancia te envuelva y descubrí piezas que acompañan tu estilo. 
+       Bliss: tu espacio, tu energía, tus sentidos."
+      </p> 
+
+      <!--<div class="hero-buttons">
+        <button class="btn-primary" onclick="document.getElementById('productos').scrollIntoView({behavior:'smooth'})">Explorar productos</button>
+        <button class="btn-soft">Contactar — WhatsApp</button>
+      </div> -->
+    </div>
+  </section>
+  <!-- PRODUCTS -->
+  <section class="products-section" id="productos">
+    <div class="container">
+      <div class="products-header">
+        <h2 class="products-title">Algunos de nuestros productos</h2>
+      </div>
+
+      <div class="carousel-container" aria-label="Carrusel de productos">
+        <button class="carousel-btn prev" aria-label="Anterior"><i class="fas fa-chevron-left"></i></button>
+
+        <div class="carousel-track">
+          <!-- Card 1 -->
+          <article class="product-card" data-name="Aromatizador textil 250ml">
+            <div class="product-media">
+              <img src="Aromatizadortextil.png" alt="Aromatizador textil 250ml">
+            </div>
+            <div class="product-info">
+              <div class="product-name">Aromatizador textil 250ml</div>
+              <div class="product-desc">Diversos aromas.</div>
+              <div class="product-bottom">
+                <div class="product-desc">Es ideal para aplicar en cortinas, ropa de cama, almohadones, y todo tipo de telas, además de poder usarse como aromatizante de ambiente general.</div>
+         <!--       <button class="add-btn">Agregar</button>-->
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 2 -->
+          <article class="product-card" data-name="Difusor Cuarzo - Bergamota">
+            <div class="product-media">
+              <img src="Aromatizantedeambiente.png" alt="Difusor Bergamota">
+            </div>
+            <div class="product-info">
+              <div class="product-name">Aromatizante de ambiente 185gr</div>
+              <div class="product-desc">Diversas fragancias</div>
+              <div class="product-bottom">
+                <div class="product-desc">Son ideales para perfumar ambientes y, en algunos casos, también para uso textil. Transforman cualquier espacio con su aroma.</div>
+            <!--    <button class="add-btn">Agregar</button>-->
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 3 -->
+          <article class="product-card" data-name="Pulsera Love - Acero">
+            <div class="product-media">
+              <img src="Difusoraromáticoconvarillas.png" alt="Pulsera">
+            </div>
+            <div class="product-info">
+              <div class="product-name">Difusor aromático con varillas 125ml</div>
+              <div class="product-desc">Amplia gama de fragancias</div>
+              <div class="product-bottom">
+                <div class="product-desc">Es excelente para aromatizar baños, oficinas, dormitorios u otros espacios pequeños.</div>
+             <!--   <button class="add-btn">Agregar</button>-->
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 4 -->
+          <article class="product-card" data-name="Collar Minimal - Jade">
+            <div class="product-media">
+              <img src="Humificadoraromáticoled(flame).png" alt="Collar Jade">
+            </div>
+            <div class="product-info">
+              <div class="product-name">Humificador aromático led (flame)</div>
+              <div class="product-desc">El humidificador aromático LED con efecto de llama (Flame) es un dispositivo versátil que combina las funciones de humidificador, difusor de aromas y luz ambiental con un diseño moderno y decorativo.</div>
+              <div class="product-bottom">
+              <!--  <div class="product-price">$3.100</div>-->
+              <!--  <button class="add-btn">Agregar</button>-->
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 5 -->
+          <article class="product-card" data-name="Mini Kit Aromas">
+            <div class="product-media">
+              <img src="Carterabaguetteisabellanegro.jpeg" alt="Kit Aromas">
+            </div>
+            <div class="product-info">
+              <div class="product-name">Cartera baguette isabella negro</div>
+              <div class="product-desc">La cartera baguette Isabella negra es un accesorio elegante y versátil, conocido por su diseño compacto y alargado, ideal para llevar lo esencial con estilo.</div>
+              <div class="product-bottom">
+            <!--    <div class="product-price">$1.600</div>-->
+             <!--   <button class="add-btn">Agregar</button>-->
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 6 -->
+          <article class="product-card" data-name="Vela Terra - Cedro">
+            <div class="product-media">
+              <img src="Reloj niza blanco.png" alt="Vela Cedro">
+            </div>
+            <div class="product-info">
+              <div class="product-name">Reloj niza blanco</div>
+              <div class="product-desc">El reloj Niza blanco es un reloj analógico, conocido por su diseño informal y su malla de silicona, que lo hace cómodo y versátil.</div>
+              <div class="product-bottom">
+            <!--    <div class="product-price">$3.600</div>-->
+            <!--    <button class="add-btn">Agregar</button>-->
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 7 (extra) -->
+          <article class="product-card" data-name="Diffuser Refill">
+            <div class="product-media">
+              <img src="cintos faja nacionales negro..png" alt="Refill">
+            </div>
+            <div class="product-info">
+              <div class="product-name">cintos faja nacionales negro</div>
+              <div class="product-desc">Se destaca la versatilidad de los cintos faja negros, capaces de añadir un toque distintivo y complementar a la perfección desde conjuntos formales hasta outfits más sobrios.</div>
+              <div class="product-bottom">
+              <!--  <div class="product-price">$1.200</div>-->
+             <!--   <button class="add-btn">Agregar</button>-->
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 8 -->
+<article class="product-card" data-name="Aceite esencial puro 10ml">
+  <div class="product-media">
+    <img src="Aros dorados.png" alt="Aceite esencial">
+  </div>
+  <div class="product-info">
+    <div class="product-name">Aros dorados</div>
+    <div class="product-desc">Los aros dorados son un accesorio de joyería versátil y atemporal que se adaptan a cualquier ocasión.</div>
+    <div class="product-bottom">
+    <!--  <div class="product-desc">Perfecto para difusores, hornillos o aromatizar textiles con unas pocas gotas.</div>-->
+    </div>
+  </div>
+</article>
+
+<!-- Card 9 -->
+<article class="product-card" data-name="Vaporizador portátil mini">
+  <div class="product-media">
+    <img src="Gorravintageneneyork.png" alt="Vaporizador portátil">
+  </div>
+  <div class="product-info">
+    <div class="product-name">Gorra vintage nene york</div>
+    <div class="product-desc">Las gorras vintage de niño con el logo de New York son populares por su estilo clásico, que a menudo presenta un diseño "gastado" y materiales de algodón cómodos y ajustables.</div>
+    <div class="product-bottom">
+    <!--  <div class="product-desc">Humidifica pequeños espacios y destaca tus aromas favoritos.</div>-->
+    </div>
+  </div>
+</article>
+
+<!-- Card 10 -->
+<article class="product-card" data-name="Vela Premium 200gr">
+  <div class="product-media">
+    <img src="collarcorbatinesargolla.png" alt="Vela premium">
+  </div>
+  <div class="product-info">
+    <div class="product-name">collar corbatines argolla.</div>
+    <div class="product-desc">El collar corbatín con argolla es un tipo de collar ajustable y largo, que no tiene un broche tradicional, sino que se cruza o anuda a través de una argolla, permitiendo regular su longitud y estilo.</div>
+    <div class="product-bottom">
+     <!-- <div class="product-desc">Fabricada en blend vegetal, quema pareja y diseño decorativo.</div>-->
+    </div>
+  </div>
+</article>
+
+<!-- Card 11 -->
+<article class="product-card" data-name="Vela Premium 200gr">
+  <div class="product-media">
+    <img src="shapirus parfum 60ml.png" alt="Vela premium">
+  </div>
+  <div class="product-info">
+    <div class="product-name">Saphirus Perfum 60ml</div>
+    <div class="product-desc">El Saphirus Perfum 60ml es un Eau de Parfum concentrado, diseñado para uso personal y para aromatizar espacios pequeños, ofreciendo una alta calidad y durabilidad de fragancia.</div>
+    <div class="product-bottom">
+      <div class="product-desc"></div>
+    </div>
+  </div>
+</article>
+
+<!-- Card 12 -->
+<article class="product-card" data-name="Vela Premium 200gr">
+  <div class="product-media">
+    <img src="aceite esencial 10ml.png" alt="Vela premium">
+  </div>
+  <div class="product-info">
+    <div class="product-name">Aceite esencial 10ml</div>
+    <div class="product-desc">El aceite esencial de 10 ml es un producto concentrado y versátil, utilizado principalmente en aromaterapia y para perfumar ambientes mediante difusores u hornillos.</div>
+    <div class="product-bottom">
+      <div class="product-desc"></div>
+    </div>
+  </div>
+</article>
+
+
+        </div>   
+
+        <button class="carousel-btn next" aria-label="Siguiente"><i class="fas fa-chevron-right"></i></button>
+      </div>
+
+      <div class="carousel-dots" role="tablist" aria-label="Páginas del carrusel"></div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about-section" id="acerca-de">
+    <div class="container about-container">
+      <div class="about-image">
+        <img src="localbliss.png" alt="Nuestra tienda Bliss">
+      </div>
+      <div class="about-content">
+        <h3 class="about-title">Acerca de Bliss</h3>
+        <p class="about-text">
+          Bliss nace con la idea de crear un lugar donde cada persona pueda encontrar armonía, bienestar y un toque de estilo propio. Somos una tienda dedicada a la aromaterapia, fragancias para el hogar y accesorios seleccionados con cuidado para acompañar tu día a día.
+        </p>
+        <p class="about-text">
+          Creemos en la importancia de los detalles, en la belleza de lo simple y en cómo un buen aroma o un accesorio especial pueden mejorar cualquier momento. Trabajamos con pasión para ofrecer productos de calidad, siempre buscando que cada visita sea una experiencia cálida, cercana y auténtica.
+        </p>
+        <p class="about-text">
+          En Bliss, no solo vendemos productos: compartimos un espacio pensado para vos. 
+        </p>
+<!--
+        <div class="features">
+          <div class="feature">
+            <strong>Hecho a mano</strong>
+            <div style="color:var(--muted);font-size:13px;margin-top:6px">Piezas producidas en lotes pequeños.</div>
+          </div>
+          <div class="feature">
+            <strong>Envios a todo el país</strong>
+            <div style="color:var(--muted);font-size:13px;margin-top:6px">Rápido y seguro.</div>
+          </div>
+          <div class="feature">
+            <strong>Regalos listos</strong>
+            <div style="color:var(--muted);font-size:13px;margin-top:6px">Packaging delicado para regalo.</div>
+          </div>
+        </div>-->
+      </div>
+    </div>
+  </section>
+
+  <!-- MAPA / UBICACIÓN -->
+  <section class="map-section" id="ubicacion" style="padding:40px 0;background:transparent">
+    <div class="container">
+      <h3 class="about-title" style="margin-bottom:8px">Dónde estamos</h3>
+      <p class="about-text">Visítanos en: Avenida Sarmiento 318, Resistencia, Chaco</p>
+
+      <div style="border-radius:12px;overflow:hidden;box-shadow:0 12px 40px var(--shadow);margin-top:12px">
+        <iframe
+          src="https://www.google.com/maps?q=Avenida+Sarmiento+318+Resistencia+Chaco&output=embed"
+          width="100%" height="380" style="border:0;display:block"
+          allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+          title="Mapa: Avenida Sarmiento 318, Resistencia, Chaco"></iframe>
+      </div>
+
+      <p style="margin-top:10px">
+        <a href="https://www.google.com/maps/search/?api=1&query=Avenida+Sarmiento+318+Resistencia+Chaco"
+           target="_blank" rel="noopener" class="btn-soft" style="display:inline-block">Abrir en Google Maps</a>
+      </p>
+    </div>
+  </section>
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4>Síguenos</h4>
+          <p>Instagram, Facebook y más — novedades y lanzamientos.</p>
+          <div class="socials">
+            <a href="https://www.instagram.com/bliss_rcia?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Visitar Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.facebook.com/tu_pagina" target="_blank" rel="noopener noreferrer" aria-label="Facebook" title="Visitar Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" aria-label="Pinterest"><i class="fab fa-pinterest"></i></a>
+          </div>
+        </div>
+
+        <div>
+          <h4>Bliss</h4>
+          <p>Bliss Aromas & Bijou — Pequeñas cosas que hacen grandes momentos.</p>
+        </div>
+
+        <div>
+            <h4>Suscribite</h4>
+            <form id="subscribe-form" onsubmit="handleSubscribe(event)" style="margin:0">
+            <input id="subscribe-email" type="email" placeholder="Tu email" required
+             style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
+            <button type="submit" style="width:100%;background:var(--accent);color:#fff;padding:10px;border:0;border-radius:8px;cursor:pointer">Suscribirse</button>
+          </form>
+
+          <div id="subscribe-confirm" style="display:none;margin-top:8px;padding:10px;border-radius:8px;background:rgba(255,255,255,0.04);">
+            <div style="font-size:14px;color:#fff(--text)">¿Querés suscribirte con <strong id="confirm-email"></strong>?</div>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button id="confirm-yes" type="button" style="flex:1;background:var(--accent);color:#fff;padding:8px;border-radius:6px;border:0;cursor:pointer">Sí</button>
+              <button id="confirm-no" type="button" style="flex:1;background:#eee;color:var(--text);padding:8px;border-radius:6px;border:0;cursor:pointer">Cancelar</button>
+            </div>
+          </div>
+
+          <div id="subscribe-thanks" style="display:none;margin-top:8px;color:var(--muted);font-size:14px">¡Gracias! Te enviaremos novedades.</div>
+
+          <script>
+            function handleSubscribe(e){
+              e.preventDefault();
+              var input = document.getElementById('subscribe-email');
+              var email = (input.value || '').trim();
+              if(!email) return;
+              document.getElementById('confirm-email').textContent = email;
+              document.getElementById('subscribe-confirm').style.display = 'block';
+              document.getElementById('subscribe-thanks').style.display = 'none';
+            }
+
+            document.getElementById('confirm-yes').addEventListener('click', function(){
+              // aquí se podría enviar el email al servidor (fetch) si se desea
+              document.getElementById('subscribe-confirm').style.display = 'none';
+              document.getElementById('subscribe-thanks').style.display = 'block';
+              // limpiar el input después de la confirmación
+              document.getElementById('subscribe-email').value = '';
+              // ocultar el mensaje de agradecimiento después de unos segundos
+              setTimeout(function(){
+          document.getElementById('subscribe-thanks').style.display = 'none';
+              }, 3500);
+            });
+
+            document.getElementById('confirm-no').addEventListener('click', function(){
+              document.getElementById('subscribe-confirm').style.display = 'none';
+            });
+          </script>
+        </div></div>
+
+       <!-- <div>
+          <h4>Enlaces</h4>
+          <ul style="list-style:none;padding:0;color:#d8cbd2">
+            <li style="margin-bottom:8px"><a href="#productos">Productos</a></li>
+            <li style="margin-bottom:8px"><a href="#acerca-de">Acerca</a></li>-->
+          <!--  <li style="margin-bottom:8px"><a href="#">Política de envíos</a></li>-->
+          <!--  <li style="margin-bottom:8px"><a href="#">Contacto</a></li>
+          </ul>
+        </div>-->
+      </div>
+
+      <div class="footer-bottom">
+        &copy; <span id="year"></span> Bliss Accesorios Sensoriales. Todos los derechos reservados.
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script>
+    // año en footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    document.addEventListener('DOMContentLoaded', function(){
+      const track = document.querySelector('.carousel-track');
+      const carouselContainer = document.querySelector('.carousel-container');
+      const cards = Array.from(document.querySelectorAll('.product-card'));
+      const prevBtn = document.querySelector('.carousel-btn.prev');
+      const nextBtn = document.querySelector('.carousel-btn.next');
+      const dotsContainer = document.querySelector('.carousel-dots');
+
+      let cardsPerView = 4;
+      let currentIndex = 0;
+      let autoSlide;
+
+      function updateCardsPerView(){
+        const w = window.innerWidth;
+        if(w <= 480) cardsPerView = 1;
+        else if(w <= 768) cardsPerView = 2;
+        else if(w <= 1024) cardsPerView = 3;
+        else cardsPerView = 4;
+        createDots();
+        goToSlide(0);
+      }
+
+      function createDots(){
+        const total = Math.ceil(cards.length / cardsPerView);
+        dotsContainer.innerHTML = '';
+        for(let i=0;i<total;i++){
+          const d = document.createElement('div');
+          d.className = 'dot' + (i===0 ? ' active' : '');
+          d.addEventListener('click', ()=>{ goToSlide(i) });
+          dotsContainer.appendChild(d);
+        }
+      }
+
+      function goToSlide(index){
+        const total = Math.ceil(cards.length / cardsPerView);
+        currentIndex = Math.max(0, Math.min(index, total-1));
+        const shiftPercent = (currentIndex * 100);
+        track.style.transform = `translateX(-${shiftPercent}%)`;
+        updateActiveDot();
+        resetAuto();
+      }
+
+      function updateActiveDot(){
+        const dots = Array.from(document.querySelectorAll('.dot'));
+        dots.forEach((d, i) => d.classList.toggle('active', i === currentIndex));
+      }
+
+      function nextSlide(){
+        const total = Math.ceil(cards.length / cardsPerView);
+        currentIndex = (currentIndex + 1) % total;
+        goToSlide(currentIndex);
+      }
+
+      function prevSlide(){
+        const total = Math.ceil(cards.length / cardsPerView);
+        currentIndex = (currentIndex - 1 + total) % total;
+        goToSlide(currentIndex);
+      }
+
+      prevBtn.addEventListener('click', ()=>{ prevSlide(); });
+      nextBtn.addEventListener('click', ()=>{ nextSlide(); });
+
+      function startAuto(){ autoSlide = setInterval(nextSlide, 10000); }
+      function resetAuto(){ clearInterval(autoSlide); startAuto(); }
+
+      // agregar comportamiento botones "Agregar" (demo)
+      document.querySelectorAll('.add-btn').forEach(btn => {
+        btn.addEventListener('click', (e)=>{
+          const card = e.target.closest('.product-card');
+          const name = card.getAttribute('data-name') || card.querySelector('.product-name').textContent;
+          alert(name + " agregado al carrito (demo).");
+        });
+      });
+
+      // responsive init
+      window.addEventListener('resize', updateCardsPerView);
+      updateCardsPerView();
+      startAuto();
+    });
+
+    // Suavizado para enlaces internos
+    document.querySelectorAll('nav a').forEach(a=>{
+      a.addEventListener('click', function(e){
+        const href = this.getAttribute('href');
+        if(href && href.startsWith('#')){
+          e.preventDefault();
+          const t = document.querySelector(href);
+          if(t) t.scrollIntoView({behavior:'smooth', block:'start'});
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+
