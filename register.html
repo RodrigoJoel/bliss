@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Bliss</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 450px;
+            overflow: hidden;
+        }
+
+        .header {
+            background: #1877f2;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            padding: 30px;
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+            font-size: 14px;
+        }
+
+        input[type="email"],
+        input[type="text"],
+        input[type="password"],
+        input[type="tel"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="email"]:focus,
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        input[type="tel"]:focus {
+            border-color: #1877f2;
+            outline: none;
+        }
+
+        .captcha {
+            background: #f8f9fa;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .captcha-text {
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .captcha input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: #1877f2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #166fe5;
+        }
+
+        .btn:disabled {
+            background: #a0c4ff;
+            cursor: not-allowed;
+        }
+
+        .verification-code {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .verification-code input {
+            flex: 1;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .resend {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .resend a {
+            color: #1877f2;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .resend a:hover {
+            text-decoration: underline;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #1877f2;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid #e1e1e1;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .name-fields {
+            display: flex;
+            gap: 10px;
+        }
+
+        .name-fields .form-group {
+            flex: 1;
+        }
+
+        .password-strength {
+            margin-top: 5px;
+            font-size: 12px;
+        }
+
+        .strength-weak { color: #dc3545; }
+        .strength-medium { color: #ffc107; }
+        .strength-strong { color: #28a745; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Registro</h1>
+            <p>Creá la cuenta para continuar en Bliss</p>
+        </div>
+
+        <div class="form-container">
+            <!-- Paso 1: Registro de email -->
+            <div class="step active" id="step1">
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" placeholder="tu@email.com" required>
+                </div>
+
+                <div class="captcha">
+                    <div class="captcha-text" id="captchaText">A1B2C3</div>
+                    <input type="text" id="captchaInput" placeholder="Ingresá el código de arriba" required>
+                </div>
+
+                <button class="btn" id="registerBtn">Registrarme</button>
+            </div>
+
+            <!-- Paso 2: Verificación de código -->
+            <div class="step" id="step2">
+                <div class="message" id="verificationMessage">
+                    Hemos enviado un código de verificación a <strong id="userEmail"></strong>
+                </div>
+
+                <div class="form-group">
+                    <label for="verificationCode">Código de verificación</label>
+                    <div class="verification-code">
+                        <input type="text" id="digit1" maxlength="1" pattern="[0-9]">
+                        <input type="text" id="digit2" maxlength="1" pattern="[0-9]">
+                        <input type="text" id="digit3" maxlength="1" pattern="[0-9]">
+                        <input type="text" id="digit4" maxlength="1" pattern="[0-9]">
+                        <input type="text" id="digit5" maxlength="1" pattern="[0-9]">
+                        <input type="text" id="digit6" maxlength="1" pattern="[0-9]">
+                    </div>
+                </div>
+
+                <button class="btn" id="verifyBtn" disabled>Verificar código</button>
+
+                <div class="resend">
+                    <a href="#" id="resendCode">Reenviar código</a>
+                </div>
+            </div>
+
+            <!-- Paso 3: Registro completado -->
+            <div class="step" id="step3">
+                <div class="message success">
+                    ¡Email verificado con éxito!
+                </div>
+                <p style="text-align: center; margin-bottom: 20px;">
+                    Tu email ha sido verificado correctamente. Completa tu registro.
+                </p>
+                <button class="btn" id="completeRegistrationBtn">Completar Registro</button>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="loading-spinner"></div>
+                <p>Enviando código de verificación...</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            Bliss &copy; 2025 - Todos los derechos reservados
+        </div>
+    </div>
+
+    <!-- Incluir EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    
+    
+    <script>
+        // Inicializar EmailJS
+        emailjs.init("A6soXH6pxsjEj0y-0");
+
+        // Variables globales
+        let verificationCode = "";
+        let userEmail = "";
+
+        // Elementos del DOM
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+        const emailInput = document.getElementById('email');
+        const captchaText = document.getElementById('captchaText');
+        const captchaInput = document.getElementById('captchaInput');
+        const registerBtn = document.getElementById('registerBtn');
+        const userEmailSpan = document.getElementById('userEmail');
+        const verifyBtn = document.getElementById('verifyBtn');
+        const resendLink = document.getElementById('resendCode');
+        const completeRegistrationBtn = document.getElementById('completeRegistrationBtn');
+        const loading = document.getElementById('loading');
+        const verificationMessage = document.getElementById('verificationMessage');
+
+        // Generar CAPTCHA aleatorio
+        function generateCaptcha() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+            let captcha = '';
+            for (let i = 0; i < 6; i++) {
+                captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            captchaText.textContent = captcha;
+            return captcha;
+        }
+
+        // Generar código de verificación
+        function generateVerificationCode() {
+            return Math.floor(100000 + Math.random() * 900000).toString();
+        }
+
+        // Enviar código por email usando EmailJS
+        function sendVerificationCode(email, code) {
+            loading.style.display = 'block';
+            
+            const templateParams = {
+                email: email,
+                verification_code: code
+            };
+
+            emailjs.send('service_9cm0mf4', 'template_d06mlj9', templateParams)
+                .then(function(response) {
+                    console.log('Email enviado con éxito:', response);
+                    loading.style.display = 'none';
+
+                    step1.classList.remove('active');
+                    step2.classList.add('active');
+                    userEmailSpan.textContent = email;
+
+                    setupCodeInputs();
+                })
+                .catch(function(error) {
+                    console.error('Error enviando email:', error);
+                    loading.style.display = 'none';
+                    alert('Error enviando el código de verificación. Por favor, intentá nuevamente.');
+                });
+        }
+
+        // Configurar inputs de código de verificación
+        function setupCodeInputs() {
+            const inputs = document.querySelectorAll('.verification-code input');
+            
+            inputs.forEach((input, index) => {
+                input.value = '';
+                input.addEventListener('input', function(e) {
+                    if (this.value.length === 1 && index < inputs.length - 1) {
+                        inputs[index + 1].focus();
+                    }
+                    checkVerificationCode();
+                });
+                
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Backspace' && this.value.length === 0 && index > 0) {
+                        inputs[index - 1].focus();
+                    }
+                });
+            });
+            
+            inputs[0].focus();
+        }
+
+        // Verificar si el código está completo
+        function checkVerificationCode() {
+            const inputs = document.querySelectorAll('.verification-code input');
+            let code = '';
+            let allFilled = true;
+            
+            inputs.forEach(input => {
+                code += input.value;
+                if (input.value.length === 0) {
+                    allFilled = false;
+                }
+            });
+            
+            verifyBtn.disabled = !allFilled;
+            return code;
+        }
+
+        // Validar código ingresado
+        function validateCode() {
+            const enteredCode = checkVerificationCode();
+            if (enteredCode === verificationCode) {
+                step2.classList.remove('active');
+                step3.classList.add('active');
+            } else {
+                verificationMessage.innerHTML = 'Código incorrecto. Por favor, intentá nuevamente.';
+                verificationMessage.className = 'message error';
+            }
+        }
+
+        // Reenviar código
+        function resendCode() {
+            verificationCode = generateVerificationCode();
+            sendVerificationCode(userEmail, verificationCode);
+            verificationMessage.innerHTML = `Nuevo código enviado a <strong>${userEmail}</strong>`;
+            verificationMessage.className = 'message';
+        }
+
+        // Abrir formulario de registro completo
+        function openRegistrationForm() {
+            // Crear la URL con el email como parámetro
+            const registrationUrl = `complete-registration.html?email=${encodeURIComponent(userEmail)}`;
+            
+            // Abrir en nueva ventana
+            const newWindow = window.open(registrationUrl, '_blank', 
+                'width=500,height=700,scrollbars=yes,resizable=yes');
+            
+            // Cerrar esta ventana después de 1 segundo (para dar tiempo a que se abra la nueva)
+            setTimeout(() => {
+                window.close();
+            }, 1000);
+        }
+
+        // Event Listeners
+        registerBtn.addEventListener('click', function() {
+            userEmail = emailInput.value.trim();
+            const captchaValue = captchaInput.value.trim();
+            
+            // Validaciones básicas
+            if (!userEmail) {
+                alert('Por favor, ingresá tu email.');
+                return;
+            }
+            
+            if (!userEmail.includes('@')) {
+                alert('Por favor, ingresá un email válido.');
+                return;
+            }
+            
+            if (captchaValue !== captchaText.textContent) {
+                alert('El código CAPTCHA es incorrecto.');
+                generateCaptcha();
+                captchaInput.value = '';
+                return;
+            }
+            
+            // Generar y enviar código
+            verificationCode = generateVerificationCode();
+            sendVerificationCode(userEmail, verificationCode);
+        });
+
+        verifyBtn.addEventListener('click', validateCode);
+        
+        resendLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            resendCode();
+        });
+        
+        completeRegistrationBtn.addEventListener('click', openRegistrationForm);
+
+        // Inicializar CAPTCHA al cargar la página
+        generateCaptcha();
+    </script>
+</body>
+</html>

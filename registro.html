@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Iniciar sesión - Bliss</title>
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <style>
+        :root{--bg:#f3f6fb;--card:#fff;--accent:#4a8ef5;--muted:#6b7280}
+        *{box-sizing:border-box}
+        html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;background:var(--bg);color:#111}
+        .container{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+        .logo{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+        .logo .mark{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,#4a8ef5,#7cc3ff);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:20px}
+        .logo .name{font-weight:600;letter-spacing:0.2px}
+        .card{width:100%;max-width:420px;background:var(--card);border-radius:12px;padding:22px;box-shadow:0 6px 20px rgba(20,30,50,0.08)}
+        h1{margin:0 0 8px;font-size:20px}
+        p.lead{margin:0 0 18px;color:var(--muted);font-size:14px}
+        .field{display:flex;flex-direction:column;margin-bottom:12px}
+        label{font-size:13px;color:#334155;margin-bottom:6px}
+        input[type="email"],input[type="password"]{padding:12px 14px;border:1px solid #e6e9ef;border-radius:8px;font-size:14px}
+        .actions{margin-top:10px;display:flex;flex-direction:column;gap:10px}
+        button.primary{background:var(--accent);color:#fff;padding:12px;border:0;border-radius:8px;font-weight:600;cursor:pointer}
+        .footer{margin-top:14px;text-align:center;color:var(--muted);font-size:14px}
+        .link{color:var(--accent);text-decoration:none;cursor:pointer}
+        
+        /* Mensajes */
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 14px;
+            display: none;
+        }
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 10px 0;
+        }
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #1877f2;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width:420px){ .card{padding:18px} .logo .mark{width:40px;height:40px;font-size:18px} }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <picture>
+                <img class="logo-img" src="imagenes/logo-bliss.png" alt="Bliss" width="48" height="48" loading="lazy" style="border-radius:10px;object-fit:cover;display:block;">
+            </picture>
+            <div class="name">Bliss</div>
+        </div>
+
+        <div class="card" role="main" aria-labelledby="login-title">
+            <h1 id="login-title">Iniciar sesión</h1>
+            <p class="lead">Introduce tu correo electrónico y contraseña para continuar</p>
+
+            <!-- Mensajes -->
+            <div id="loginMessage" class="message"></div>
+            <div id="loading" class="loading">
+                <div class="loading-spinner"></div>
+                <p>Iniciando sesión...</p>
+            </div>
+
+            <form id="loginForm">
+    <div class="field">
+        <label for="email">Correo electrónico</label>
+        <input id="email" name="email" type="email" placeholder="tu@ejemplo.com" required />
+    </div>
+    <div class="field">
+        <label for="password">Contraseña</label>
+        <input id="password" name="password" type="password" placeholder="Contraseña" required minlength="6" />
+    </div>
+
+    <div class="actions">
+        <button type="submit" class="primary" id="loginBtn">Iniciar sesión</button>
+    </div>
+</form>
+
+<div class="footer">
+    <div style="margin-bottom: 10px;">
+        ¿Aún no estás registrado?
+        <a class="link" onclick="openRegister()">Regístrate</a>
+    </div>
+    <div>
+        <a class="link" onclick="recoverPassword()" style="font-size: 13px; color: var(--muted);">
+            ¿Olvidaste tu contraseña?
+        </a>
+    </div>
+</div>
+    </div>
+
+    <script>
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBm_eFEYlE-GOpSp8PzRvUzGPEl2pIsWz0",
+            authDomain: "bliss-ffad9.firebaseapp.com",
+            projectId: "bliss-ffad9",
+            storageBucket: "bliss-ffad9.firebasestorage.app",
+            messagingSenderId: "863864024902",
+            appId: "1:863864024902:web:02cb9dd6997a0fa7353f47"
+        };
+
+        // Inicializar Firebase
+        let auth;
+        if (typeof firebase !== 'undefined') {
+            try {
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
+                }
+                auth = firebase.auth();
+                console.log('✅ Firebase inicializado en registro.html');
+            } catch (error) {
+                console.error('Error Firebase:', error);
+            }
+        }
+
+        // Mostrar mensaje
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('loginMessage');
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type}`;
+            messageDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Función para abrir registro
+        // Función para abrir registro - ALTERNATIVA CONFIRMADA
+        function openRegister() {
+        // Mostrar mensaje al usuario
+        showMessage('Redirigiendo al registro...', 'success');
+    
+        // Esperar un momento y luego redirigir ESTA ventana
+        setTimeout(() => {
+        window.location.href = 'register.html';
+        }, 800);
+}
+
+        // Función de login con Firebase
+        async function handleLogin(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            
+            if (!email) {
+                showMessage('Introduce un correo válido.', 'error');
+                return;
+            }
+
+            // Mostrar loading
+            // Mostrar loading
+const originalText = loginBtn.textContent;
+loginBtn.textContent = 'Iniciando sesión...';
+loginBtn.disabled = true;
+document.getElementById('loading').style.display = 'block';
+
+try {
+    const userCredential = await auth.signInWithEmailAndPassword(email, password);
+    const user = userCredential.user;
+    
+    // Login exitoso
+    showMessage('¡Login exitoso! Redirigiendo al inicio...', 'success');
+    
+    // Redirigir después de 1.5 segundos
+    setTimeout(() => {
+        // Siempre redirigir esta ventana a index.html
+        window.location.href = 'index.html';
+    }, 1500);
+    
+} catch (error) {
+    console.error('Error en login:', error);
+    
+    let errorMessage;
+    
+    if (error.code === 'auth/user-not-found') {
+        errorMessage = 'Usuario no encontrado. Por favor regístrate.';
+    } else if (error.code === 'auth/wrong-password' || 
+               error.code === 'auth/invalid-credential' || 
+               error.message.includes('INVALID_LOGIN_CREDENTIALS')) {
+        errorMessage = 'Contraseña incorrecta.';
+    } else if (error.code === 'auth/invalid-email') {
+        errorMessage = 'Email inválido.';
+    } else if (error.code === 'auth/too-many-requests') {
+        errorMessage = 'Demasiados intentos fallidos. Intenta más tarde.';
+    } else {
+        errorMessage = 'Email o contraseña incorrectos.';
+    }
+    
+    showMessage(errorMessage, 'error');
+} finally {
+    // Restaurar botón
+    loginBtn.textContent = originalText;
+    loginBtn.disabled = false;
+    document.getElementById('loading').style.display = 'none';
+}
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            
+            // Auto-focus en el campo de email
+            document.getElementById('email').focus();
+        });
+
+        // También permitir registro con Enter
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+            }
+        });
+
+        // Función para recuperar contraseña
+function recoverPassword() {
+    const email = document.getElementById('email').value.trim();
+    
+    // Si el usuario ya ingresó un email, lo usamos
+    let userEmail = email;
+    
+    if (!userEmail) {
+        // Si no hay email, pedimos que lo ingrese
+        showMessage('Ingresá tu email en el campo de arriba para recuperar tu contraseña', 'error');
+        document.getElementById('email').focus();
+        return;
+    }
+    
+    if (!userEmail.includes('@')) {
+        showMessage('Por favor ingresá un email válido', 'error');
+        document.getElementById('email').focus();
+        return;
+    }
+    
+    // Mostrar loading en el enlace
+    const recoverLink = document.querySelector('.link[onclick="recoverPassword()"]');
+    const originalText = recoverLink.textContent;
+    recoverLink.textContent = 'Enviando email...';
+    recoverLink.style.pointerEvents = 'none';
+    
+    // Enviar email de recuperación
+    auth.sendPasswordResetEmail(userEmail)
+        .then(() => {
+            showMessage(`✅ Te enviamos un email a ${userEmail} con instrucciones para recuperar tu contraseña. Revisá tu bandeja de entrada.`, 'success');
+        })
+        .catch((error) => {
+            console.error('Error recuperando contraseña:', error);
+            
+            let errorMessage = 'Error al enviar el email de recuperación. ';
+            
+            if (error.code === 'auth/user-not-found') {
+                errorMessage = 'No hay una cuenta registrada con este email.';
+            } else if (error.code === 'auth/invalid-email') {
+                errorMessage = 'El email no es válido.';
+            } else if (error.code === 'auth/too-many-requests') {
+                errorMessage = 'Demasiados intentos. Por favor, intentá más tarde.';
+            } else if (error.code === 'auth/network-request-failed') {
+                errorMessage = 'Error de conexión. Verificá tu internet.';
+            } else {
+                errorMessage += 'Por favor, intentá nuevamente.';
+            }
+            
+            showMessage(errorMessage, 'error');
+        })
+        .finally(() => {
+            // Restaurar el enlace
+            recoverLink.textContent = originalText;
+            recoverLink.style.pointerEvents = 'auto';
+        });
+}
+    </script>
+</body>
+</html>

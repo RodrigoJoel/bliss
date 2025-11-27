@@ -1,0 +1,142 @@
+:root{
+  --bg: #fff8fb;
+  --text: #3a3a3a;
+  --accent: #f6a8c9; /* rosa principal */
+  --accent-dark: #e88aae;
+  --muted: #8a8a8a;
+  --card-bg: #ffffff;
+  --shadow: rgba(50,30,60,0.06);
+  --rounded: 12px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family: "Montserrat", "Segoe UI", Tahoma, sans-serif;
+  background: linear-gradient(180deg,var(--bg),#fff);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  scroll-behavior:smooth;
+  line-height:1.45;
+}
+
+a{color:inherit;text-decoration:none}
+.container{max-width:1200px;margin:0 auto;padding:0 20px}
+
+/* Header */
+header{
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: blur(6px);
+  position:sticky;top:0;z-index:1200;
+  box-shadow: 0 4px 18px var(--shadow);
+}
+
+.logo-small {
+  width: 55px;      /* Tamaño chico del logo */
+  height: auto;
+  object-fit: contain;
+}
+
+.top-bar{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
+.logo{font-family:"Krona One",sans-serif;font-size:26px;color:var(--accent-dark);font-weight:700}
+.logo span{color:var(--text);font-weight:500;margin-left:4px}
+nav ul{display:flex;gap:22px;list-style:none;align-items:center}
+nav a{color:var(--text);font-weight:500;padding:6px 4px;border-radius:6px}
+nav a:hover{color:var(--accent-dark)}
+.cta-btn{
+  background:var(--accent);
+  border:0;padding:8px 14px;border-radius:10px;color:#fff;font-weight:600;cursor:pointer;
+  box-shadow:0 6px 20px rgba(246,168,201,0.18);
+}
+.cta-btn:hover{background:var(--accent-dark)}
+
+/* Welcome */
+.welcome-section{
+  background:
+     linear-gradient(180deg, rgba(255,255,255,0.35), rgba(139, 8, 8, 0.35)),
+    url('https://images.unsplash.com/photo-1520697222867-7b9a3d7c6c8a?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+  padding:88px 0 70px;
+  text-align:center;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+.welcome-label{display:inline-block;background:rgba(246,168,201,0.12);color:var(--accent-dark);padding:6px 14px;border-radius:999px;font-weight:600;margin-bottom:18px}
+.welcome-title{font-family:"Krona One",sans-serif;font-size:46px;color:#3a2b3b;margin:12px 0 10px}
+.welcome-sub{max-width:860px;margin:0 auto;color:#392733(--muted);font-size:17px}
+.hero-buttons{margin-top:22px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn-soft{background:transparent;border:2px solid var(--accent);color:var(--accent-dark);padding:10px 20px;border-radius:999px;font-weight:600;cursor:pointer}
+.btn-primary{background:var(--accent-dark);color:white;border:0;padding:10px 20px;border-radius:999px;font-weight:600;cursor:pointer}
+.btn-soft:hover{background:rgba(246,168,201,0.06)}
+.btn-primary:hover{transform:translateY(-3px)}
+
+/* Products */
+.products-section{padding:70px 0;background:transparent}
+.products-header{text-align:center;margin-bottom:30px}
+.products-title{font-size:32px;color:#3a2b3b;font-weight:700;display:inline-block}
+.products-title::after{content:'';display:block;height:3px;width:90px;background:var(--accent);margin:12px auto 0;border-radius:4px}
+
+.carousel-container{position:relative;overflow:hidden;padding:0 16px}
+.carousel-track{display:flex;gap:18px;transition:transform .5s ease}
+.product-card{
+  flex:0 0 calc(25% - 18px);
+  background:var(--card-bg);
+  border-radius:var(--rounded);
+  overflow:hidden;
+  box-shadow:0 8px 30px var(--shadow);
+  transition:transform .25s ease, box-shadow .25s ease;
+  min-width:220px;
+}
+.product-card:hover{transform:translateY(-8px)}
+.product-media{height:200px;background:#f5f2f6;display:flex;align-items:center;justify-content:center}
+.product-media img{width:100%;height:100%;object-fit:cover;display:block}
+.product-info{padding:16px}
+.product-name{font-weight:700;color:#392733;margin-bottom:8px}
+.product-desc{color:var(--muted);font-size:14px;margin-bottom:12px}
+.product-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.product-price{font-weight:800;color:var(--accent-dark)}
+.add-btn{background:var(--accent);color:white;padding:8px 12px;border-radius:10px;border:0;font-weight:600;cursor:pointer}
+.add-btn:hover{background:var(--accent-dark)}
+
+.carousel-btn{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:999px;border:0;display:flex;align-items:center;justify-content:center;cursor:pointer;background:rgba(58,42,59,0.06)}
+.carousel-btn.prev{left:8px}
+.carousel-btn.next{right:8px}
+.carousel-dots{display:flex;gap:8px;justify-content:center;margin-top:20px}
+
+.dot{width:12px;height:12px;border-radius:50%;background:#eee;cursor:pointer}
+.dot.active{background:var(--accent-dark)}
+
+/* About */
+.about-section{padding:70px 0;background:linear-gradient(180deg,#fff,#fff8fb)}
+.about-container{display:flex;gap:36px;align-items:center;flex-wrap:wrap}
+.about-image{flex:1;min-height:320px;border-radius:14px;overflow:hidden;box-shadow:0 12px 40px var(--shadow)}
+.about-image img{width:100%;height:100%;object-fit:cover;display:block}
+.about-content{flex:1;min-width:300px}
+.about-title{font-size:28px;color:#3a2b3b;margin-bottom:12px;font-weight:700}
+.about-text{color:var(--muted);margin-bottom:12px}
+
+.features{display:flex;gap:16px;margin-top:18px;flex-wrap:wrap}
+.feature{background:#fff;padding:14px;border-radius:10px;box-shadow:0 8px 20px var(--shadow);min-width:180px}
+
+/* Footer */
+footer{background:#3a2b3b;color:#fff;padding:50px 0 28px;margin-top:30px}
+.footer-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.footer h4{color:var(--accent);margin-bottom:10px}
+.socials{display:flex;gap:10px;margin-top:10px}
+.socials a{display:inline-flex;width:40px;height:40px;align-items:center;justify-content:center;background:#4a3d47;border-radius:8px;color:#fff}
+.footer-bottom{text-align:center;color:#d6cbd2;margin-top:20px;font-size:13px}
+
+/* Responsive */
+@media(max-width:1024px){
+  .product-card{flex:0 0 calc(33.333% - 18px)}
+  .footer-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:768px){
+  .top-bar{flex-direction:column;gap:12px}
+  .product-card{flex:0 0 calc(50% - 18px)}
+  .about-container{flex-direction:column}
+  .carousel-btn{display:none}
+}
+@media(max-width:480px){
+  .product-card{flex:0 0 100%}
+  .welcome-title{font-size:28px}
+}

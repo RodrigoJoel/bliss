@@ -4,6 +4,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Bliss Aromas & Bijouterie</title>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
   <!-- Font Awesome para iconos -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -11,156 +15,130 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&family=Krona+One&display=swap" rel="stylesheet">
 
+  <link rel="stylesheet" href="style.css">
+  
   <style>
-    :root{
-      --bg: #fff8fb;
-      --text: #3a3a3a;
-      --accent: #f6a8c9; /* rosa principal */
-      --accent-dark: #e88aae;
-      --muted: #8a8a8a;
-      --card-bg: #ffffff;
-      --shadow: rgba(50,30,60,0.06);
-      --rounded: 12px;
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-
-    *{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%}
-    body{
-      font-family: "Montserrat", "Segoe UI", Tahoma, sans-serif;
-      background: linear-gradient(180deg,var(--bg),#fff);
-      color:var(--text);
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      scroll-behavior:smooth;
-      line-height:1.45;
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #4a8ef5, #7cc3ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
     }
-
-    a{color:inherit;text-decoration:none}
-    .container{max-width:1200px;margin:0 auto;padding:0 20px}
-
-    /* Header */
-    header{
-      background: rgba(255,255,255,0.9);
-      backdrop-filter: blur(6px);
-      position:sticky;top:0;z-index:1200;
-      box-shadow: 0 4px 18px var(--shadow);
+    .user-name {
+      font-weight: 500;
+      color: #333;
     }
-
-    .logo-small {
-    width: 55px;      /* Tamaño chico del logo */
-    height: auto;
-    object-fit: contain;
-}
-    .top-bar{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
-    .logo{font-family:"Krona One",sans-serif;font-size:26px;color:var(--accent-dark);font-weight:700}
-    .logo span{color:var(--text);font-weight:500;margin-left:4px}
-    nav ul{display:flex;gap:22px;list-style:none;align-items:center}
-    nav a{color:var(--text);font-weight:500;padding:6px 4px;border-radius:6px}
-    nav a:hover{color:var(--accent-dark)}
-    .cta-btn{
-      background:var(--accent);
-      border:0;padding:8px 14px;border-radius:10px;color:#fff;font-weight:600;cursor:pointer;
-      box-shadow:0 6px 20px rgba(246,168,201,0.18);
+    .logout-btn {
+      background: transparent;
+      border: 1px solid #ddd;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.3s;
     }
-    .cta-btn:hover{background:var(--accent-dark)}
-
-    /* Welcome */
-    .welcome-section{
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0.35)),
-        url('https://images.unsplash.com/photo-1520697222867-7b9a3d7c6c8a?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
-      padding:88px 0 70px;
-      text-align:center;
-      border-bottom: 1px solid rgba(0,0,0,0.04);
-    }
-    .welcome-label{display:inline-block;background:rgba(246,168,201,0.12);color:var(--accent-dark);padding:6px 14px;border-radius:999px;font-weight:600;margin-bottom:18px}
-    .welcome-title{font-family:"Krona One",sans-serif;font-size:46px;color:#3a2b3b;margin:12px 0 10px}
-    .welcome-sub{max-width:860px;margin:0 auto;color:var(--muted);font-size:17px}
-    .hero-buttons{margin-top:22px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
-    .btn-soft{background:transparent;border:2px solid var(--accent);color:var(--accent-dark);padding:10px 20px;border-radius:999px;font-weight:600;cursor:pointer}
-    .btn-primary{background:var(--accent-dark);color:white;border:0;padding:10px 20px;border-radius:999px;font-weight:600;cursor:pointer}
-    .btn-soft:hover{background:rgba(246,168,201,0.06)}
-    .btn-primary:hover{transform:translateY(-3px)}
-
-    /* Products */
-    .products-section{padding:70px 0;background:transparent}
-    .products-header{text-align:center;margin-bottom:30px}
-    .products-title{font-size:32px;color:#3a2b3b;font-weight:700;display:inline-block}
-    .products-title::after{content:'';display:block;height:3px;width:90px;background:var(--accent);margin:12px auto 0;border-radius:4px}
-
-    .carousel-container{position:relative;overflow:hidden;padding:0 16px}
-    .carousel-track{display:flex;gap:18px;transition:transform .5s ease}
-    .product-card{
-      flex:0 0 calc(25% - 18px);
-      background:var(--card-bg);
-      border-radius:var(--rounded);
-      overflow:hidden;
-      box-shadow:0 8px 30px var(--shadow);
-      transition:transform .25s ease, box-shadow .25s ease;
-      min-width:220px;
-    }
-    .product-card:hover{transform:translateY(-8px)}
-    .product-media{height:200px;background:#f5f2f6;display:flex;align-items:center;justify-content:center}
-    .product-media img{width:100%;height:100%;object-fit:cover;display:block}
-    .product-info{padding:16px}
-    .product-name{font-weight:700;color:#392733;margin-bottom:8px}
-    .product-desc{color:var(--muted);font-size:14px;margin-bottom:12px}
-    .product-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px}
-    .product-price{font-weight:800;color:var(--accent-dark)}
-    .add-btn{background:var(--accent);color:white;padding:8px 12px;border-radius:10px;border:0;font-weight:600;cursor:pointer}
-    .add-btn:hover{background:var(--accent-dark)}
-
-    .carousel-btn{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:999px;border:0;display:flex;align-items:center;justify-content:center;cursor:pointer;background:rgba(58,42,59,0.06)}
-    .carousel-btn.prev{left:8px}
-    .carousel-btn.next{right:8px}
-    .carousel-dots{display:flex;gap:8px;justify-content:center;margin-top:20px}
-
-    .dot{width:12px;height:12px;border-radius:50%;background:#eee;cursor:pointer}
-    .dot.active{background:var(--accent-dark)}
-
-    /* About */
-    .about-section{padding:70px 0;background:linear-gradient(180deg,#fff,#fff8fb)}
-    .about-container{display:flex;gap:36px;align-items:center;flex-wrap:wrap}
-    .about-image{flex:1;min-height:320px;border-radius:14px;overflow:hidden;box-shadow:0 12px 40px var(--shadow)}
-    .about-image img{width:100%;height:100%;object-fit:cover;display:block}
-    .about-content{flex:1;min-width:300px}
-    .about-title{font-size:28px;color:#3a2b3b;margin-bottom:12px;font-weight:700}
-    .about-text{color:var(--muted);margin-bottom:12px}
-
-    .features{display:flex;gap:16px;margin-top:18px;flex-wrap:wrap}
-    .feature{background:#fff;padding:14px;border-radius:10px;box-shadow:0 8px 20px var(--shadow);min-width:180px}
-
-    /* Footer */
-    footer{background:#3a2b3b;color:#fff;padding:50px 0 28px;margin-top:30px}
-    .footer-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
-    .footer h4{color:var(--accent);margin-bottom:10px}
-    .socials{display:flex;gap:10px;margin-top:10px}
-    .socials a{display:inline-flex;width:40px;height:40px;align-items:center;justify-content:center;background:#4a3d47;border-radius:8px;color:#fff}
-    .footer-bottom{text-align:center;color:#d6cbd2;margin-top:20px;font-size:13px}
-
-    /* Responsive */
-    @media(max-width:1024px){
-      .product-card{flex:0 0 calc(33.333% - 18px)}
-      .footer-grid{grid-template-columns:repeat(2,1fr)}
-    }
-    @media(max-width:768px){
-      .top-bar{flex-direction:column;gap:12px}
-      .product-card{flex:0 0 calc(50% - 18px)}
-      .about-container{flex-direction:column}
-      .carousel-btn{display:none}
-    }
-    @media(max-width:480px){
-      .product-card{flex:0 0 100%}
-      .welcome-title{font-size:28px}
+    .logout-btn:hover {
+      background: #f5f5f5;
     }
   </style>
 </head>
 <body>
   <header style="position:fixed;top:0;left:0;width:100%;z-index:1300;background:rgba(255,255,255,0.95);backdrop-filter:blur(6px);box-shadow:0 4px 18px var(--shadow);">
-    <div class="container top-bar" style="padding:12px 20px;">
-      <div style="display:flex;align-items:center;">
-        <img src="logo-bliss.png" alt="Bliss Logo" class="logo-small"
+    <div class="container top-bar" style="padding:12px 20px; display:flex; align-items:center; justify-content:space-between; gap:16px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <img src="imagenes/logo-bliss.png" alt="Bliss Logo" class="logo-small"
              style="background:transparent;padding:0;border-radius:0;box-shadow:none;display:block;">
+
+        <!-- Enlaces junto al logo -->
+      <nav style="position:relative;">
+        <style>
+          .dropdown { position:relative; display:inline-block; }
+          .dropdown-button { background:transparent;border:0;cursor:pointer;padding:6px 8px;font-weight:500;display:flex;align-items:center;gap:8px; }
+          .dropdown-menu {
+            position:absolute; left:0; top:calc(100% + 6px);
+            background:#fff; border-radius:8px; box-shadow:0 8px 20px rgba(0,0,0,0.12);
+            list-style:none; margin:0; padding:6px 0; min-width:200px; display:none; z-index:1400;
+          }
+          .dropdown-menu a { display:block; padding:8px 14px; color:var(--text,#231f20); text-decoration:none; }
+          .dropdown-menu a:hover { background:rgba(0,0,0,0.04); }
+          /* Mostrar con clase .open o con aria-expanded para compatibilidad */
+          .dropdown.open .dropdown-menu { display:block; }
+          .dropdown-button[aria-expanded="true"] + .dropdown-menu { display:block; }
+        </style>
+
+        <div class="dropdown" aria-haspopup="true">
+          <button class="dropdown-button" aria-expanded="false" id="catalog-btn" type="button" aria-controls="catalog-menu">
+            Catalogo <i class="fa fa-caret-down" aria-hidden="true"></i>
+          </button>
+
+          <ul class="dropdown-menu" role="menu" aria-label="Productos" id="catalog-menu">
+            <li role="none"><a role="menuitem" href="productos.html">Productos Aromáticos</a></li>
+            <li role="none"><a role="menuitem" href="humidificadores.html">Humidificadores</a></li>
+            <li role="none"><a role="menuitem" href="bijou.html">Bijou</a></li>
+          </ul>
+        </div>
+
+        <script>
+          (function(){
+            var dropdown = document.querySelector('.dropdown');
+            if(!dropdown) return;
+            var btn = dropdown.querySelector('.dropdown-button');
+            var menu = dropdown.querySelector('.dropdown-menu');
+            var closeTimer = null;
+
+            function open() {
+              if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
+              dropdown.classList.add('open');
+              btn.setAttribute('aria-expanded','true');
+            }
+            function close() {
+              dropdown.classList.remove('open');
+              btn.setAttribute('aria-expanded','false');
+            }
+
+            // Mostrar al entrar con el mouse y ocultar al salir (pequeña demora para permitir movimientos)
+            dropdown.addEventListener('mouseenter', open);
+            dropdown.addEventListener('mouseleave', function(){
+              closeTimer = setTimeout(close, 180);
+            });
+
+            // Toggle por click (útil en touch)
+            btn.addEventListener('click', function(e){
+              var expanded = btn.getAttribute('aria-expanded') === 'true';
+              if (expanded) close(); else open();
+            });
+
+            // Mantener abierto mientras el foco está dentro (teclado)
+            dropdown.addEventListener('focusin', open);
+            dropdown.addEventListener('focusout', function(e){
+              // si el nuevo foco no está dentro del dropdown, cerramos
+              var related = e.relatedTarget;
+              if (!dropdown.contains(related)) close();
+            });
+
+            // Cerrar con Escape
+            dropdown.addEventListener('keydown', function(e){
+              if (e.key === 'Escape') { close(); btn.focus(); }
+            });
+
+            // Cerrar al seleccionar una opción
+            Array.prototype.forEach.call(menu.querySelectorAll('a'), function(link){
+              link.addEventListener('click', function(){ close(); });
+            });
+          })();
+        </script>
+      </nav>
       </div>
 
       <nav>
@@ -168,249 +146,278 @@
           <li><a href="#bienvenidos" onclick="document.querySelector('header').scrollIntoView({behavior:'smooth', block:'start'});">Inicio</a></li>
           <li><a href="#productos">Productos</a></li>
           <li><a href="#footer" onclick="event.preventDefault(); document.querySelector('footer').scrollIntoView({behavior:'smooth', block:'start'});" aria-label="Ir al pie de página">Contacto</a></li>
+          
+          <!-- Estado de usuario: No logueado -->
+          <li id="loginState">
+            <a href="registro.html">Iniciar Sesion / Registrarse</a>
+          </li>
+          
+          <!-- Estado de usuario: Logueado -->
+          <li id="userState" style="display:none;">
+            <div class="user-menu">
+              <div class="user-avatar" id="userAvatar">U</div>
+              <span class="user-name" id="userName">Usuario</span>
+              <button class="logout-btn" onclick="handleLogout()">Salir</button>
+            </div>
+          </li>
+          
+          <li>
+            <a href="carrito.html" class="cart-link" aria-label="Ver carrito de compras"
+               style="position:relative;display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:inherit;padding:6px 8px;border-radius:6px;">
+              <i class="fa fa-shopping-cart" aria-hidden="true" style="font-size:16px"></i>
+              <span>Carrito</span>
+              <span id="cart-count" aria-hidden="true"
+                    style="position:absolute;top:-6px;right:-8px;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--accent,#e91e63);color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;">
+                0
+              </span>
+            </a>
+          </li>
         </ul>
       </nav>
     </div>
   </header>
 
-  <script>
-    // Evita que el header fijo tape el contenido: ajusta padding-top dinámicamente
-    (function(){
-      const header = document.querySelector('header');
-      function adjustSpacing(){
-        const h = header.offsetHeight;
-        document.body.style.paddingTop = h + 'px';
-      }
-      window.addEventListener('resize', adjustSpacing);
-      // ejecutar después de que el layout esté listo
-      window.addEventListener('load', adjustSpacing);
-      adjustSpacing();
-    })();
-  </script>
-
+  <!-- Resto de tu contenido HTML permanece igual -->
   <!-- WELCOME -->
   <section class="welcome-section" id="bienvenidos" style="position:relative; overflow:hidden;">
-    <!-- Imagen de fondo que cubre toda la sección (reemplaza 'fondoBienvenida.png' por tu archivo) -->
-    <img src="fondoBIen.png" alt="" aria-hidden="true"
+    <img src="imagenes/fondop.png" alt="" aria-hidden="true"
          style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;opacity:0.95;z-index:0;">
 
     <div class="container" style="position:relative;z-index:1;">
       <div class="welcome-label">Novedades • Aromas & Bijou</div>
       <h1 class="welcome-title">Placeres para tu hogar y tu estilo</h1>
-      <p class="welcome-sub">
-       "Un espacio donde los aromas se vuelven emociones y los accesorios realzan tu esencia. 
-       En Bliss creamos experiencias que equilibran tu energía y transforman cada rincón en un momento único. 
-       Conectá con lo que te inspira, dejá que cada fragancia te envuelva y descubrí piezas que acompañan tu estilo. 
-       Bliss: tu espacio, tu energía, tus sentidos."
-      </p> 
-
-      <!--<div class="hero-buttons">
-        <button class="btn-primary" onclick="document.getElementById('productos').scrollIntoView({behavior:'smooth'})">Explorar productos</button>
-        <button class="btn-soft">Contactar — WhatsApp</button>
-      </div> -->
+      <p class="welcome-sub" style="color:#231f20;font-weight:bold;text-shadow:0 1px 2px rgba(0,0,0,0.15);">
+        Un espacio donde los aromas se vuelven emociones y los accesorios realzan tu esencia. En Bliss creamos experiencias que equilibran tu energía y transforman cada rincón en un momento único. Conectá con lo que te inspira, dejá que cada fragancia te envuelva y descubrí piezas que acompañan tu estilo. Bliss: tu espacio, tu energía, tus sentidos.
+      </p>
     </div>
   </section>
+
   <!-- PRODUCTS -->
-  <section class="products-section" id="productos">
+  <section class="features-section" id="productos" aria-label="Productos destacados">
+    <style>
+      /* Fondos suaves y graduales para cada item */
+      .features-section .container { display:flex; flex-direction:column; gap:36px; padding:40px 0; }
+      .feature-row {
+        display:flex;
+        align-items:center;
+        gap:20px;
+        padding:22px;
+        border-radius:16px;
+        transition:transform .18s ease, box-shadow .18s ease;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+        background-clip: padding-box;
+      }
+      .feature-row:focus-within,
+      .feature-row:hover { transform:translateY(-4px); box-shadow: 0 14px 40px rgba(0,0,0,0.08); }
+
+      /* Gradientes suaves */
+      .feature-1 {
+        background: linear-gradient(135deg, #fff6fb 0%, #fff0f4 50%, #ffeef7 100%); /* rosa clarito */
+      }
+      .feature-2 {
+        background: linear-gradient(135deg, #fffdf8 0%, #f9efe0 50%, #f2e4cc 100%); /* beige suave */
+      }
+      .feature-3 {
+        background: linear-gradient(135deg, #fff8f6 0%, #fff1ef 50%, #fdeff4 100%); /* rosado / melocotón muy tenue */
+      }
+
+      /* Asegurar contraste y separación de imágenes */
+      .feature-row figure { margin:0; flex:0 0 320px; max-width:320px; }
+      .feature-row .feature-content { flex:1; }
+      @media (max-width:900px){
+        .feature-row { flex-direction:column; text-align:center; }
+        .feature-row[style*="row-reverse"] { flex-direction:column; }
+        .feature-row figure { width:100%; flex:0 0 auto; max-width:640px; }
+      }
+    </style>
+
     <div class="container">
-      <div class="products-header">
-        <h2 class="products-title">Algunos de nuestros productos</h2>
-      </div>
+      <!-- Item 1 -->
+      <article class="feature-row feature-1" style="display:flex;align-items:center;gap:20px;">
+        <figure style="flex:0 0 320px;max-width:320px;margin:0;">
+          <style>
+            .simple-carousel{position:relative;width:100%;height:320px;border-radius:12px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,0.12);}
+            .simple-carousel .slide{position:absolute;inset:0;opacity:0;transition:opacity .6s ease;display:block;}
+            .simple-carousel .slide img{width:100%;height:100%;object-fit:cover;display:block;}
+            .simple-carousel .slide.active{opacity:1;z-index:2;}
+            .simple-carousel .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;}
+          </style>
 
-      <div class="carousel-container" aria-label="Carrusel de productos">
-        <button class="carousel-btn prev" aria-label="Anterior"><i class="fas fa-chevron-left"></i></button>
+          <div class="simple-carousel" aria-roledescription="carousel" aria-label="Galería de imágenes de aromatizantes" id="carouselAromas">
+            <div class="slide active" role="group" aria-roledescription="slide" aria-label="1 de 3">
+              <img src="imagenes/Aromatizantedeambiente.png" alt="Frasco de aromatizante" loading="lazy">
+            </div>
+            <div class="slide" role="group" aria-roledescription="slide" aria-label="2 de 3">
+              <img src="imagenes/aceite esencial 10ml.png" alt="Detalle aromatizante 2" loading="lazy">
+            </div>
+            <div class="slide" role="group" aria-roledescription="slide" aria-label="3 de 3">
+              <img src="imagenes/shapirus parfum 60ml.png" alt="Detalle aromatizante 3" loading="lazy">
+            </div>
+            <span class="visually-hidden" id="carouselAromasStatus" aria-live="polite">Imagen 1 de 3</span>
+          </div>
 
-        <div class="carousel-track">
-          <!-- Card 1 -->
-          <article class="product-card" data-name="Aromatizador textil 250ml">
-            <div class="product-media">
-              <img src="Aromatizadortextil.png" alt="Aromatizador textil 250ml">
-            </div>
-            <div class="product-info">
-              <div class="product-name">Aromatizador textil 250ml</div>
-              <div class="product-desc">Diversos aromas.</div>
-              <div class="product-bottom">
-                <div class="product-desc">Es ideal para aplicar en cortinas, ropa de cama, almohadones, y todo tipo de telas, además de poder usarse como aromatizante de ambiente general.</div>
-         <!--       <button class="add-btn">Agregar</button>-->
-              </div>
-            </div>
-          </article>
+          <script>
+          (function(){
+            var carousel = document.getElementById('carouselAromas');
+            if(!carousel) return;
+            var slides = carousel.querySelectorAll('.slide');
+            var status = document.getElementById('carouselAromasStatus');
+            var current = 0, total = slides.length, interval = 5000, timer = null;
 
-          <!-- Card 2 -->
-          <article class="product-card" data-name="Difusor Cuarzo - Bergamota">
-            <div class="product-media">
-              <img src="Aromatizantedeambiente.png" alt="Difusor Bergamota">
-            </div>
-            <div class="product-info">
-              <div class="product-name">Aromatizante de ambiente 185gr</div>
-              <div class="product-desc">Diversas fragancias</div>
-              <div class="product-bottom">
-                <div class="product-desc">Son ideales para perfumar ambientes y, en algunos casos, también para uso textil. Transforman cualquier espacio con su aroma.</div>
-            <!--    <button class="add-btn">Agregar</button>-->
-              </div>
-            </div>
-          </article>
+            function show(index){
+              slides[current].classList.remove('active');
+              current = (index + total) % total;
+              slides[current].classList.add('active');
+              if(status) status.textContent = 'Imagen ' + (current+1) + ' de ' + total;
+            }
+            function next(){ show(current+1); }
+            function start(){ if(timer) clearInterval(timer); timer = setInterval(next, interval); }
+            function stop(){ if(timer){ clearInterval(timer); timer = null; } }
 
-          <!-- Card 3 -->
-          <article class="product-card" data-name="Pulsera Love - Acero">
-            <div class="product-media">
-              <img src="Difusoraromáticoconvarillas.png" alt="Pulsera">
-            </div>
-            <div class="product-info">
-              <div class="product-name">Difusor aromático con varillas 125ml</div>
-              <div class="product-desc">Amplia gama de fragancias</div>
-              <div class="product-bottom">
-                <div class="product-desc">Es excelente para aromatizar baños, oficinas, dormitorios u otros espacios pequeños.</div>
-             <!--   <button class="add-btn">Agregar</button>-->
-              </div>
-            </div>
-          </article>
+            start();
+            carousel.addEventListener('mouseenter', stop);
+            carousel.addEventListener('mouseleave', start);
+            carousel.addEventListener('focusin', stop);
+            carousel.addEventListener('focusout', start);
 
-          <!-- Card 4 -->
-          <article class="product-card" data-name="Collar Minimal - Jade">
-            <div class="product-media">
-              <img src="Humificadoraromáticoled(flame).png" alt="Collar Jade">
-            </div>
-            <div class="product-info">
-              <div class="product-name">Humificador aromático led (flame)</div>
-              <div class="product-desc">El humidificador aromático LED con efecto de llama (Flame) es un dispositivo versátil que combina las funciones de humidificador, difusor de aromas y luz ambiental con un diseño moderno y decorativo.</div>
-              <div class="product-bottom">
-              <!--  <div class="product-price">$3.100</div>-->
-              <!--  <button class="add-btn">Agregar</button>-->
-              </div>
-            </div>
-          </article>
+            // small keyboard support
+            carousel.tabIndex = 0;
+            carousel.addEventListener('keydown', function(e){
+              if(e.key === 'ArrowRight'){ stop(); next(); start(); }
+              if(e.key === 'ArrowLeft'){ stop(); show(current-1); start(); }
+            });
+          })();
+          </script>
+        </figure>
+        <div class="feature-content" style="flex:1;">
+          <h3 style="margin:0 0 8px;font-size:1.4rem;">Aromas</h3>
+          <p style="margin:0;color:var(--muted,#444);line-height:1.5;"></p>
+            Descubrí nuestra selección de fragancias para el hogar, pensadas para transformar cada ambiente con personalidad y calidez. Contamos con aromatizantes y aceites esenciales que aportan equilibrio, bienestar y una atmósfera armoniosa. Nuestras esencias están formuladas para ser suaves pero duraderas, ideales para acompañar tus rutinas y crear momentos de relax. Cada aroma está diseñado para influir positivamente en el ánimo y embellecer tus espacios. Elegí la fragancia que mejor te identifique y llená tu hogar de sensaciones únicas.
+          </p>
+        </div>
+      </article>
 
-          <!-- Card 5 -->
-          <article class="product-card" data-name="Mini Kit Aromas">
-            <div class="product-media">
-              <img src="Carterabaguetteisabellanegro.jpeg" alt="Kit Aromas">
+      <!-- Item 2 -->
+      <article class="feature-row feature-2" style="display:flex;align-items:center;gap:20px;flex-direction:row-reverse;">
+        <figure style="flex:0 0 320px;max-width:320px;margin:0;">
+            <div class="simple-carousel" aria-roledescription="carousel" aria-label="Galería de imágenes de bijou" id="carouselBijou">
+            <div class="slide active" role="group" aria-roledescription="slide" aria-label="1 de 3">
+              <img src="imagenes/Aros dorados.png" alt="Aros dorados" loading="lazy">
             </div>
-            <div class="product-info">
-              <div class="product-name">Cartera baguette isabella negro</div>
-              <div class="product-desc">La cartera baguette Isabella negra es un accesorio elegante y versátil, conocido por su diseño compacto y alargado, ideal para llevar lo esencial con estilo.</div>
-              <div class="product-bottom">
-            <!--    <div class="product-price">$1.600</div>-->
-             <!--   <button class="add-btn">Agregar</button>-->
-              </div>
+            <div class="slide" role="group" aria-roledescription="slide" aria-label="2 de 3">
+              <img src="imagenes/Carterabaguetteisabellanegro.jpeg" alt="Collar elegante" loading="lazy">
             </div>
-          </article>
+            <div class="slide" role="group" aria-roledescription="slide" aria-label="3 de 3">
+              <img src="imagenes/Gorravintageneneyork.png" alt="Pulsera fina" loading="lazy">
+            </div>
+            <span class="visually-hidden" id="carouselBijouStatus" aria-live="polite">Imagen 1 de 3</span>
+            </div>
+          </figure>
 
-          <!-- Card 6 -->
-          <article class="product-card" data-name="Vela Terra - Cedro">
-            <div class="product-media">
-              <img src="Reloj niza blanco.png" alt="Vela Cedro">
-            </div>
-            <div class="product-info">
-              <div class="product-name">Reloj niza blanco</div>
-              <div class="product-desc">El reloj Niza blanco es un reloj analógico, conocido por su diseño informal y su malla de silicona, que lo hace cómodo y versátil.</div>
-              <div class="product-bottom">
-            <!--    <div class="product-price">$3.600</div>-->
-            <!--    <button class="add-btn">Agregar</button>-->
-              </div>
-            </div>
-          </article>
+          <script>
+          (function(){
+            var carousel = document.getElementById('carouselBijou');
+            if(!carousel) return;
+            var slides = carousel.querySelectorAll('.slide');
+            var status = document.getElementById('carouselBijouStatus');
+            var current = 0, total = slides.length, interval = 5000, timer = null;
 
-          <!-- Card 7 (extra) -->
-          <article class="product-card" data-name="Diffuser Refill">
-            <div class="product-media">
-              <img src="cintos faja nacionales negro..png" alt="Refill">
-            </div>
-            <div class="product-info">
-              <div class="product-name">cintos faja nacionales negro</div>
-              <div class="product-desc">Se destaca la versatilidad de los cintos faja negros, capaces de añadir un toque distintivo y complementar a la perfección desde conjuntos formales hasta outfits más sobrios.</div>
-              <div class="product-bottom">
-              <!--  <div class="product-price">$1.200</div>-->
-             <!--   <button class="add-btn">Agregar</button>-->
-              </div>
-            </div>
-          </article>
+            function show(index){
+            slides[current].classList.remove('active');
+            current = (index + total) % total;
+            slides[current].classList.add('active');
+            if(status) status.textContent = 'Imagen ' + (current+1) + ' de ' + total;
+            }
+            function next(){ show(current+1); }
+            function start(){ if(timer) clearInterval(timer); timer = setInterval(next, interval); }
+            function stop(){ if(timer){ clearInterval(timer); timer = null; } }
 
-          <!-- Card 8 -->
-<article class="product-card" data-name="Aceite esencial puro 10ml">
-  <div class="product-media">
-    <img src="Aros dorados.png" alt="Aceite esencial">
-  </div>
-  <div class="product-info">
-    <div class="product-name">Aros dorados</div>
-    <div class="product-desc">Los aros dorados son un accesorio de joyería versátil y atemporal que se adaptan a cualquier ocasión.</div>
-    <div class="product-bottom">
-    <!--  <div class="product-desc">Perfecto para difusores, hornillos o aromatizar textiles con unas pocas gotas.</div>-->
+            start();
+            carousel.addEventListener('mouseenter', stop);
+            carousel.addEventListener('mouseleave', start);
+            carousel.addEventListener('focusin', stop);
+            carousel.addEventListener('focusout', start);
+
+            // teclado básico
+            carousel.tabIndex = 0;
+            carousel.addEventListener('keydown', function(e){
+            if(e.key === 'ArrowRight'){ stop(); next(); start(); }
+            if(e.key === 'ArrowLeft'){ stop(); show(current-1); start(); }
+            });
+          })();
+          </script>
+        <div class="feature-content" style="flex:1;">
+          <h3 style="margin:0 0 8px;font-size:1.4rem;">Bijou</h3>
+          <p style="margin:0;color:var(--muted,#444);line-height:1.5;">
+            Piezas cuidadosamente seleccionadas para realzar tu estilo y acompañarte en cada ocasión. Aros, collares y accesorios atemporales diseñados para lucir todos los días sin perder elegancia. Cada creación refleja dedicación, detalle y materiales pensados para durar. Nuestro objetivo es ofrecerte bijouterie que combine simplicidad, personalidad y encanto. Encontrá el accesorio perfecto para completar tu look y expresar tu esencia.
+          </p>
+        </div>
+      </article>
+
+      <!-- Item 3 -->
+      <article class="feature-row feature-3" style="display:flex;align-items:center;gap:20px;">
+        <figure style="flex:0 0 320px;max-width:320px;margin:0;">
+          <div class="simple-carousel" aria-roledescription="carousel" aria-label="Galería de humidificadores" id="carouselHumid">
+            <div class="slide active" role="group" aria-roledescription="slide" aria-label="1 de 3">
+              <img src="imagenes/Humificadoraromáticoled(flame).png" alt="Humificador aromático LED" loading="lazy">
+            </div>
+            <div class="slide" role="group" aria-roledescription="slide" aria-label="2 de 3">
+              <img src="imagenes/humidificador2.png" alt="Humificador modelo 2" loading="lazy">
+            </div>
+            <div class="slide" role="group" aria-roledescription="slide" aria-label="3 de 3">
+              <img src="imagenes/Humidificador3.png" alt="Humificador modelo 3" loading="lazy">
+            </div>
+            <span class="visually-hidden" id="carouselHumidStatus" aria-live="polite">Imagen 1 de 3</span>
+          </div>
+          </figure>
+
+          <script>
+          (function(){
+            var carousel = document.getElementById('carouselHumid');
+            if(!carousel) return;
+            var slides = carousel.querySelectorAll('.slide');
+            var status = document.getElementById('carouselHumidStatus');
+            var current = 0, total = slides.length, interval = 5000, timer = null;
+
+            function show(index){
+              slides[current].classList.remove('active');
+              current = (index + total) % total;
+              slides[current].classList.add('active');
+              if(status) status.textContent = 'Imagen ' + (current+1) + ' de ' + total;
+            }
+            function next(){ show(current+1); }
+            function start(){ if(timer) clearInterval(timer); timer = setInterval(next, interval); }
+            function stop(){ if(timer){ clearInterval(timer); timer = null; } }
+
+            start();
+            carousel.addEventListener('mouseenter', stop);
+            carousel.addEventListener('mouseleave', start);
+            carousel.addEventListener('focusin', stop);
+            carousel.addEventListener('focusout', start);
+
+            // soporte básico de teclado
+            carousel.tabIndex = 0;
+            carousel.addEventListener('keydown', function(e){
+              if(e.key === 'ArrowRight'){ stop(); next(); start(); }
+              if(e.key === 'ArrowLeft'){ stop(); show(current-1); start(); }
+            });
+          })();
+          </script>
+        <div class="feature-content" style="flex:1;">
+          <h3 style="margin:0 0 8px;font-size:1.4rem;">Humidificadores</h3>
+          <p style="margin:0;color:var(--muted,#444);line-height:1.5;">
+            Descubrí nuestros humidificadores diseñados para mejorar la calidad del aire y crear un ambiente más saludable y confortable. Cada modelo combina funcionalidad con un diseño moderno que se adapta a cualquier espacio. Ideales para acompañar tus rutinas diarias, ayudan a mantener la humedad justa y a potenciar el aroma de tus esencias favoritas. Fabricados con materiales cuidados y pensados para un uso sencillo y eficiente. Transformá tus ambientes en espacios más armoniosos, frescos y llenos de bienestar.
+          </p>
+        </div>
+      </article>
     </div>
-  </div>
-</article>
-
-<!-- Card 9 -->
-<article class="product-card" data-name="Vaporizador portátil mini">
-  <div class="product-media">
-    <img src="Gorravintageneneyork.png" alt="Vaporizador portátil">
-  </div>
-  <div class="product-info">
-    <div class="product-name">Gorra vintage nene york</div>
-    <div class="product-desc">Las gorras vintage de niño con el logo de New York son populares por su estilo clásico, que a menudo presenta un diseño "gastado" y materiales de algodón cómodos y ajustables.</div>
-    <div class="product-bottom">
-    <!--  <div class="product-desc">Humidifica pequeños espacios y destaca tus aromas favoritos.</div>-->
-    </div>
-  </div>
-</article>
-
-<!-- Card 10 -->
-<article class="product-card" data-name="Vela Premium 200gr">
-  <div class="product-media">
-    <img src="collarcorbatinesargolla.png" alt="Vela premium">
-  </div>
-  <div class="product-info">
-    <div class="product-name">collar corbatines argolla.</div>
-    <div class="product-desc">El collar corbatín con argolla es un tipo de collar ajustable y largo, que no tiene un broche tradicional, sino que se cruza o anuda a través de una argolla, permitiendo regular su longitud y estilo.</div>
-    <div class="product-bottom">
-     <!-- <div class="product-desc">Fabricada en blend vegetal, quema pareja y diseño decorativo.</div>-->
-    </div>
-  </div>
-</article>
-
-<!-- Card 11 -->
-<article class="product-card" data-name="Vela Premium 200gr">
-  <div class="product-media">
-    <img src="shapirus parfum 60ml.png" alt="Vela premium">
-  </div>
-  <div class="product-info">
-    <div class="product-name">Saphirus Perfum 60ml</div>
-    <div class="product-desc">El Saphirus Perfum 60ml es un Eau de Parfum concentrado, diseñado para uso personal y para aromatizar espacios pequeños, ofreciendo una alta calidad y durabilidad de fragancia.</div>
-    <div class="product-bottom">
-      <div class="product-desc"></div>
-    </div>
-  </div>
-</article>
-
-<!-- Card 12 -->
-<article class="product-card" data-name="Vela Premium 200gr">
-  <div class="product-media">
-    <img src="aceite esencial 10ml.png" alt="Vela premium">
-  </div>
-  <div class="product-info">
-    <div class="product-name">Aceite esencial 10ml</div>
-    <div class="product-desc">El aceite esencial de 10 ml es un producto concentrado y versátil, utilizado principalmente en aromaterapia y para perfumar ambientes mediante difusores u hornillos.</div>
-    <div class="product-bottom">
-      <div class="product-desc"></div>
-    </div>
-  </div>
-</article>
-
-
-        </div>   
-
-        <button class="carousel-btn next" aria-label="Siguiente"><i class="fas fa-chevron-right"></i></button>
-      </div>
-
-      <div class="carousel-dots" role="tablist" aria-label="Páginas del carrusel"></div>
-    </div>
-  </section>
+  </section></p>
 
   <!-- ABOUT -->
   <section class="about-section" id="acerca-de">
     <div class="container about-container">
       <div class="about-image">
-        <img src="localbliss.png" alt="Nuestra tienda Bliss">
+        <img src="imagenes/fondobliss.png.png" alt="Nuestra tienda Bliss">
       </div>
       <div class="about-content">
         <h3 class="about-title">Acerca de Bliss</h3>
@@ -423,31 +430,15 @@
         <p class="about-text">
           En Bliss, no solo vendemos productos: compartimos un espacio pensado para vos. 
         </p>
-<!--
-        <div class="features">
-          <div class="feature">
-            <strong>Hecho a mano</strong>
-            <div style="color:var(--muted);font-size:13px;margin-top:6px">Piezas producidas en lotes pequeños.</div>
-          </div>
-          <div class="feature">
-            <strong>Envios a todo el país</strong>
-            <div style="color:var(--muted);font-size:13px;margin-top:6px">Rápido y seguro.</div>
-          </div>
-          <div class="feature">
-            <strong>Regalos listos</strong>
-            <div style="color:var(--muted);font-size:13px;margin-top:6px">Packaging delicado para regalo.</div>
-          </div>
-        </div>-->
       </div>
     </div>
   </section>
 
   <!-- MAPA / UBICACIÓN -->
-  <section class="map-section" id="ubicacion" style="padding:40px 0;background:transparent">
+  <section class="map-section" id="ubicacion" style="padding:40px 0;background:#fff">
     <div class="container">
       <h3 class="about-title" style="margin-bottom:8px">Dónde estamos</h3>
       <p class="about-text">Visítanos en: Avenida Sarmiento 318, Resistencia, Chaco</p>
-
       <div style="border-radius:12px;overflow:hidden;box-shadow:0 12px 40px var(--shadow);margin-top:12px">
         <iframe
           src="https://www.google.com/maps?q=Avenida+Sarmiento+318+Resistencia+Chaco&output=embed"
@@ -455,15 +446,68 @@
           allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
           title="Mapa: Avenida Sarmiento 318, Resistencia, Chaco"></iframe>
       </div>
-
       <p style="margin-top:10px">
         <a href="https://www.google.com/maps/search/?api=1&query=Avenida+Sarmiento+318+Resistencia+Chaco"
            target="_blank" rel="noopener" class="btn-soft" style="display:inline-block">Abrir en Google Maps</a>
       </p>
     </div>
   </section>
+
   <!-- FOOTER -->
   <footer>
+    <style>
+      /* Botón flotante de WhatsApp (fijo en esquina inferior derecha) */
+      .whatsapp-float {
+        position: fixed;
+        right: 18px;
+        bottom: 18px;
+        z-index: 1600;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: #25D366;
+        color: #fff;
+        padding: 10px 14px;
+        border-radius: 999px;
+        box-shadow: 0 10px 30px rgba(37,211,102,0.16);
+        text-decoration: none;
+        font-weight: 600;
+        transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease;
+        will-change: transform;
+      }
+      .whatsapp-float:hover { transform: translateY(-4px); box-shadow: 0 16px 36px rgba(37,211,102,0.22); }
+      .whatsapp-float:active { transform: translateY(-1px) scale(.99); }
+
+      .whatsapp-float .wa-icon {
+        width: 36px;
+        height: 36px;
+        display: inline-grid;
+        place-items: center;
+        background: rgba(255,255,255,0.12);
+        border-radius: 50%;
+        font-size: 18px;
+      }
+
+      .whatsapp-float .wa-label {
+        white-space: nowrap;
+        font-size: 14px;
+      }
+
+      /* En móviles mostramos sólo el icono para ahorrar espacio */
+      @media (max-width:640px) {
+        .whatsapp-float { padding: 8px; gap: 8px; }
+        .whatsapp-float .wa-label { display: none; }
+      }
+
+      /* pequeña animación flotante opcional */
+      @keyframes wa-float {
+        0% { transform: translateY(0); }
+        50% { transform: translateY(-4px); }
+        100% { transform: translateY(0); }
+      }
+      .whatsapp-float.gentle { animation: wa-float 4.5s ease-in-out infinite; }
+    </style>
+
     <div class="container">
       <div class="footer-grid">
         <div>
@@ -482,8 +526,8 @@
         </div>
 
         <div>
-            <h4>Suscribite</h4>
-            <form id="subscribe-form" onsubmit="handleSubscribe(event)" style="margin:0">
+          <h4>Suscribite</h4>
+          <form id="subscribe-form" onsubmit="handleSubscribe(event)" style="margin:0">
             <input id="subscribe-email" type="email" placeholder="Tu email" required
              style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
             <button type="submit" style="width:100%;background:var(--accent);color:#fff;padding:10px;border:0;border-radius:8px;cursor:pointer">Suscribirse</button>
@@ -498,150 +542,152 @@
           </div>
 
           <div id="subscribe-thanks" style="display:none;margin-top:8px;color:var(--muted);font-size:14px">¡Gracias! Te enviaremos novedades.</div>
-
-          <script>
-            function handleSubscribe(e){
-              e.preventDefault();
-              var input = document.getElementById('subscribe-email');
-              var email = (input.value || '').trim();
-              if(!email) return;
-              document.getElementById('confirm-email').textContent = email;
-              document.getElementById('subscribe-confirm').style.display = 'block';
-              document.getElementById('subscribe-thanks').style.display = 'none';
-            }
-
-            document.getElementById('confirm-yes').addEventListener('click', function(){
-              // aquí se podría enviar el email al servidor (fetch) si se desea
-              document.getElementById('subscribe-confirm').style.display = 'none';
-              document.getElementById('subscribe-thanks').style.display = 'block';
-              // limpiar el input después de la confirmación
-              document.getElementById('subscribe-email').value = '';
-              // ocultar el mensaje de agradecimiento después de unos segundos
-              setTimeout(function(){
-          document.getElementById('subscribe-thanks').style.display = 'none';
-              }, 3500);
-            });
-
-            document.getElementById('confirm-no').addEventListener('click', function(){
-              document.getElementById('subscribe-confirm').style.display = 'none';
-            });
-          </script>
-        </div></div>
-
-       <!-- <div>
-          <h4>Enlaces</h4>
-          <ul style="list-style:none;padding:0;color:#d8cbd2">
-            <li style="margin-bottom:8px"><a href="#productos">Productos</a></li>
-            <li style="margin-bottom:8px"><a href="#acerca-de">Acerca</a></li>-->
-          <!--  <li style="margin-bottom:8px"><a href="#">Política de envíos</a></li>-->
-          <!--  <li style="margin-bottom:8px"><a href="#">Contacto</a></li>
-          </ul>
-        </div>-->
+        </div>
       </div>
 
       <div class="footer-bottom">
         &copy; <span id="year"></span> Bliss Accesorios Sensoriales. Todos los derechos reservados.
       </div>
     </div>
-  </footer>
 
-  <!-- SCRIPTS -->
+    <!-- Botón flotante de WhatsApp (fijo en la esquina inferior izquierda).
+         Reemplazá PHONE_NUMBER por tu número en formato internacional sin signos, ejemplo: 5491122223333 -->
+    <a class="whatsapp-float gentle" href="https://wa.me/5493624271016?text=Hola%20Bliss%20!%20Quisiera%20consultar%20sobre%20sus%20productos." target="_blank" rel="noopener noreferrer" aria-label="Chatear por WhatsApp con Bliss" title="Chatear por WhatsApp">
+      <span class="wa-icon" aria-hidden="true"><i class="fab fa-whatsapp" style="font-size:18px;"></i></span>
+      <span class="wa-label">Chatear por WhatsApp</span>
+    </a>
+  </footer></div>
+
   <script>
-    // año en footer
-    document.getElementById('year').textContent = new Date().getFullYear();
+    // Configuración de Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyBm_eFEYlE-GOpSp8PzRvUzGPEl2pIsWz0",
+      authDomain: "bliss-ffad9.firebaseapp.com",
+      projectId: "bliss-ffad9",
+      storageBucket: "bliss-ffad9.firebasestorage.app",
+      messagingSenderId: "863864024902",
+      appId: "1:863864024902:web:02cb9dd6997a0fa7353f47"
+    };
 
-    document.addEventListener('DOMContentLoaded', function(){
-      const track = document.querySelector('.carousel-track');
-      const carouselContainer = document.querySelector('.carousel-container');
-      const cards = Array.from(document.querySelectorAll('.product-card'));
-      const prevBtn = document.querySelector('.carousel-btn.prev');
-      const nextBtn = document.querySelector('.carousel-btn.next');
-      const dotsContainer = document.querySelector('.carousel-dots');
-
-      let cardsPerView = 4;
-      let currentIndex = 0;
-      let autoSlide;
-
-      function updateCardsPerView(){
-        const w = window.innerWidth;
-        if(w <= 480) cardsPerView = 1;
-        else if(w <= 768) cardsPerView = 2;
-        else if(w <= 1024) cardsPerView = 3;
-        else cardsPerView = 4;
-        createDots();
-        goToSlide(0);
-      }
-
-      function createDots(){
-        const total = Math.ceil(cards.length / cardsPerView);
-        dotsContainer.innerHTML = '';
-        for(let i=0;i<total;i++){
-          const d = document.createElement('div');
-          d.className = 'dot' + (i===0 ? ' active' : '');
-          d.addEventListener('click', ()=>{ goToSlide(i) });
-          dotsContainer.appendChild(d);
+    // Inicializar Firebase
+    let auth, db;
+    if (typeof firebase !== 'undefined') {
+      try {
+        if (!firebase.apps.length) {
+          firebase.initializeApp(firebaseConfig);
         }
+        auth = firebase.auth();
+        db = firebase.firestore();
+        console.log('✅ Firebase inicializado en index.html');
+      } catch (error) {
+        console.error('Error Firebase:', error);
       }
+    }
 
-      function goToSlide(index){
-        const total = Math.ceil(cards.length / cardsPerView);
-        currentIndex = Math.max(0, Math.min(index, total-1));
-        const shiftPercent = (currentIndex * 100);
-        track.style.transform = `translateX(-${shiftPercent}%)`;
-        updateActiveDot();
-        resetAuto();
-      }
-
-      function updateActiveDot(){
-        const dots = Array.from(document.querySelectorAll('.dot'));
-        dots.forEach((d, i) => d.classList.toggle('active', i === currentIndex));
-      }
-
-      function nextSlide(){
-        const total = Math.ceil(cards.length / cardsPerView);
-        currentIndex = (currentIndex + 1) % total;
-        goToSlide(currentIndex);
-      }
-
-      function prevSlide(){
-        const total = Math.ceil(cards.length / cardsPerView);
-        currentIndex = (currentIndex - 1 + total) % total;
-        goToSlide(currentIndex);
-      }
-
-      prevBtn.addEventListener('click', ()=>{ prevSlide(); });
-      nextBtn.addEventListener('click', ()=>{ nextSlide(); });
-
-      function startAuto(){ autoSlide = setInterval(nextSlide, 10000); }
-      function resetAuto(){ clearInterval(autoSlide); startAuto(); }
-
-      // agregar comportamiento botones "Agregar" (demo)
-      document.querySelectorAll('.add-btn').forEach(btn => {
-        btn.addEventListener('click', (e)=>{
-          const card = e.target.closest('.product-card');
-          const name = card.getAttribute('data-name') || card.querySelector('.product-name').textContent;
-          alert(name + " agregado al carrito (demo).");
+    // Verificar estado de autenticación al cargar
+    document.addEventListener('DOMContentLoaded', function() {
+      if (auth) {
+        auth.onAuthStateChanged((user) => {
+          if (user) {
+            showUserState(user);
+          } else {
+            showLoginState();
+          }
         });
-      });
-
-      // responsive init
-      window.addEventListener('resize', updateCardsPerView);
-      updateCardsPerView();
-      startAuto();
+      }
+      
+      // Inicializar otras funcionalidades
+      initializeCart();
+      initializeYear();
     });
 
-    // Suavizado para enlaces internos
-    document.querySelectorAll('nav a').forEach(a=>{
-      a.addEventListener('click', function(e){
-        const href = this.getAttribute('href');
-        if(href && href.startsWith('#')){
-          e.preventDefault();
-          const t = document.querySelector(href);
-          if(t) t.scrollIntoView({behavior:'smooth', block:'start'});
+    // Mostrar estado de usuario logueado
+    async function showUserState(user) {
+      document.getElementById('loginState').style.display = 'none';
+      document.getElementById('userState').style.display = 'block';
+      
+      try {
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        if (userDoc.exists) {
+          const userData = userDoc.data();
+          const firstName = userData.firstName || '';
+          const lastName = userData.lastName || '';
+          const fullName = `${firstName} ${lastName}`.trim();
+          
+          document.getElementById('userName').textContent = fullName || user.email;
+          document.getElementById('userAvatar').textContent = firstName ? firstName.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase();
+        } else {
+          document.getElementById('userName').textContent = user.email;
+          document.getElementById('userAvatar').textContent = user.email.charAt(0).toUpperCase();
         }
+      } catch (error) {
+        console.error('Error obteniendo datos usuario:', error);
+        document.getElementById('userName').textContent = user.email;
+        document.getElementById('userAvatar').textContent = user.email.charAt(0).toUpperCase();
+      }
+    }
+
+    // Mostrar estado de login
+    function showLoginState() {
+      document.getElementById('loginState').style.display = 'block';
+      document.getElementById('userState').style.display = 'none';
+    }
+
+    // Manejar logout
+    function handleLogout() {
+      if (auth) {
+        auth.signOut().then(() => {
+          console.log('✅ Sesión cerrada');
+          showLoginState();
+        }).catch((error) => {
+          console.error('Error cerrando sesión:', error);
+        });
+      }
+    }
+
+    // Funciones existentes del carrito
+    function initializeCart() {
+      function updateCount(){
+        var count = parseInt(localStorage.getItem('cartCount')) || 0;
+        var el = document.getElementById('cart-count');
+        if(!el) return;
+        el.textContent = count;
+        el.style.display = count ? 'flex' : 'none';
+      }
+      updateCount();
+      window.addEventListener('storage', function(e){
+        if(e.key === 'cartCount') updateCount();
       });
+    }
+
+    // Año en footer
+    function initializeYear() {
+      document.getElementById('year').textContent = new Date().getFullYear();
+    }
+
+    // Función para el formulario de suscripción
+    function handleSubscribe(e){
+      e.preventDefault();
+      var input = document.getElementById('subscribe-email');
+      var email = (input.value || '').trim();
+      if(!email) return;
+      document.getElementById('confirm-email').textContent = email;
+      document.getElementById('subscribe-confirm').style.display = 'block';
+      document.getElementById('subscribe-thanks').style.display = 'none';
+    }
+
+    document.getElementById('confirm-yes').addEventListener('click', function(){
+      document.getElementById('subscribe-confirm').style.display = 'none';
+      document.getElementById('subscribe-thanks').style.display = 'block';
+      document.getElementById('subscribe-email').value = '';
+      setTimeout(function(){
+        document.getElementById('subscribe-thanks').style.display = 'none';
+      }, 3500);
+    });
+
+    document.getElementById('confirm-no').addEventListener('click', function(){
+      document.getElementById('subscribe-confirm').style.display = 'none';
     });
   </script>
 </body>
 </html>
-
