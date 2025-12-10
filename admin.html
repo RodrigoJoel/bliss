@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Admin - Cargar productos</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 16px; background:#f5f5f5; }
+        h1 { margin-bottom: 8px; }
+        .sections { display:flex; gap:16px; flex-wrap:wrap; }
+        .section { background:#fff; padding:12px; border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,.1); width:320px; }
+        .section h2 { margin:0 0 8px 0; font-size:18px; }
+        .section .controls { display:flex; gap:8px; margin-bottom:8px; }
+        .section .list { display:flex; flex-direction:column; gap:8px; max-height:60vh; overflow:auto; padding-right:4px; }
+        .card { display:flex; gap:8px; border:1px solid #eee; padding:8px; border-radius:6px; align-items:flex-start; background:#fafafa; transition:opacity .2s, filter .2s; }
+        .card.inactive { opacity:0.55; filter:grayscale(.6); }
+        .card img { width:80px; height:80px; object-fit:cover; border-radius:4px; }
+        .card .meta { flex:1; }
+        .card .meta b { display:block; }
+        .card .meta small { color:#666; }
+        .card .actions { display:flex; flex-direction:column; gap:6px; }
+        button { cursor:pointer; }
+        /* modal form */
+        .overlay { position:fixed; inset:0; background:rgba(0,0,0,.4); display:flex; align-items:center; justify-content:center; }
+        .formbox { background:#fff; padding:16px; border-radius:8px; width:400px; max-width:95%; box-shadow:0 6px 24px rgba(0,0,0,.2); }
+        .form-row { display:flex; flex-direction:column; gap:6px; margin-bottom:10px; }
+        label { font-size:13px; color:#222; }
+        input[type="text"], input[type="number"], textarea { padding:8px; border:1px solid #ccc; border-radius:4px; width:100%; box-sizing:border-box; }
+        input[type="file"] { padding:6px 0; }
+        .preview { display:block; margin-top:6px; max-height:160px; object-fit:cover; border-radius:6px; }
+        .row-actions { display:flex; justify-content:flex-end; gap:8px; }
+        .small { font-size:12px; color:#777; }
+    </style>
+</head>
+<body>
+    <h1>Panel de administrador - Cargar productos</h1>
+    <p class="small">Agrega productos en cualquiera de las tres secciones. Cada producto requiere foto, nombre, precio, características y cantidad.</p>
+
+    <div class="sections">
+        <div class="section" data-section="1" id="section-1">
+            <h2>Seccion 1</h2>
+            <div class="controls">
+                <button onclick="openForm(1)">Agregar producto</button>
+                <button onclick="clearSection(1)">Limpiar</button>
+            </div>
+            <div class="list" id="list-1"></div>
+        </div>
+
+        <div class="section" data-section="2" id="section-2">
+            <h2>Seccion 2</h2>
+            <div class="controls">
+                <button onclick="openForm(2)">Agregar producto</button>
+                <button onclick="clearSection(2)">Limpiar</button>
+            </div>
+            <div class="list" id="list-2"></div>
+        </div>
+
+        <div class="section" data-section="3" id="section-3">
+            <h2>Seccion 3</h2>
+            <div class="controls">
+                <button onclick="openForm(3)">Agregar producto</button>
+                <button onclick="clearSection(3)">Limpiar</button>
+            </div>
+            <div class="list" id="list-3"></div>
+        </div>
+    </div>
+
+    <!-- Modal form (hidden until needed) -->
+    <div id="overlay" class="overlay" style="display:none" onclick="overlayClick(event)">
+        <div class="formbox" onclick="event.stopPropagation()">
+            <h3 id="form-title">Agregar producto</h3>
+            <form id="product-form">
+                <input type="hidden" id="form-section" />
+                <input type="hidden" id="form-id" />
+                <div class="form-row">
+                    <label for="photo">Foto (imagen)</label>
+                    <input id="photo" type="file" accept="image/*" required />
+                    <img id="photo-preview" class="preview" style="display:none" />
+                </div>
+
+                <div class="form-row">
+                    <label for="name">Nombre</label>
+                    <input id="name" type="text" required />
+                </div>
+
+                <div class="form-row">
+                    <label for="price">Precio (ej. 9.99)</label>
+                    <input id="price" type="number" min="0" step="0.01" required />
+                </div>
+
+                <div class="form-row">
+                    <label for="features">Características</label>
+                    <textarea id="features" rows="3" placeholder="Breve descripción"></textarea>
+                </div>
+
+                <div class="form-row">
+                    <label for="qty">Cantidad disponible</label>
+                    <input id="qty" type="number" min="1" step="1" value="1" required />
+                </div>
+
+                <div class="row-actions">
+                    <button type="button" onclick="closeForm()">Cancelar</button>
+                    <button type="submit">Guardar producto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Utilidades de almacenamiento local
+        function storageKey(section) { return 'admin_products_section_' + section; }
+        function loadSection(section) {
+            const raw = localStorage.getItem(storageKey(section));
+            return raw ? JSON.parse(raw) : [];
+        }
+        function saveSection(section, items) {
+            localStorage.setItem(storageKey(section), JSON.stringify(items));
+        }
+
+        // Renderizar productos al abrir la página
+        document.addEventListener('DOMContentLoaded', () => {
+            [1,2,3].forEach(section => {
+                const items = loadSection(section);
+                items.forEach(renderProductCard);
+            });
+
+            // preview file change
+            document.getElementById('photo').addEventListener('change', onPhotoChange);
+            document.getElementById('product-form').addEventListener('submit', onSubmitForm);
+        });
+
+        // Abrir modal para agregar (o editar) producto
+        function openForm(section, product) {
+            document.getElementById('overlay').style.display = 'flex';
+            document.getElementById('form-section').value = section;
+            document.getElementById('form-title').textContent = product ? 'Editar producto' : 'Agregar producto';
+            if (product) {
+                document.getElementById('form-id').value = product.id;
+                document.getElementById('name').value = product.name;
+                document.getElementById('price').value = product.price;
+                document.getElementById('features').value = product.features;
+                document.getElementById('qty').value = product.qty;
+                const img = document.getElementById('photo-preview');
+                img.src = product.photo;
+                img.style.display = 'block';
+            } else {
+                document.getElementById('form-id').value = '';
+                document.getElementById('name').value = '';
+                document.getElementById('price').value = '';
+                document.getElementById('features').value = '';
+                document.getElementById('qty').value = 1;
+                document.getElementById('photo').value = '';
+                const img = document.getElementById('photo-preview');
+                img.src = '';
+                img.style.display = 'none';
+            }
+        }
+        function closeForm() { document.getElementById('overlay').style.display = 'none'; }
+
+        function overlayClick(e) { if (e.target.id === 'overlay') closeForm(); }
+
+        // Preview imagen
+        function onPhotoChange(e) {
+            const file = e.target.files[0];
+            const preview = document.getElementById('photo-preview');
+            if (!file) { preview.style.display = 'none'; preview.src = ''; return; }
+            const reader = new FileReader();
+            reader.onload = () => {
+                preview.src = reader.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Manejar envío del formulario
+        function onSubmitForm(e) {
+            e.preventDefault();
+            const section = Number(document.getElementById('form-section').value);
+            const id = document.getElementById('form-id').value || Date.now().toString();
+            const name = document.getElementById('name').value.trim();
+            const price = Number(document.getElementById('price').value);
+            const features = document.getElementById('features').value.trim();
+            const qty = Number(document.getElementById('qty').value);
+
+            const fileInput = document.getElementById('photo');
+            const file = fileInput.files && fileInput.files[0];
+
+            const proceedWithData = (photoData => {
+                // load existing items to preserve active state when editing
+                const items = loadSection(section);
+                const idx = items.findIndex(x => x.id === id);
+                const activeState = idx >= 0 ? (items[idx].active !== false) : true;
+                const item = { id, name, price, features, qty, photo: photoData, active: activeState };
+                if (idx >= 0) items[idx] = item; else items.push(item);
+                saveSection(section, items);
+                // re-render section list
+                refreshSectionList(section);
+                closeForm();
+            });
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = () => proceedWithData(reader.result);
+                reader.readAsDataURL(file);
+            } else {
+                // if editing and didn't change file, keep the preview src
+                const prev = document.getElementById('photo-preview').src || '';
+                proceedWithData(prev);
+            }
+        }
+
+        // Renderizar todos los items de una sección
+        function refreshSectionList(section) {
+            const container = document.getElementById('list-' + section);
+            container.innerHTML = '';
+            const items = loadSection(section);
+            items.forEach(renderProductCard);
+        }
+
+        // Crear tarjeta DOM de producto
+        function renderProductCard(item) {
+            const section = findSectionForItem(item.id);
+            const container = document.getElementById('list-' + section);
+            // construir card
+            const card = document.createElement('div');
+            card.className = 'card' + (item.active === false ? ' inactive' : '');
+            const img = document.createElement('img');
+            img.src = item.photo || '';
+            img.alt = item.name;
+            const meta = document.createElement('div');
+            meta.className = 'meta';
+            const statusText = item.active === false ? '<span class="small">Inactivo</span>' : '<span class="small">Activo</span>';
+            meta.innerHTML = `<b>${escapeHtml(item.name)}</b>
+                                                <small>Precio: $${Number(item.price).toFixed(2)} • Cantidad: ${item.qty}</small>
+                                                <div class="small">${escapeHtml(item.features)}</div>
+                                                <div style="margin-top:6px">${statusText}</div>`;
+            const actions = document.createElement('div');
+            actions.className = 'actions';
+            const editBtn = document.createElement('button');
+            editBtn.textContent = 'Editar';
+            editBtn.onclick = () => openForm(section, item);
+            const delBtn = document.createElement('button');
+            delBtn.textContent = 'Eliminar';
+            delBtn.onclick = () => {
+                if (!confirm('Eliminar este producto?')) return;
+                let items = loadSection(section);
+                items = items.filter(x => x.id !== item.id);
+                saveSection(section, items);
+                refreshSectionList(section);
+            };
+            const toggleBtn = document.createElement('button');
+            toggleBtn.textContent = item.active === false ? 'Activar' : 'Desactivar';
+            toggleBtn.onclick = () => {
+                const items = loadSection(section);
+                const idx = items.findIndex(x => x.id === item.id);
+                if (idx < 0) return;
+                items[idx].active = items[idx].active === false ? true : false;
+                saveSection(section, items);
+                refreshSectionList(section);
+            };
+
+            actions.appendChild(editBtn);
+            actions.appendChild(delBtn);
+            actions.appendChild(toggleBtn);
+
+            card.appendChild(img);
+            card.appendChild(meta);
+            card.appendChild(actions);
+            container.appendChild(card);
+        }
+
+        // Encuentra la sección que contiene el item (útil al recargar/rehidratar)
+        function findSectionForItem(id) {
+            for (const s of [1,2,3]) {
+                const items = loadSection(s);
+                if (items.some(x => x.id === id)) return s;
+            }
+            return 1; // por defecto
+        }
+
+        // Vaciar sección entera
+        function clearSection(section) {
+            if (!confirm('¿Eliminar todos los productos de la sección ' + section + '?')) return;
+            saveSection(section, []);
+            refreshSectionList(section);
+        }
+
+        // Pequeña función para evitar inyección HTML en la muestra
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+    </script>
+</body>
+</html>

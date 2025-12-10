@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Productos Aromáticos - Bliss</title>
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles-aromaticos.css">
+</head>
+<body>
+    <!-- Header similar al index -->
+    <header>
+        <div class="header-container">
+            <!-- Sección izquierda: Logo + Catálogo -->
+            <div class="header-left">
+                <div class="logo-section">
+                    <img src="imagenes/logo-bliss.png" alt="Bliss Logo" class="logo-img">
+                    <!--<span class="logo-name">Bliss</span>-->
+                </div>
+                
+                <!-- Dropdown Catálogo -->
+                <div class="catalog-dropdown" id="catalog-dropdown">
+                    <button class="catalog-btn" id="catalog-btn" aria-expanded="false" aria-controls="catalog-menu">
+                        <i class="fas fa-bars"></i>
+                        Catálogo
+                        <i class="fas fa-caret-down dropdown-icon"></i>
+                    </button>
+                    <ul class="catalog-menu" id="catalog-menu" role="menu" aria-label="Menú de catálogo">
+                        <li><a href="productosAromaticos.html"><i class="fas fa-spa"></i> Productos Aromáticos</a></li>
+                        <li><a href="humidificadores.html"><i class="fas fa-wind"></i> Humidificadores</a></li>
+                        <li><a href="bijouterie.html"><i class="fas fa-gem"></i> Bijouterie</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Navegación principal -->
+            <nav class="main-nav">
+                <ul class="nav-list">
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="carrito.html">Carrito</a></li>
+                    
+                    <!-- Estado de usuario -->
+                    <li id="loginState">
+                        <a href="registro.html">Iniciar Sesión</a>
+                    </li>
+                    
+                    <li id="userState" style="display:none;">
+                        <div class="user-menu">
+                            <div class="user-avatar" id="userAvatar">U</div>
+                            <button class="logout-btn" onclick="handleLogout()">Salir</button>
+                        </div>
+                    </li>
+                    
+                    <li>
+                        <a href="carrito.html" class="cart-link">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span id="cart-count">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="main-container">
+        <div class="page-header">
+            <h1>Productos Aromáticos</h1>
+            <p class="page-subtitle">Descubrí nuestra exclusiva selección de fragancias para transformar tus espacios. Cada aroma está pensado para crear ambientes únicos.</p>
+        </div>
+        
+        <div class="cart-indicator" onclick="window.location.href='carrito.html'">
+            <i class="fas fa-shopping-cart"></i>
+            <span id="total-cart-count">0</span> productos en el carrito
+        </div>
+        
+        <div id="productsGrid" class="products-grid"></div>
+        
+        <div id="empty" class="empty-message" style="display:none;">
+            <h3>No hay productos disponibles</h3>
+            <p>Próximamente agregaremos más productos.</p>
+        </div>
+    </main>
+
+    <!-- Toast message -->
+    <div id="toast" class="toast"></div>
+
+    <script src="script-aromaticos.js" defer></script>
+</body>
+</html>

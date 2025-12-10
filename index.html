@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Bliss Aromas & Bijouterie</title>
+  
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -15,161 +16,53 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&family=Krona+One&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css">
-  
-  <style>
-    .user-menu {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .user-avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #4a8ef5, #7cc3ff);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: bold;
-      font-size: 14px;
-    }
-    .user-name {
-      font-weight: 500;
-      color: #333;
-    }
-    .logout-btn {
-      background: transparent;
-      border: 1px solid #ddd;
-      padding: 6px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 12px;
-      transition: all 0.3s;
-    }
-    .logout-btn:hover {
-      background: #f5f5f5;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
 </head>
 <body>
-  <header style="position:fixed;top:0;left:0;width:100%;z-index:1300;background:rgba(255,255,255,0.95);backdrop-filter:blur(6px);box-shadow:0 4px 18px var(--shadow);">
-    <div class="container top-bar" style="padding:12px 20px; display:flex; align-items:center; justify-content:space-between; gap:16px;">
-      <div style="display:flex;align-items:center;gap:12px;">
-        <img src="imagenes/logo-bliss.png" alt="Bliss Logo" class="logo-small"
-             style="background:transparent;padding:0;border-radius:0;box-shadow:none;display:block;">
+  <header>
+    <div class="container top-bar">
+      <div class="header-left">
+        <img src="imagenes/logo-bliss.png" alt="Bliss Logo" class="logo-small">
+        
+        <nav class="main-nav">
+          <div class="dropdown" aria-haspopup="true">
+            <button class="dropdown-button" aria-expanded="false" id="catalog-btn" type="button" aria-controls="catalog-menu">
+              Catálogo <i class="fa fa-caret-down" aria-hidden="true"></i>
+            </button>
 
-        <!-- Enlaces junto al logo -->
-      <nav style="position:relative;">
-        <style>
-          .dropdown { position:relative; display:inline-block; }
-          .dropdown-button { background:transparent;border:0;cursor:pointer;padding:6px 8px;font-weight:500;display:flex;align-items:center;gap:8px; }
-          .dropdown-menu {
-            position:absolute; left:0; top:calc(100% + 6px);
-            background:#fff; border-radius:8px; box-shadow:0 8px 20px rgba(0,0,0,0.12);
-            list-style:none; margin:0; padding:6px 0; min-width:200px; display:none; z-index:1400;
-          }
-          .dropdown-menu a { display:block; padding:8px 14px; color:var(--text,#231f20); text-decoration:none; }
-          .dropdown-menu a:hover { background:rgba(0,0,0,0.04); }
-          /* Mostrar con clase .open o con aria-expanded para compatibilidad */
-          .dropdown.open .dropdown-menu { display:block; }
-          .dropdown-button[aria-expanded="true"] + .dropdown-menu { display:block; }
-        </style>
-
-        <div class="dropdown" aria-haspopup="true">
-          <button class="dropdown-button" aria-expanded="false" id="catalog-btn" type="button" aria-controls="catalog-menu">
-            Catalogo <i class="fa fa-caret-down" aria-hidden="true"></i>
-          </button>
-
-          <ul class="dropdown-menu" role="menu" aria-label="Productos" id="catalog-menu">
-            <li role="none"><a role="menuitem" href="productos.html">Productos Aromáticos</a></li>
-            <li role="none"><a role="menuitem" href="humidificadores.html">Humidificadores</a></li>
-            <li role="none"><a role="menuitem" href="bijou.html">Bijou</a></li>
-          </ul>
-        </div>
-
-        <script>
-          (function(){
-            var dropdown = document.querySelector('.dropdown');
-            if(!dropdown) return;
-            var btn = dropdown.querySelector('.dropdown-button');
-            var menu = dropdown.querySelector('.dropdown-menu');
-            var closeTimer = null;
-
-            function open() {
-              if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
-              dropdown.classList.add('open');
-              btn.setAttribute('aria-expanded','true');
-            }
-            function close() {
-              dropdown.classList.remove('open');
-              btn.setAttribute('aria-expanded','false');
-            }
-
-            // Mostrar al entrar con el mouse y ocultar al salir (pequeña demora para permitir movimientos)
-            dropdown.addEventListener('mouseenter', open);
-            dropdown.addEventListener('mouseleave', function(){
-              closeTimer = setTimeout(close, 180);
-            });
-
-            // Toggle por click (útil en touch)
-            btn.addEventListener('click', function(e){
-              var expanded = btn.getAttribute('aria-expanded') === 'true';
-              if (expanded) close(); else open();
-            });
-
-            // Mantener abierto mientras el foco está dentro (teclado)
-            dropdown.addEventListener('focusin', open);
-            dropdown.addEventListener('focusout', function(e){
-              // si el nuevo foco no está dentro del dropdown, cerramos
-              var related = e.relatedTarget;
-              if (!dropdown.contains(related)) close();
-            });
-
-            // Cerrar con Escape
-            dropdown.addEventListener('keydown', function(e){
-              if (e.key === 'Escape') { close(); btn.focus(); }
-            });
-
-            // Cerrar al seleccionar una opción
-            Array.prototype.forEach.call(menu.querySelectorAll('a'), function(link){
-              link.addEventListener('click', function(){ close(); });
-            });
-          })();
-        </script>
-      </nav>
+            <ul class="dropdown-menu" role="menu" aria-label="Productos" id="catalog-menu">
+              <li role="none"><a role="menuitem" href="productosAromaticos.html"><i class="fas fa-spa"></i> Productos Aromáticos</a></li>
+              <li role="none"><a role="menuitem" href="humidificadores.html"><i class="fas fa-wind"></i> Humidificadores</a></li>
+              <li role="none"><a role="menuitem" href="bijou.html"><i class="fas fa-gem"></i> Bijou</a></li>
+            </ul>
+          </div>
+        </nav>
       </div>
 
-      <nav>
-        <ul style="display:flex;gap:22px;list-style:none;align-items:center;margin:0;padding:0;">
-          <li><a href="#bienvenidos" onclick="document.querySelector('header').scrollIntoView({behavior:'smooth', block:'start'});">Inicio</a></li>
-          <li><a href="#productos">Productos</a></li>
-          <li><a href="#footer" onclick="event.preventDefault(); document.querySelector('footer').scrollIntoView({behavior:'smooth', block:'start'});" aria-label="Ir al pie de página">Contacto</a></li>
+      <nav class="header-nav">
+        <ul>
+          <li><a href="#bienvenidos" class="nav-link">Inicio</a></li>
+          <li><a href="#footer" class="nav-link">Contacto</a></li>
           
           <!-- Estado de usuario: No logueado -->
           <li id="loginState">
-            <a href="registro.html">Iniciar Sesion / Registrarse</a>
+            <a href="registro.html">Iniciar Sesión</a>
           </li>
           
           <!-- Estado de usuario: Logueado -->
           <li id="userState" style="display:none;">
             <div class="user-menu">
               <div class="user-avatar" id="userAvatar">U</div>
-              <span class="user-name" id="userName">Usuario</span>
               <button class="logout-btn" onclick="handleLogout()">Salir</button>
             </div>
           </li>
           
           <li>
-            <a href="carrito.html" class="cart-link" aria-label="Ver carrito de compras"
-               style="position:relative;display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:inherit;padding:6px 8px;border-radius:6px;">
-              <i class="fa fa-shopping-cart" aria-hidden="true" style="font-size:16px"></i>
-              <span>Carrito</span>
-              <span id="cart-count" aria-hidden="true"
-                    style="position:absolute;top:-6px;right:-8px;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--accent,#e91e63);color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;">
-                0
-              </span>
+            <a href="carrito.html" class="cart-link" aria-label="Ver carrito de compras">
+              <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+              <span></span>
+              <span id="cart-count" aria-hidden="true">0</span>
             </a>
           </li>
         </ul>
@@ -177,16 +70,15 @@
     </div>
   </header>
 
-  <!-- Resto de tu contenido HTML permanece igual -->
   <!-- WELCOME -->
-  <section class="welcome-section" id="bienvenidos" style="position:relative; overflow:hidden;">
-    <img src="imagenes/fondop.png" alt="" aria-hidden="true"
-         style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;opacity:0.95;z-index:0;">
-
-    <div class="container" style="position:relative;z-index:1;">
+  <section class="welcome-section" id="bienvenidos">
+    <div class="welcome-bg">
+      <img src="imagenes/fondop.png" alt="Fondo Bliss" aria-hidden="true">
+    </div>
+    <div class="container">
       <div class="welcome-label">Novedades • Aromas & Bijou</div>
       <h1 class="welcome-title">Placeres para tu hogar y tu estilo</h1>
-      <p class="welcome-sub" style="color:#231f20;font-weight:bold;text-shadow:0 1px 2px rgba(0,0,0,0.15);">
+      <p class="welcome-sub">
         Un espacio donde los aromas se vuelven emociones y los accesorios realzan tu esencia. En Bliss creamos experiencias que equilibran tu energía y transforman cada rincón en un momento único. Conectá con lo que te inspira, dejá que cada fragancia te envuelva y descubrí piezas que acompañan tu estilo. Bliss: tu espacio, tu energía, tus sentidos.
       </p>
     </div>
@@ -194,55 +86,10 @@
 
   <!-- PRODUCTS -->
   <section class="features-section" id="productos" aria-label="Productos destacados">
-    <style>
-      /* Fondos suaves y graduales para cada item */
-      .features-section .container { display:flex; flex-direction:column; gap:36px; padding:40px 0; }
-      .feature-row {
-        display:flex;
-        align-items:center;
-        gap:20px;
-        padding:22px;
-        border-radius:16px;
-        transition:transform .18s ease, box-shadow .18s ease;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-        background-clip: padding-box;
-      }
-      .feature-row:focus-within,
-      .feature-row:hover { transform:translateY(-4px); box-shadow: 0 14px 40px rgba(0,0,0,0.08); }
-
-      /* Gradientes suaves */
-      .feature-1 {
-        background: linear-gradient(135deg, #fff6fb 0%, #fff0f4 50%, #ffeef7 100%); /* rosa clarito */
-      }
-      .feature-2 {
-        background: linear-gradient(135deg, #fffdf8 0%, #f9efe0 50%, #f2e4cc 100%); /* beige suave */
-      }
-      .feature-3 {
-        background: linear-gradient(135deg, #fff8f6 0%, #fff1ef 50%, #fdeff4 100%); /* rosado / melocotón muy tenue */
-      }
-
-      /* Asegurar contraste y separación de imágenes */
-      .feature-row figure { margin:0; flex:0 0 320px; max-width:320px; }
-      .feature-row .feature-content { flex:1; }
-      @media (max-width:900px){
-        .feature-row { flex-direction:column; text-align:center; }
-        .feature-row[style*="row-reverse"] { flex-direction:column; }
-        .feature-row figure { width:100%; flex:0 0 auto; max-width:640px; }
-      }
-    </style>
-
     <div class="container">
       <!-- Item 1 -->
-      <article class="feature-row feature-1" style="display:flex;align-items:center;gap:20px;">
-        <figure style="flex:0 0 320px;max-width:320px;margin:0;">
-          <style>
-            .simple-carousel{position:relative;width:100%;height:320px;border-radius:12px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,0.12);}
-            .simple-carousel .slide{position:absolute;inset:0;opacity:0;transition:opacity .6s ease;display:block;}
-            .simple-carousel .slide img{width:100%;height:100%;object-fit:cover;display:block;}
-            .simple-carousel .slide.active{opacity:1;z-index:2;}
-            .simple-carousel .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;}
-          </style>
-
+      <article class="feature-row feature-1">
+        <figure>
           <div class="simple-carousel" aria-roledescription="carousel" aria-label="Galería de imágenes de aromatizantes" id="carouselAromas">
             <div class="slide active" role="group" aria-roledescription="slide" aria-label="1 de 3">
               <img src="imagenes/Aromatizantedeambiente.png" alt="Frasco de aromatizante" loading="lazy">
@@ -255,163 +102,64 @@
             </div>
             <span class="visually-hidden" id="carouselAromasStatus" aria-live="polite">Imagen 1 de 3</span>
           </div>
-
-          <script>
-          (function(){
-            var carousel = document.getElementById('carouselAromas');
-            if(!carousel) return;
-            var slides = carousel.querySelectorAll('.slide');
-            var status = document.getElementById('carouselAromasStatus');
-            var current = 0, total = slides.length, interval = 5000, timer = null;
-
-            function show(index){
-              slides[current].classList.remove('active');
-              current = (index + total) % total;
-              slides[current].classList.add('active');
-              if(status) status.textContent = 'Imagen ' + (current+1) + ' de ' + total;
-            }
-            function next(){ show(current+1); }
-            function start(){ if(timer) clearInterval(timer); timer = setInterval(next, interval); }
-            function stop(){ if(timer){ clearInterval(timer); timer = null; } }
-
-            start();
-            carousel.addEventListener('mouseenter', stop);
-            carousel.addEventListener('mouseleave', start);
-            carousel.addEventListener('focusin', stop);
-            carousel.addEventListener('focusout', start);
-
-            // small keyboard support
-            carousel.tabIndex = 0;
-            carousel.addEventListener('keydown', function(e){
-              if(e.key === 'ArrowRight'){ stop(); next(); start(); }
-              if(e.key === 'ArrowLeft'){ stop(); show(current-1); start(); }
-            });
-          })();
-          </script>
         </figure>
-        <div class="feature-content" style="flex:1;">
-          <h3 style="margin:0 0 8px;font-size:1.4rem;">Aromas</h3>
-          <p style="margin:0;color:var(--muted,#444);line-height:1.5;"></p>
+        <div class="feature-content">
+          <h3><a href="productosAromaticos.html" class="feature-link" aria-label="Ver Productos Aromáticos">Productos Aromáticos </a></h3>
+          <p>
             Descubrí nuestra selección de fragancias para el hogar, pensadas para transformar cada ambiente con personalidad y calidez. Contamos con aromatizantes y aceites esenciales que aportan equilibrio, bienestar y una atmósfera armoniosa. Nuestras esencias están formuladas para ser suaves pero duraderas, ideales para acompañar tus rutinas y crear momentos de relax. Cada aroma está diseñado para influir positivamente en el ánimo y embellecer tus espacios. Elegí la fragancia que mejor te identifique y llená tu hogar de sensaciones únicas.
           </p>
         </div>
       </article>
 
       <!-- Item 2 -->
-      <article class="feature-row feature-2" style="display:flex;align-items:center;gap:20px;flex-direction:row-reverse;">
-        <figure style="flex:0 0 320px;max-width:320px;margin:0;">
-            <div class="simple-carousel" aria-roledescription="carousel" aria-label="Galería de imágenes de bijou" id="carouselBijou">
+      <article class="feature-row feature-2">
+        <figure>
+          <div class="simple-carousel" aria-roledescription="carousel" aria-label="Galería de imágenes de bijou" id="carouselBijou">
             <div class="slide active" role="group" aria-roledescription="slide" aria-label="1 de 3">
               <img src="imagenes/Aros dorados.png" alt="Aros dorados" loading="lazy">
             </div>
             <div class="slide" role="group" aria-roledescription="slide" aria-label="2 de 3">
-              <img src="imagenes/Carterabaguetteisabellanegro.jpeg" alt="Collar elegante" loading="lazy">
+              <img src="imagenes/Carterabaguetteisabellanegro.jpeg" alt="Cartera baguette" loading="lazy">
             </div>
             <div class="slide" role="group" aria-roledescription="slide" aria-label="3 de 3">
-              <img src="imagenes/Gorravintageneneyork.png" alt="Pulsera fina" loading="lazy">
+              <img src="imagenes/Gorravintageneneyork.png" alt="Gorra vintage" loading="lazy">
             </div>
             <span class="visually-hidden" id="carouselBijouStatus" aria-live="polite">Imagen 1 de 3</span>
-            </div>
-          </figure>
-
-          <script>
-          (function(){
-            var carousel = document.getElementById('carouselBijou');
-            if(!carousel) return;
-            var slides = carousel.querySelectorAll('.slide');
-            var status = document.getElementById('carouselBijouStatus');
-            var current = 0, total = slides.length, interval = 5000, timer = null;
-
-            function show(index){
-            slides[current].classList.remove('active');
-            current = (index + total) % total;
-            slides[current].classList.add('active');
-            if(status) status.textContent = 'Imagen ' + (current+1) + ' de ' + total;
-            }
-            function next(){ show(current+1); }
-            function start(){ if(timer) clearInterval(timer); timer = setInterval(next, interval); }
-            function stop(){ if(timer){ clearInterval(timer); timer = null; } }
-
-            start();
-            carousel.addEventListener('mouseenter', stop);
-            carousel.addEventListener('mouseleave', start);
-            carousel.addEventListener('focusin', stop);
-            carousel.addEventListener('focusout', start);
-
-            // teclado básico
-            carousel.tabIndex = 0;
-            carousel.addEventListener('keydown', function(e){
-            if(e.key === 'ArrowRight'){ stop(); next(); start(); }
-            if(e.key === 'ArrowLeft'){ stop(); show(current-1); start(); }
-            });
-          })();
-          </script>
-        <div class="feature-content" style="flex:1;">
-          <h3 style="margin:0 0 8px;font-size:1.4rem;">Bijou</h3>
-          <p style="margin:0;color:var(--muted,#444);line-height:1.5;">
+          </div>
+        </figure>
+        <div class="feature-content">
+          <h3><a href="bijouterie.html" class="feature-link" aria-label="Ver bijou">Bijou</a></h3>
+          <p>
             Piezas cuidadosamente seleccionadas para realzar tu estilo y acompañarte en cada ocasión. Aros, collares y accesorios atemporales diseñados para lucir todos los días sin perder elegancia. Cada creación refleja dedicación, detalle y materiales pensados para durar. Nuestro objetivo es ofrecerte bijouterie que combine simplicidad, personalidad y encanto. Encontrá el accesorio perfecto para completar tu look y expresar tu esencia.
           </p>
         </div>
       </article>
 
       <!-- Item 3 -->
-      <article class="feature-row feature-3" style="display:flex;align-items:center;gap:20px;">
-        <figure style="flex:0 0 320px;max-width:320px;margin:0;">
+      <article class="feature-row feature-3">
+        <figure>
           <div class="simple-carousel" aria-roledescription="carousel" aria-label="Galería de humidificadores" id="carouselHumid">
             <div class="slide active" role="group" aria-roledescription="slide" aria-label="1 de 3">
-              <img src="imagenes/Humificadoraromáticoled(flame).png" alt="Humificador aromático LED" loading="lazy">
+              <img src="imagenes/Humificadoraromáticoled(flame).png" alt="Humidificador aromático LED" loading="lazy">
             </div>
             <div class="slide" role="group" aria-roledescription="slide" aria-label="2 de 3">
-              <img src="imagenes/humidificador2.png" alt="Humificador modelo 2" loading="lazy">
+              <img src="imagenes/humidificador2.png" alt="Humidificador modelo 2" loading="lazy">
             </div>
             <div class="slide" role="group" aria-roledescription="slide" aria-label="3 de 3">
-              <img src="imagenes/Humidificador3.png" alt="Humificador modelo 3" loading="lazy">
+              <img src="imagenes/Humidificador3.png" alt="Humidificador modelo 3" loading="lazy">
             </div>
             <span class="visually-hidden" id="carouselHumidStatus" aria-live="polite">Imagen 1 de 3</span>
           </div>
-          </figure>
-
-          <script>
-          (function(){
-            var carousel = document.getElementById('carouselHumid');
-            if(!carousel) return;
-            var slides = carousel.querySelectorAll('.slide');
-            var status = document.getElementById('carouselHumidStatus');
-            var current = 0, total = slides.length, interval = 5000, timer = null;
-
-            function show(index){
-              slides[current].classList.remove('active');
-              current = (index + total) % total;
-              slides[current].classList.add('active');
-              if(status) status.textContent = 'Imagen ' + (current+1) + ' de ' + total;
-            }
-            function next(){ show(current+1); }
-            function start(){ if(timer) clearInterval(timer); timer = setInterval(next, interval); }
-            function stop(){ if(timer){ clearInterval(timer); timer = null; } }
-
-            start();
-            carousel.addEventListener('mouseenter', stop);
-            carousel.addEventListener('mouseleave', start);
-            carousel.addEventListener('focusin', stop);
-            carousel.addEventListener('focusout', start);
-
-            // soporte básico de teclado
-            carousel.tabIndex = 0;
-            carousel.addEventListener('keydown', function(e){
-              if(e.key === 'ArrowRight'){ stop(); next(); start(); }
-              if(e.key === 'ArrowLeft'){ stop(); show(current-1); start(); }
-            });
-          })();
-          </script>
-        <div class="feature-content" style="flex:1;">
-          <h3 style="margin:0 0 8px;font-size:1.4rem;">Humidificadores</h3>
-          <p style="margin:0;color:var(--muted,#444);line-height:1.5;">
+        </figure>
+        <div class="feature-content">
+          <h3><a href="humidificadores.html" class="feature-link" aria-label="Ver humidificadores">Humidificadores</a></h3>
+          <p>
             Descubrí nuestros humidificadores diseñados para mejorar la calidad del aire y crear un ambiente más saludable y confortable. Cada modelo combina funcionalidad con un diseño moderno que se adapta a cualquier espacio. Ideales para acompañar tus rutinas diarias, ayudan a mantener la humedad justa y a potenciar el aroma de tus esencias favoritas. Fabricados con materiales cuidados y pensados para un uso sencillo y eficiente. Transformá tus ambientes en espacios más armoniosos, frescos y llenos de bienestar.
           </p>
         </div>
       </article>
     </div>
-  </section></p>
+  </section>
 
   <!-- ABOUT -->
   <section class="about-section" id="acerca-de">
@@ -435,79 +183,26 @@
   </section>
 
   <!-- MAPA / UBICACIÓN -->
-  <section class="map-section" id="ubicacion" style="padding:40px 0;background:#fff">
+  <section class="map-section" id="ubicacion">
     <div class="container">
-      <h3 class="about-title" style="margin-bottom:8px">Dónde estamos</h3>
+      <h3 class="about-title">Dónde estamos</h3>
       <p class="about-text">Visítanos en: Avenida Sarmiento 318, Resistencia, Chaco</p>
-      <div style="border-radius:12px;overflow:hidden;box-shadow:0 12px 40px var(--shadow);margin-top:12px">
+      <div class="map-container">
         <iframe
           src="https://www.google.com/maps?q=Avenida+Sarmiento+318+Resistencia+Chaco&output=embed"
           width="100%" height="380" style="border:0;display:block"
           allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
           title="Mapa: Avenida Sarmiento 318, Resistencia, Chaco"></iframe>
       </div>
-      <p style="margin-top:10px">
+      <p class="map-link">
         <a href="https://www.google.com/maps/search/?api=1&query=Avenida+Sarmiento+318+Resistencia+Chaco"
-           target="_blank" rel="noopener" class="btn-soft" style="display:inline-block">Abrir en Google Maps</a>
+           target="_blank" rel="noopener" class="btn-soft">Abrir en Google Maps</a>
       </p>
     </div>
   </section>
 
   <!-- FOOTER -->
-  <footer>
-    <style>
-      /* Botón flotante de WhatsApp (fijo en esquina inferior derecha) */
-      .whatsapp-float {
-        position: fixed;
-        right: 18px;
-        bottom: 18px;
-        z-index: 1600;
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        background: #25D366;
-        color: #fff;
-        padding: 10px 14px;
-        border-radius: 999px;
-        box-shadow: 0 10px 30px rgba(37,211,102,0.16);
-        text-decoration: none;
-        font-weight: 600;
-        transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease;
-        will-change: transform;
-      }
-      .whatsapp-float:hover { transform: translateY(-4px); box-shadow: 0 16px 36px rgba(37,211,102,0.22); }
-      .whatsapp-float:active { transform: translateY(-1px) scale(.99); }
-
-      .whatsapp-float .wa-icon {
-        width: 36px;
-        height: 36px;
-        display: inline-grid;
-        place-items: center;
-        background: rgba(255,255,255,0.12);
-        border-radius: 50%;
-        font-size: 18px;
-      }
-
-      .whatsapp-float .wa-label {
-        white-space: nowrap;
-        font-size: 14px;
-      }
-
-      /* En móviles mostramos sólo el icono para ahorrar espacio */
-      @media (max-width:640px) {
-        .whatsapp-float { padding: 8px; gap: 8px; }
-        .whatsapp-float .wa-label { display: none; }
-      }
-
-      /* pequeña animación flotante opcional */
-      @keyframes wa-float {
-        0% { transform: translateY(0); }
-        50% { transform: translateY(-4px); }
-        100% { transform: translateY(0); }
-      }
-      .whatsapp-float.gentle { animation: wa-float 4.5s ease-in-out infinite; }
-    </style>
-
+  <footer id="footer">
     <div class="container">
       <div class="footer-grid">
         <div>
@@ -527,21 +222,20 @@
 
         <div>
           <h4>Suscribite</h4>
-          <form id="subscribe-form" onsubmit="handleSubscribe(event)" style="margin:0">
-            <input id="subscribe-email" type="email" placeholder="Tu email" required
-             style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
-            <button type="submit" style="width:100%;background:var(--accent);color:#fff;padding:10px;border:0;border-radius:8px;cursor:pointer">Suscribirse</button>
+          <form id="subscribe-form" onsubmit="handleSubscribe(event)">
+            <input id="subscribe-email" type="email" placeholder="Tu email" required>
+            <button type="submit">Suscribirse</button>
           </form>
 
-          <div id="subscribe-confirm" style="display:none;margin-top:8px;padding:10px;border-radius:8px;background:rgba(255,255,255,0.04);">
-            <div style="font-size:14px;color:#fff(--text)">¿Querés suscribirte con <strong id="confirm-email"></strong>?</div>
-            <div style="display:flex;gap:8px;margin-top:8px">
-              <button id="confirm-yes" type="button" style="flex:1;background:var(--accent);color:#fff;padding:8px;border-radius:6px;border:0;cursor:pointer">Sí</button>
-              <button id="confirm-no" type="button" style="flex:1;background:#eee;color:var(--text);padding:8px;border-radius:6px;border:0;cursor:pointer">Cancelar</button>
+          <div id="subscribe-confirm">
+            <div>¿Querés suscribirte con <strong id="confirm-email"></strong>?</div>
+            <div class="confirm-buttons">
+              <button id="confirm-yes" type="button">Sí</button>
+              <button id="confirm-no" type="button">Cancelar</button>
             </div>
           </div>
 
-          <div id="subscribe-thanks" style="display:none;margin-top:8px;color:var(--muted);font-size:14px">¡Gracias! Te enviaremos novedades.</div>
+          <div id="subscribe-thanks">¡Gracias! Te enviaremos novedades.</div>
         </div>
       </div>
 
@@ -550,144 +244,11 @@
       </div>
     </div>
 
-    <!-- Botón flotante de WhatsApp (fijo en la esquina inferior izquierda).
-         Reemplazá PHONE_NUMBER por tu número en formato internacional sin signos, ejemplo: 5491122223333 -->
+    <!-- Botón flotante de WhatsApp -->
     <a class="whatsapp-float gentle" href="https://wa.me/5493624271016?text=Hola%20Bliss%20!%20Quisiera%20consultar%20sobre%20sus%20productos." target="_blank" rel="noopener noreferrer" aria-label="Chatear por WhatsApp con Bliss" title="Chatear por WhatsApp">
-      <span class="wa-icon" aria-hidden="true"><i class="fab fa-whatsapp" style="font-size:18px;"></i></span>
+      <span class="wa-icon" aria-hidden="true"><i class="fab fa-whatsapp"></i></span>
       <span class="wa-label">Chatear por WhatsApp</span>
     </a>
-  </footer></div>
-
-  <script>
-    // Configuración de Firebase
-    const firebaseConfig = {
-      apiKey: "AIzaSyBm_eFEYlE-GOpSp8PzRvUzGPEl2pIsWz0",
-      authDomain: "bliss-ffad9.firebaseapp.com",
-      projectId: "bliss-ffad9",
-      storageBucket: "bliss-ffad9.firebasestorage.app",
-      messagingSenderId: "863864024902",
-      appId: "1:863864024902:web:02cb9dd6997a0fa7353f47"
-    };
-
-    // Inicializar Firebase
-    let auth, db;
-    if (typeof firebase !== 'undefined') {
-      try {
-        if (!firebase.apps.length) {
-          firebase.initializeApp(firebaseConfig);
-        }
-        auth = firebase.auth();
-        db = firebase.firestore();
-        console.log('✅ Firebase inicializado en index.html');
-      } catch (error) {
-        console.error('Error Firebase:', error);
-      }
-    }
-
-    // Verificar estado de autenticación al cargar
-    document.addEventListener('DOMContentLoaded', function() {
-      if (auth) {
-        auth.onAuthStateChanged((user) => {
-          if (user) {
-            showUserState(user);
-          } else {
-            showLoginState();
-          }
-        });
-      }
-      
-      // Inicializar otras funcionalidades
-      initializeCart();
-      initializeYear();
-    });
-
-    // Mostrar estado de usuario logueado
-    async function showUserState(user) {
-      document.getElementById('loginState').style.display = 'none';
-      document.getElementById('userState').style.display = 'block';
-      
-      try {
-        const userDoc = await db.collection('users').doc(user.uid).get();
-        if (userDoc.exists) {
-          const userData = userDoc.data();
-          const firstName = userData.firstName || '';
-          const lastName = userData.lastName || '';
-          const fullName = `${firstName} ${lastName}`.trim();
-          
-          document.getElementById('userName').textContent = fullName || user.email;
-          document.getElementById('userAvatar').textContent = firstName ? firstName.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase();
-        } else {
-          document.getElementById('userName').textContent = user.email;
-          document.getElementById('userAvatar').textContent = user.email.charAt(0).toUpperCase();
-        }
-      } catch (error) {
-        console.error('Error obteniendo datos usuario:', error);
-        document.getElementById('userName').textContent = user.email;
-        document.getElementById('userAvatar').textContent = user.email.charAt(0).toUpperCase();
-      }
-    }
-
-    // Mostrar estado de login
-    function showLoginState() {
-      document.getElementById('loginState').style.display = 'block';
-      document.getElementById('userState').style.display = 'none';
-    }
-
-    // Manejar logout
-    function handleLogout() {
-      if (auth) {
-        auth.signOut().then(() => {
-          console.log('✅ Sesión cerrada');
-          showLoginState();
-        }).catch((error) => {
-          console.error('Error cerrando sesión:', error);
-        });
-      }
-    }
-
-    // Funciones existentes del carrito
-    function initializeCart() {
-      function updateCount(){
-        var count = parseInt(localStorage.getItem('cartCount')) || 0;
-        var el = document.getElementById('cart-count');
-        if(!el) return;
-        el.textContent = count;
-        el.style.display = count ? 'flex' : 'none';
-      }
-      updateCount();
-      window.addEventListener('storage', function(e){
-        if(e.key === 'cartCount') updateCount();
-      });
-    }
-
-    // Año en footer
-    function initializeYear() {
-      document.getElementById('year').textContent = new Date().getFullYear();
-    }
-
-    // Función para el formulario de suscripción
-    function handleSubscribe(e){
-      e.preventDefault();
-      var input = document.getElementById('subscribe-email');
-      var email = (input.value || '').trim();
-      if(!email) return;
-      document.getElementById('confirm-email').textContent = email;
-      document.getElementById('subscribe-confirm').style.display = 'block';
-      document.getElementById('subscribe-thanks').style.display = 'none';
-    }
-
-    document.getElementById('confirm-yes').addEventListener('click', function(){
-      document.getElementById('subscribe-confirm').style.display = 'none';
-      document.getElementById('subscribe-thanks').style.display = 'block';
-      document.getElementById('subscribe-email').value = '';
-      setTimeout(function(){
-        document.getElementById('subscribe-thanks').style.display = 'none';
-      }, 3500);
-    });
-
-    document.getElementById('confirm-no').addEventListener('click', function(){
-      document.getElementById('subscribe-confirm').style.display = 'none';
-    });
-  </script>
+  </footer>
 </body>
 </html>
