@@ -45,6 +45,7 @@ header {
   width: 100%;
   z-index: 1300;
   background: rgba(255, 255, 255, 0.95);
+/*  background: #3a2b3b;*/
   backdrop-filter: blur(6px);
   box-shadow: 0 4px 18px var(--shadow);
 }
@@ -147,11 +148,17 @@ header {
 }
 
 .nav-link {
-  color: var(--text);
+/*  color: var(--text);
   font-weight: 500;
   padding: 6px 4px;
   border-radius: 6px;
-  transition: color 0.3s;
+  transition: color 0.3s;*/
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: color 0.2s;
+  padding: 6px 0;
 }
 
 .nav-link:hover {
@@ -762,4 +769,9 @@ footer h4 {
   .feature-content h3 {
     font-size: 1.2rem;
   }
+
+  .feature-content p {
+    font-size: 1rem;
+  }
 }
+
