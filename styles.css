@@ -46,7 +46,7 @@ header {
   z-index: 1300;
   background: rgba(255, 255, 255, 0.95);
 /*  background: #3a2b3b;*/
-  backdrop-filter: blur(6px);
+/*  backdrop-filter: blur(6px);*/
   box-shadow: 0 4px 18px var(--shadow);
 }
 
