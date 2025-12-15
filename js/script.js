@@ -1,3 +1,184 @@
+// ========== SISTEMA DE AUTENTICACIÓN ==========
+
+// Verificar sesión de administrador
+function checkAdminSession() {
+    const sessionToken = localStorage.getItem('admin_session_token');
+    const sessionExpiry = localStorage.getItem('admin_session_expiry');
+    
+    // Si no hay sesión, redirigir al login
+    if (!sessionToken || !sessionExpiry) {
+        redirectToLogin();
+        return false;
+    }
+    
+    // Verificar si la sesión expiró
+    const now = Date.now();
+    const expiry = parseInt(sessionExpiry);
+    
+    if (now >= expiry) {
+        // Sesión expirada
+        clearAdminSession();
+        showSessionExpired();
+        return false;
+    }
+    
+    // Sesión válida
+    updateAdminInfo();
+    return true;
+}
+
+// Redirigir al login
+function redirectToLogin() {
+    // Guardar la página actual para redirigir después del login
+    sessionStorage.setItem('admin_redirect_url', window.location.pathname);
+    window.location.href = 'admin-login.html';
+}
+
+// Limpiar sesión
+function clearAdminSession() {
+    localStorage.removeItem('admin_session_token');
+    localStorage.removeItem('admin_session_expiry');
+    localStorage.removeItem('admin_user_name');
+    localStorage.removeItem('admin_last_login');
+}
+
+// Mostrar que la sesión expiró
+function showSessionExpired() {
+    const modal = document.createElement('div');
+    modal.innerHTML = `
+        <div class="session-expired-modal">
+            <div class="modal-content">
+                <i class="fas fa-clock"></i>
+                <h3>Sesión Expirada</h3>
+                <p>Tu sesión ha expirado por inactividad. Por favor, inicia sesión nuevamente.</p>
+                <button onclick="redirectToLogin()">Ir al Login</button>
+            </div>
+        </div>
+    `;
+    
+    // Estilos
+    const style = document.createElement('style');
+    style.textContent = `
+        .session-expired-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            animation: fadeIn 0.3s ease;
+        }
+        .session-expired-modal .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 400px;
+            animation: slideUp 0.3s ease;
+        }
+        .session-expired-modal i {
+            font-size: 4rem;
+            color: #fdcb6e;
+            margin-bottom: 20px;
+        }
+        .session-expired-modal h3 {
+            margin-bottom: 15px;
+            color: #231f20;
+        }
+        .session-expired-modal p {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+        .session-expired-modal button {
+            background: #4a8ef5;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .session-expired-modal button:hover {
+            background: #2d6bc8;
+            transform: translateY(-2px);
+        }
+    `;
+    
+    document.head.appendChild(style);
+    document.body.appendChild(modal);
+}
+
+// Actualizar información del administrador
+function updateAdminInfo() {
+    const userName = localStorage.getItem('admin_user_name');
+    const lastLogin = localStorage.getItem('admin_last_login');
+    
+    if (userName) {
+        const adminNameElement = document.getElementById('adminName');
+        const adminAvatarElement = document.getElementById('adminAvatar');
+        
+        if (adminNameElement) {
+            adminNameElement.textContent = userName;
+        }
+        
+        if (adminAvatarElement) {
+            adminAvatarElement.textContent = userName.charAt(0).toUpperCase();
+        }
+    }
+    
+    if (lastLogin) {
+        // Opcional: Mostrar última conexión
+        console.log('Último login:', new Date(lastLogin).toLocaleString());
+    }
+}
+
+// Manejar logout desde el panel
+function handleLogout() {
+    if (confirm('¿Estás seguro de cerrar sesión del panel de administrador?')) {
+        clearAdminSession();
+        showNotification('Sesión cerrada exitosamente', 'info');
+        
+        // Redirigir al login después de 1 segundo
+        setTimeout(() => {
+            window.location.href = 'admin-login.html';
+        }, 1000);
+    }
+}
+
+// Auto-logout por inactividad (opcional)
+function setupInactivityTimer() {
+    let inactivityTimer;
+    
+    function resetTimer() {
+        clearTimeout(inactivityTimer);
+        // Cerrar sesión después de 30 minutos de inactividad
+        inactivityTimer = setTimeout(() => {
+            if (confirm('Tu sesión está a punto de expirar por inactividad. ¿Deseas permanecer conectado?')) {
+                resetTimer();
+                // Renovar sesión
+                const newExpiry = Date.now() + (30 * 60 * 1000); // 30 minutos más
+                localStorage.setItem('admin_session_expiry', newExpiry.toString());
+            } else {
+                clearAdminSession();
+                redirectToLogin();
+            }
+        }, 30 * 60 * 1000); // 30 minutos
+    }
+    
+    // Eventos que resetean el timer
+    ['mousemove', 'keypress', 'click', 'scroll'].forEach(event => {
+        document.addEventListener(event, resetTimer);
+    });
+    
+    resetTimer(); // Iniciar el timer
+}
 // Configuración de Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBm_eFEYlE-GOpSp8PzRvUzGPEl2pIsWz0",
@@ -35,6 +216,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   }
+  
   
   // Inicializar otras funcionalidades
   initializeDropdown();

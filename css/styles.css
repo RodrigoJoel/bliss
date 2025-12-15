@@ -774,4 +774,38 @@ footer h4 {
     font-size: 1rem;
   }
 }
+.admin-access-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-light);
+    text-decoration: none;
+    font-size: 0.85rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.3s;
+}
+
+.admin-access-link:hover {
+    color: var(--primary);
+    background: rgba(74, 142, 245, 0.1);
+}
+
+.admin-access-link i {
+    font-size: 0.9rem;
+}
+
+.access-text {
+    display: inline;
+}
+
+@media (max-width: 768px) {
+    .access-text {
+        display: none;
+    }
+    
+    .admin-access-link {
+        padding: 6px;
+    }
+}
 

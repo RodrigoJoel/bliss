@@ -2,299 +2,364 @@
 <html lang="es">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Admin - Cargar productos</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 16px; background:#f5f5f5; }
-        h1 { margin-bottom: 8px; }
-        .sections { display:flex; gap:16px; flex-wrap:wrap; }
-        .section { background:#fff; padding:12px; border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,.1); width:320px; }
-        .section h2 { margin:0 0 8px 0; font-size:18px; }
-        .section .controls { display:flex; gap:8px; margin-bottom:8px; }
-        .section .list { display:flex; flex-direction:column; gap:8px; max-height:60vh; overflow:auto; padding-right:4px; }
-        .card { display:flex; gap:8px; border:1px solid #eee; padding:8px; border-radius:6px; align-items:flex-start; background:#fafafa; transition:opacity .2s, filter .2s; }
-        .card.inactive { opacity:0.55; filter:grayscale(.6); }
-        .card img { width:80px; height:80px; object-fit:cover; border-radius:4px; }
-        .card .meta { flex:1; }
-        .card .meta b { display:block; }
-        .card .meta small { color:#666; }
-        .card .actions { display:flex; flex-direction:column; gap:6px; }
-        button { cursor:pointer; }
-        /* modal form */
-        .overlay { position:fixed; inset:0; background:rgba(0,0,0,.4); display:flex; align-items:center; justify-content:center; }
-        .formbox { background:#fff; padding:16px; border-radius:8px; width:400px; max-width:95%; box-shadow:0 6px 24px rgba(0,0,0,.2); }
-        .form-row { display:flex; flex-direction:column; gap:6px; margin-bottom:10px; }
-        label { font-size:13px; color:#222; }
-        input[type="text"], input[type="number"], textarea { padding:8px; border:1px solid #ccc; border-radius:4px; width:100%; box-sizing:border-box; }
-        input[type="file"] { padding:6px 0; }
-        .preview { display:block; margin-top:6px; max-height:160px; object-fit:cover; border-radius:6px; }
-        .row-actions { display:flex; justify-content:flex-end; gap:8px; }
-        .small { font-size:12px; color:#777; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Panel de Administrador - Bliss</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Estilos -->
+    <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
-    <h1>Panel de administrador - Cargar productos</h1>
-    <p class="small">Agrega productos en cualquiera de las tres secciones. Cada producto requiere foto, nombre, precio, características y cantidad.</p>
-
-    <div class="sections">
-        <div class="section" data-section="1" id="section-1">
-            <h2>Seccion 1</h2>
-            <div class="controls">
-                <button onclick="openForm(1)">Agregar producto</button>
-                <button onclick="clearSection(1)">Limpiar</button>
+    <!-- Contenedor principal -->
+    <div class="admin-container">
+        <!-- Sidebar / Menú lateral -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <div class="admin-logo">
+                    <i class="fas fa-spa"></i>
+                    <span>Bliss Admin</span>
+                </div>
+                <div class="admin-user">
+                    <div class="user-avatar" id="adminAvatar">A</div>
+                    <div class="user-info">
+                        <span id="adminName">Administrador</span>
+                        <small>Panel de Control</small>
+                    </div>
+                </div>
             </div>
-            <div class="list" id="list-1"></div>
-        </div>
-
-        <div class="section" data-section="2" id="section-2">
-            <h2>Seccion 2</h2>
-            <div class="controls">
-                <button onclick="openForm(2)">Agregar producto</button>
-                <button onclick="clearSection(2)">Limpiar</button>
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item active" data-view="dashboard">
+                        <a href="#">
+                            <i class="fas fa-home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-section">Gestión de Productos</li>
+                    <li class="nav-item" data-view="productos-aromas">
+                        <a href="#">
+                            <i class="fas fa-spa"></i>
+                            <span>Productos Aromáticos</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-view="productos-bijouterie">
+                        <a href="#">
+                            <i class="fas fa-gem"></i>
+                            <span>Productos Bijouterie</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-view="productos-humidificadores">
+                        <a href="#">
+                            <i class="fas fa-wind"></i>
+                            <span>Productos Humidificadores</span>
+                        </a>
+                    </li>
+                    <li class="nav-section">Gestión de Imágenes</li>
+                    <li class="nav-item" data-view="imagen-bienvenida">
+                        <a href="#">
+                            <i class="fas fa-image"></i>
+                            <span>Imagen de Bienvenida</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-view="imagen-secciones">
+                        <a href="#">
+                            <i class="fas fa-images"></i>
+                            <span>Imágenes de Secciones</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <a href="index.html" class="back-to-site">
+                    <i class="fas fa-external-link-alt"></i>
+                    <span>Volver al Sitio</span>
+                </a>
+                <button class="logout-btn" onclick="handleLogout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Cerrar Sesión</span>
+                </button>
             </div>
-            <div class="list" id="list-2"></div>
-        </div>
+        </aside>
 
-        <div class="section" data-section="3" id="section-3">
-            <h2>Seccion 3</h2>
-            <div class="controls">
-                <button onclick="openForm(3)">Agregar producto</button>
-                <button onclick="clearSection(3)">Limpiar</button>
+        <!-- Contenido principal -->
+        <main class="admin-main">
+            <!-- Header del contenido -->
+            <header class="main-header">
+                <div class="header-title">
+                    <h1 id="pageTitle">Dashboard</h1>
+                    <p id="pageSubtitle">Selecciona en el menú lateral lo que deseas realizar</p>
+                </div>
+                <div class="header-actions">
+                    <div class="stats-card">
+                        <i class="fas fa-box-open"></i>
+                        <div>
+                            <span id="totalProducts">0</span>
+                            <small>Productos Totales</small>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Contenido dinámico -->
+            <div class="main-content" id="mainContent">
+                <!-- Vista Dashboard (por defecto) -->
+                <div class="content-view active" id="dashboard">
+                    <div class="welcome-card">
+                        <div class="welcome-content">
+                            <h2><i class="fas fa-crown"></i> Bienvenido al Panel de Administrador de Bliss</h2>
+                            <p class="welcome-subtitle">Desde aquí podrás gestionar todos los aspectos de tu tienda online</p>
+                            
+                            <div class="dashboard-grid">
+                                <div class="dashboard-card">
+                                    <div class="card-icon primary">
+                                        <i class="fas fa-spa"></i>
+                                    </div>
+                                    <h3>Productos Aromáticos</h3>
+                                    <p>Gestiona tu catálogo de productos aromáticos, difusores y esencias</p>
+                                    <button class="card-action" data-view="productos-aromas">
+                                        Administrar <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                </div>
+                                
+                                <div class="dashboard-card">
+                                    <div class="card-icon secondary">
+                                        <i class="fas fa-gem"></i>
+                                    </div>
+                                    <h3>Productos Bijouterie</h3>
+                                    <p>Administra tu colección de accesorios y joyería fina</p>
+                                    <button class="card-action" data-view="productos-bijouterie">
+                                        Administrar <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                </div>
+                                
+                                <div class="dashboard-card">
+                                    <div class="card-icon accent">
+                                        <i class="fas fa-wind"></i>
+                                    </div>
+                                    <h3>Humidificadores</h3>
+                                    <p>Gestiona tu línea de humidificadores y aromatizadores</p>
+                                    <button class="card-action" data-view="productos-humidificadores">
+                                        Administrar <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                </div>
+                                
+                                <div class="dashboard-card">
+                                    <div class="card-icon success">
+                                        <i class="fas fa-image"></i>
+                                    </div>
+                                    <h3>Imágenes del Sitio</h3>
+                                    <p>Actualiza las imágenes de bienvenida y secciones principales</p>
+                                    <button class="card-action" data-view="imagen-bienvenida">
+                                        Administrar <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vista Productos Aromáticos -->
+                <div class="content-view" id="productos-aromas">
+                    <div class="view-header">
+                        <h2><i class="fas fa-spa"></i> Productos Aromáticos</h2>
+                        <p>Gestiona tu catálogo de productos aromáticos</p>
+                    </div>
+                    <div class="products-section" data-section="1">
+                        <div class="section-actions">
+                            <button class="btn-primary" onclick="openProductForm(1)">
+                                <i class="fas fa-plus"></i> Agregar Producto
+                            </button>
+                            <button class="btn-secondary" onclick="clearSection(1)">
+                                <i class="fas fa-trash"></i> Limpiar Sección
+                            </button>
+                        </div>
+                        <div class="products-list" id="list-1"></div>
+                    </div>
+                </div>
+
+                <!-- Vista Productos Bijouterie -->
+                <div class="content-view" id="productos-bijouterie">
+                    <div class="view-header">
+                        <h2><i class="fas fa-gem"></i> Productos Bijouterie</h2>
+                        <p>Gestiona tu colección de bijouterie y accesorios</p>
+                    </div>
+                    <div class="products-section" data-section="2">
+                        <div class="section-actions">
+                            <button class="btn-primary" onclick="openProductForm(2)">
+                                <i class="fas fa-plus"></i> Agregar Producto
+                            </button>
+                            <button class="btn-secondary" onclick="clearSection(2)">
+                                <i class="fas fa-trash"></i> Limpiar Sección
+                            </button>
+                        </div>
+                        <div class="products-list" id="list-2"></div>
+                    </div>
+                </div>
+
+                <!-- Vista Humidificadores -->
+                <div class="content-view" id="productos-humidificadores">
+                    <div class="view-header">
+                        <h2><i class="fas fa-wind"></i> Productos Humidificadores</h2>
+                        <p>Gestiona tu catálogo de humidificadores</p>
+                    </div>
+                    <div class="products-section" data-section="3">
+                        <div class="section-actions">
+                            <button class="btn-primary" onclick="openProductForm(3)">
+                                <i class="fas fa-plus"></i> Agregar Producto
+                            </button>
+                            <button class="btn-secondary" onclick="clearSection(3)">
+                                <i class="fas fa-trash"></i> Limpiar Sección
+                            </button>
+                        </div>
+                        <div class="products-list" id="list-3"></div>
+                    </div>
+                </div>
+
+                <!-- Vista Imagen de Bienvenida -->
+                <div class="content-view" id="imagen-bienvenida">
+                    <div class="view-header">
+                        <h2><i class="fas fa-image"></i> Imagen de Bienvenida</h2>
+                        <p>Actualiza la imagen principal de la página de inicio</p>
+                    </div>
+                    <div class="image-management">
+                        <div class="image-preview-card">
+                            <div class="preview-header">
+                                <h3>Imagen Actual</h3>
+                                <small>Se muestra en la sección principal del inicio</small>
+                            </div>
+                            <div class="preview-content">
+                                <img id="welcome-image-preview" src="" alt="Imagen de bienvenida" 
+                                     onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"400\" height=\"200\"><rect width=\"100%\" height=\"100%\" fill=\"%23f0f4ff\"/><text x=\"50%\" y=\"50%\" font-family=\"Montserrat\" font-size=\"14\" fill=\"%2394a3b8\" text-anchor=\"middle\" dy=\".3em\">Sin imagen configurada</text></svg>'">
+                                <div class="preview-info">
+                                    <p><strong>Tamaño recomendado:</strong> 1200x600px</p>
+                                    <p><strong>Formato:</strong> JPG, PNG o WebP</p>
+                                    <p><strong>Peso máximo:</strong> 2MB</p>
+                                </div>
+                            </div>
+                            <div class="preview-actions">
+                                <input type="file" id="welcome-image-upload" accept="image/*" style="display: none;">
+                                <button class="btn-primary" onclick="document.getElementById('welcome-image-upload').click()">
+                                    <i class="fas fa-upload"></i> Subir Nueva Imagen
+                                </button>
+                                <button class="btn-secondary" onclick="resetWelcomeImage()">
+                                    <i class="fas fa-undo"></i> Restaurar Original
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vista Imágenes de Secciones -->
+                <div class="content-view" id="imagen-secciones">
+                    <div class="view-header">
+                        <h2><i class="fas fa-images"></i> Imágenes de Secciones</h2>
+                        <p>Gestiona las imágenes de las diferentes secciones del sitio</p>
+                    </div>
+                    <div class="sections-grid">
+                        <div class="section-image-card">
+                            <div class="card-header">
+                                <h3>Logo Principal</h3>
+                                <small>Logo que aparece en el header</small>
+                            </div>
+                            <div class="card-preview">
+                                <img id="logo-preview" src="imagenes/logo-bliss.png" alt="Logo" 
+                                     onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"200\" height=\"100\"><rect width=\"100%\" height=\"100%\" fill=\"%23f0f4ff\"/><text x=\"50%\" y=\"50%\" font-family=\"Montserrat\" font-size=\"12\" fill=\"%2394a3b8\" text-anchor=\"middle\" dy=\".3em\">Sin logo</text></svg>'">
+                            </div>
+                            <div class="card-actions">
+                                <input type="file" class="section-image-upload" data-section="logo" accept="image/*" style="display: none;">
+                                <button class="btn-outline" onclick="document.querySelector('[data-section=\"logo\"]').click()">
+                                    <i class="fas fa-sync"></i> Cambiar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="list" id="list-3"></div>
-        </div>
+        </main>
     </div>
 
-    <!-- Modal form (hidden until needed) -->
-    <div id="overlay" class="overlay" style="display:none" onclick="overlayClick(event)">
-        <div class="formbox" onclick="event.stopPropagation()">
-            <h3 id="form-title">Agregar producto</h3>
-            <form id="product-form">
-                <input type="hidden" id="form-section" />
-                <input type="hidden" id="form-id" />
-                <div class="form-row">
-                    <label for="photo">Foto (imagen)</label>
-                    <input id="photo" type="file" accept="image/*" required />
-                    <img id="photo-preview" class="preview" style="display:none" />
+    <!-- Modal para agregar/editar productos (OCULTO POR DEFECTO) -->
+    <div id="productModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3 id="modalTitle">Agregar Producto</h3>
+                <button type="button" class="modal-close" onclick="closeProductForm()">&times;</button>
+            </div>
+            <form id="productForm">
+                <input type="hidden" id="formSection" />
+                <input type="hidden" id="formId" />
+                
+                <div class="form-group">
+                    <label for="productPhoto">Foto del Producto *</label>
+                    <div class="file-upload">
+                        <input type="file" id="productPhoto" accept="image/*" required>
+                        <div class="upload-preview">
+                            <img id="photoPreview" src="" alt="Vista previa">
+                            <div class="upload-placeholder">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span>Haz clic para subir una imagen</span>
+                                <small>JPG, PNG o WebP (máx. 2MB)</small>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-row">
-                    <label for="name">Nombre</label>
-                    <input id="name" type="text" required />
+                    <div class="form-group">
+                        <label for="productName">Nombre del Producto *</label>
+                        <input type="text" id="productName" required placeholder="Ej: Difusor de Bambú">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="productPrice">Precio *</label>
+                        <div class="price-input">
+                            <span class="currency">$</span>
+                            <input type="number" id="productPrice" min="0" step="0.01" required placeholder="0.00">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="productDescription">Descripción / Características</label>
+                    <textarea id="productDescription" rows="3" placeholder="Describe las características del producto..."></textarea>
                 </div>
 
                 <div class="form-row">
-                    <label for="price">Precio (ej. 9.99)</label>
-                    <input id="price" type="number" min="0" step="0.01" required />
+                    <div class="form-group">
+                        <label for="productQuantity">Cantidad Disponible *</label>
+                        <input type="number" id="productQuantity" min="1" value="1" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="productActive">Estado</label>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="productActive" checked>
+                            <label for="productActive" class="toggle-label">
+                                <span class="toggle-text">Activo</span>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="form-row">
-                    <label for="features">Características</label>
-                    <textarea id="features" rows="3" placeholder="Breve descripción"></textarea>
-                </div>
-
-                <div class="form-row">
-                    <label for="qty">Cantidad disponible</label>
-                    <input id="qty" type="number" min="1" step="1" value="1" required />
-                </div>
-
-                <div class="row-actions">
-                    <button type="button" onclick="closeForm()">Cancelar</button>
-                    <button type="submit">Guardar producto</button>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeProductForm()">Cancelar</button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i> Guardar Producto
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <script>
-        // Utilidades de almacenamiento local
-        function storageKey(section) { return 'admin_products_section_' + section; }
-        function loadSection(section) {
-            const raw = localStorage.getItem(storageKey(section));
-            return raw ? JSON.parse(raw) : [];
-        }
-        function saveSection(section, items) {
-            localStorage.setItem(storageKey(section), JSON.stringify(items));
-        }
-
-        // Renderizar productos al abrir la página
-        document.addEventListener('DOMContentLoaded', () => {
-            [1,2,3].forEach(section => {
-                const items = loadSection(section);
-                items.forEach(renderProductCard);
-            });
-
-            // preview file change
-            document.getElementById('photo').addEventListener('change', onPhotoChange);
-            document.getElementById('product-form').addEventListener('submit', onSubmitForm);
-        });
-
-        // Abrir modal para agregar (o editar) producto
-        function openForm(section, product) {
-            document.getElementById('overlay').style.display = 'flex';
-            document.getElementById('form-section').value = section;
-            document.getElementById('form-title').textContent = product ? 'Editar producto' : 'Agregar producto';
-            if (product) {
-                document.getElementById('form-id').value = product.id;
-                document.getElementById('name').value = product.name;
-                document.getElementById('price').value = product.price;
-                document.getElementById('features').value = product.features;
-                document.getElementById('qty').value = product.qty;
-                const img = document.getElementById('photo-preview');
-                img.src = product.photo;
-                img.style.display = 'block';
-            } else {
-                document.getElementById('form-id').value = '';
-                document.getElementById('name').value = '';
-                document.getElementById('price').value = '';
-                document.getElementById('features').value = '';
-                document.getElementById('qty').value = 1;
-                document.getElementById('photo').value = '';
-                const img = document.getElementById('photo-preview');
-                img.src = '';
-                img.style.display = 'none';
-            }
-        }
-        function closeForm() { document.getElementById('overlay').style.display = 'none'; }
-
-        function overlayClick(e) { if (e.target.id === 'overlay') closeForm(); }
-
-        // Preview imagen
-        function onPhotoChange(e) {
-            const file = e.target.files[0];
-            const preview = document.getElementById('photo-preview');
-            if (!file) { preview.style.display = 'none'; preview.src = ''; return; }
-            const reader = new FileReader();
-            reader.onload = () => {
-                preview.src = reader.result;
-                preview.style.display = 'block';
-            };
-            reader.readAsDataURL(file);
-        }
-
-        // Manejar envío del formulario
-        function onSubmitForm(e) {
-            e.preventDefault();
-            const section = Number(document.getElementById('form-section').value);
-            const id = document.getElementById('form-id').value || Date.now().toString();
-            const name = document.getElementById('name').value.trim();
-            const price = Number(document.getElementById('price').value);
-            const features = document.getElementById('features').value.trim();
-            const qty = Number(document.getElementById('qty').value);
-
-            const fileInput = document.getElementById('photo');
-            const file = fileInput.files && fileInput.files[0];
-
-            const proceedWithData = (photoData => {
-                // load existing items to preserve active state when editing
-                const items = loadSection(section);
-                const idx = items.findIndex(x => x.id === id);
-                const activeState = idx >= 0 ? (items[idx].active !== false) : true;
-                const item = { id, name, price, features, qty, photo: photoData, active: activeState };
-                if (idx >= 0) items[idx] = item; else items.push(item);
-                saveSection(section, items);
-                // re-render section list
-                refreshSectionList(section);
-                closeForm();
-            });
-
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = () => proceedWithData(reader.result);
-                reader.readAsDataURL(file);
-            } else {
-                // if editing and didn't change file, keep the preview src
-                const prev = document.getElementById('photo-preview').src || '';
-                proceedWithData(prev);
-            }
-        }
-
-        // Renderizar todos los items de una sección
-        function refreshSectionList(section) {
-            const container = document.getElementById('list-' + section);
-            container.innerHTML = '';
-            const items = loadSection(section);
-            items.forEach(renderProductCard);
-        }
-
-        // Crear tarjeta DOM de producto
-        function renderProductCard(item) {
-            const section = findSectionForItem(item.id);
-            const container = document.getElementById('list-' + section);
-            // construir card
-            const card = document.createElement('div');
-            card.className = 'card' + (item.active === false ? ' inactive' : '');
-            const img = document.createElement('img');
-            img.src = item.photo || '';
-            img.alt = item.name;
-            const meta = document.createElement('div');
-            meta.className = 'meta';
-            const statusText = item.active === false ? '<span class="small">Inactivo</span>' : '<span class="small">Activo</span>';
-            meta.innerHTML = `<b>${escapeHtml(item.name)}</b>
-                                                <small>Precio: $${Number(item.price).toFixed(2)} • Cantidad: ${item.qty}</small>
-                                                <div class="small">${escapeHtml(item.features)}</div>
-                                                <div style="margin-top:6px">${statusText}</div>`;
-            const actions = document.createElement('div');
-            actions.className = 'actions';
-            const editBtn = document.createElement('button');
-            editBtn.textContent = 'Editar';
-            editBtn.onclick = () => openForm(section, item);
-            const delBtn = document.createElement('button');
-            delBtn.textContent = 'Eliminar';
-            delBtn.onclick = () => {
-                if (!confirm('Eliminar este producto?')) return;
-                let items = loadSection(section);
-                items = items.filter(x => x.id !== item.id);
-                saveSection(section, items);
-                refreshSectionList(section);
-            };
-            const toggleBtn = document.createElement('button');
-            toggleBtn.textContent = item.active === false ? 'Activar' : 'Desactivar';
-            toggleBtn.onclick = () => {
-                const items = loadSection(section);
-                const idx = items.findIndex(x => x.id === item.id);
-                if (idx < 0) return;
-                items[idx].active = items[idx].active === false ? true : false;
-                saveSection(section, items);
-                refreshSectionList(section);
-            };
-
-            actions.appendChild(editBtn);
-            actions.appendChild(delBtn);
-            actions.appendChild(toggleBtn);
-
-            card.appendChild(img);
-            card.appendChild(meta);
-            card.appendChild(actions);
-            container.appendChild(card);
-        }
-
-        // Encuentra la sección que contiene el item (útil al recargar/rehidratar)
-        function findSectionForItem(id) {
-            for (const s of [1,2,3]) {
-                const items = loadSection(s);
-                if (items.some(x => x.id === id)) return s;
-            }
-            return 1; // por defecto
-        }
-
-        // Vaciar sección entera
-        function clearSection(section) {
-            if (!confirm('¿Eliminar todos los productos de la sección ' + section + '?')) return;
-            saveSection(section, []);
-            refreshSectionList(section);
-        }
-
-        // Pequeña función para evitar inyección HTML en la muestra
-        function escapeHtml(str) {
-            if (!str) return '';
-            return String(str)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#39;');
-        }
-    </script>
+    <!-- Scripts -->
+    <script src="js/admin.js"></script>
 </body>
 </html>
