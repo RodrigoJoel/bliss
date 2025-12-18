@@ -48,16 +48,16 @@
                             <span>Productos Aromáticos</span>
                         </a>
                     </li>
-                    <li class="nav-item" data-view="productos-bijouterie">
-                        <a href="#">
-                            <i class="fas fa-gem"></i>
-                            <span>Productos Bijouterie</span>
-                        </a>
-                    </li>
                     <li class="nav-item" data-view="productos-humidificadores">
                         <a href="#">
                             <i class="fas fa-wind"></i>
                             <span>Productos Humidificadores</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-view="productos-bijouterie">
+                        <a href="#">
+                            <i class="fas fa-gem"></i>
+                            <span>Productos Bijouterie</span>
                         </a>
                     </li>
                     <li class="nav-section">Gestión de Imágenes</li>
@@ -127,6 +127,17 @@
                                         Administrar <i class="fas fa-arrow-right"></i>
                                     </button>
                                 </div>
+
+                                <div class="dashboard-card">
+                                    <div class="card-icon accent">
+                                        <i class="fas fa-wind"></i>
+                                    </div>
+                                    <h3>Humidificadores</h3>
+                                    <p>Gestiona tu línea de humidificadores y aromatizadores</p>
+                                    <button class="card-action" data-view="productos-humidificadores">
+                                        Administrar <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                </div>
                                 
                                 <div class="dashboard-card">
                                     <div class="card-icon secondary">
@@ -135,17 +146,6 @@
                                     <h3>Productos Bijouterie</h3>
                                     <p>Administra tu colección de accesorios y joyería fina</p>
                                     <button class="card-action" data-view="productos-bijouterie">
-                                        Administrar <i class="fas fa-arrow-right"></i>
-                                    </button>
-                                </div>
-                                
-                                <div class="dashboard-card">
-                                    <div class="card-icon accent">
-                                        <i class="fas fa-wind"></i>
-                                    </div>
-                                    <h3>Humidificadores</h3>
-                                    <p>Gestiona tu línea de humidificadores y aromatizadores</p>
-                                    <button class="card-action" data-view="productos-humidificadores">
                                         Administrar <i class="fas fa-arrow-right"></i>
                                     </button>
                                 </div>
@@ -190,7 +190,7 @@
                         <h2><i class="fas fa-gem"></i> Productos Bijouterie</h2>
                         <p>Gestiona tu colección de bijouterie y accesorios</p>
                     </div>
-                    <div class="products-section" data-section="2">
+                    <div class="products-section" data-section="3">
                         <div class="section-actions">
                             <button class="btn-primary" onclick="openProductForm(2)">
                                 <i class="fas fa-plus"></i> Agregar Producto
@@ -199,7 +199,7 @@
                                 <i class="fas fa-trash"></i> Limpiar Sección
                             </button>
                         </div>
-                        <div class="products-list" id="list-2"></div>
+                        <div class="products-list" id="list-3"></div>
                     </div>
                 </div>
 
@@ -209,7 +209,7 @@
                         <h2><i class="fas fa-wind"></i> Productos Humidificadores</h2>
                         <p>Gestiona tu catálogo de humidificadores</p>
                     </div>
-                    <div class="products-section" data-section="3">
+                    <div class="products-section" data-section="2">
                         <div class="section-actions">
                             <button class="btn-primary" onclick="openProductForm(3)">
                                 <i class="fas fa-plus"></i> Agregar Producto
@@ -218,7 +218,7 @@
                                 <i class="fas fa-trash"></i> Limpiar Sección
                             </button>
                         </div>
-                        <div class="products-list" id="list-3"></div>
+                        <div class="products-list" id="list-2"></div>
                     </div>
                 </div>
 
