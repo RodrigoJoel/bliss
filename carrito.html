@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tu Carrito - Bliss</title>
+    <!-- Usamos los mismos recursos que tu index.html para mantener el estilo -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&family=Krona+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- CSS específico de la página -->
+    <link rel="stylesheet" href="css/carrito.css">
+</head>
+<body>
+    <!-- 🎪 HEADER (Copiado del index.html para consistencia) -->
+    <header>
+    <div class="container top-bar">
+      <div class="header-left">
+        <img src="imagenes/logo-bliss.png" alt="Bliss Logo" class="logo-small">
+        
+        <nav class="main-nav">
+          <div id="catalog-dropdown" class="dropdown" aria-haspopup="true">
+            <button class="dropdown-button" aria-expanded="false" id="catalog-btn" type="button" aria-controls="catalog-menu">
+              Catálogo <i class="fa fa-caret-down" aria-hidden="true"></i>
+            </button>
+
+            <ul class="dropdown-menu" role="menu" aria-label="Productos" id="catalog-menu">
+              <li role="none"><a role="menuitem" href="productosAromaticos.html"><i class="fas fa-spa"></i> Productos Aromáticos</a></li>
+              <li role="none"><a role="menuitem" href="humidificadores.html"><i class="fas fa-wind"></i> Humidificadores</a></li>
+              <li role="none"><a role="menuitem" href="bijouterie.html"><i class="fas fa-gem"></i> Bijouterie</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+            <nav class="header-nav">
+                <ul>
+                    <li><a href="index.html" class="nav-link">Inicio</a></li>
+                    <li><a href="index.html#footer" class="nav-link">Contacto</a></li>
+                    <li id="loginState"><a href="registro.html">Iniciar Sesión</a></li>
+                    <li id="userState" style="display:none;">
+                        <div class="user-menu">
+                            <div class="user-avatar" id="userAvatar">U</div>
+                            <button class="logout-btn" onclick="handleLogout()">Salir</button>
+                        </div>
+                    </li>
+                    <!-- 🛒 ICONO DEL CARRITO -->
+                    <li>
+                        <a href="carrito.html" class="cart-link" aria-label="Carrito de compras">
+                            <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                            <span id="cart-count">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 🛍️ CONTENIDO PRINCIPAL DEL CARRITO -->
+    <main class="cart-page-container">
+        <div class="cart-header">
+            <h1><i class="fas fa-shopping-cart"></i> Tu Carrito de Compras</h1>
+            <p>Revisa y gestiona los productos que elegiste</p>
+        </div>
+
+        <div class="cart-layout">
+            <!-- COLUMNA IZQUIERDA: Lista de Productos -->
+            <section class="cart-items-section">
+                <h2>Tus Productos</h2>
+                <div id="cart-items-container">
+                    <!-- Los productos se insertarán aquí dinámicamente con JavaScript -->
+                    <div class="empty-cart-message" id="empty-cart-message">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h3>Tu carrito está vacío</h3>
+                        <p>Parece que aún no agregaste productos. ¡Explora nuestro catálogo!</p>
+                        <a href="index.html" class="checkout-btn" style="background: #95a5a6;">Ver Catálogo</a>
+                    </div>
+                </div>
+
+                <!-- Acciones del Carrito -->
+                <div class="cart-actions">
+                    <a href="index.html" class="btn" style="background: #ecf0f1; color: #2c3e50;">
+                        <i class="fas fa-arrow-left"></i> Seguir Comprando
+                    </a>
+                    <button id="clear-cart-btn" class="btn" style="background: #e74c3c; color: white; display: none;">
+                        <i class="fas fa-trash"></i> Vaciar Carrito
+                    </button>
+                </div>
+            </section>
+
+            <!-- COLUMNA DERECHA: Resumen del Pedido -->
+            <aside class="cart-summary">
+                <h2>Resumen del Pedido</h2>
+                <div id="order-summary">
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span id="summary-subtotal">$0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Envío:</span>
+                        <span id="summary-shipping">Se calcula al finalizar</span>
+                    </div>
+                    <div class="summary-row summary-total">
+                        <span>Total:</span>
+                        <span id="summary-total">$0.00</span>
+                    </div>
+                </div>
+                
+                <a href="checkout.html" class="checkout-btn" id="go-to-checkout-btn" style="display: none;">
+                    <i class="fas fa-lock"></i> Proceder al Pago
+                </a>
+                
+                <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; font-size: 0.9em;">
+                <!--    <p><i class="fas fa-shipping-fast"></i> <strong>Envío gratis</strong> en compras superiores a $60.000</p>-->
+                    <p><i class="fas fa-undo"></i> <strong>5 días</strong> para cambios o devoluciones</p>
+                    <p><i class="fas fa-lock"></i> <strong>Compra 100% segura</strong></p>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- 🦶 FOOTER (similar al index.html) -->
+    <footer id="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h4>Síguenos</h4>
+                    <p>Instagram, Facebook y más — novedades y lanzamientos.</p>
+                    <div class="socials">
+                        <a href="https://www.instagram.com/bliss_rcia" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Pinterest"><i class="fab fa-pinterest"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4>Bliss</h4>
+                    <p>Pequeñas cosas que hacen grandes momentos.</p>
+                </div>
+                <div>
+                    <h4>Contacto</h4>
+                    <p>Av. Sarmiento 318, Resistencia</p>
+                    <p>blissrcia@gmail.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; <span id="current-year"></span> Bliss Accesorios Sensoriales.
+                <a href="admin-login.html" style="margin-left: 15px;"><i class="fas fa-user-shield"></i> Admin</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 📜 SCRIPTS -->
+    <!-- Primero cargamos el núcleo del carrito -->
+    <script src="js/cart.js"></script>
+    <!-- Luego el script específico para esta página -->
+    <script src="js/carrito.js"></script>
+</body>
+</html>

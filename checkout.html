@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Bliss</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Estilos -->
+    <link rel="stylesheet" href="css/checkout.css">
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="checkout-header">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-spa"></i>
+                <span>Bliss</span>
+            </a>
+            <div class="checkout-steps">
+                <div class="step active">
+                    <span class="step-number">1</span>
+                    <span class="step-label">Carrito</span>
+                </div>
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <span class="step-label">Datos</span>
+                </div>
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <span class="step-label">Pago</span>
+                </div>
+                <div class="step">
+                    <span class="step-number">4</span>
+                    <span class="step-label">Confirmación</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="checkout-main">
+        <div class="container">
+            <div class="checkout-grid">
+                <!-- Columna izquierda: Resumen del pedido -->
+                <div class="order-summary">
+                    <h2><i class="fas fa-shopping-bag"></i> Tu Pedido</h2>
+                    
+                    <div id="orderItems" class="order-items">
+                        <!-- Los productos se cargan con JavaScript -->
+                    </div>
+
+                    <div class="order-totals">
+                        <div class="total-row">
+                            <span>Subtotal:</span>
+                            <span id="orderSubtotal">$0.00</span>
+                        </div>
+                        <div class="total-row">
+                            <span>Envío:</span>
+                            <span id="orderShipping">A coordinar</span>
+                        </div>
+                        <div class="total-row grand-total">
+                            <span>Total:</span>
+                            <span id="orderTotal">$0.00</span>
+                        </div>
+                    </div>
+
+                    <script>
+                    (function(){
+                        const subtotalEl = document.getElementById('orderSubtotal');
+                        const shippingEl = document.getElementById('orderShipping');
+                        const totalEl = document.getElementById('orderTotal');
+
+                       // const FREE_THRESHOLD = 60.000;
+                       // const SHIPPING_COST = 2500;
+
+                        function parseCurrency(text){
+                            if(!text) return 0;
+                            // remove any non-digit except comma/dot, then normalize to dot as decimal separator
+                            const cleaned = text.replace(/[^\d.,]/g,'').replace(/\./g,'').replace(/,/g,'.');
+                            const v = parseFloat(cleaned);
+                            return isNaN(v) ? 0 : v;
+                        }
+
+                        function formatCurrency(n){
+                            return '$' + n.toLocaleString('es-AR',{minimumFractionDigits:2, maximumFractionDigits:2});
+                        }
+
+                        function updateOrderTotals(){
+                            const subtotal = parseCurrency(subtotalEl.textContent);
+                            // Aplicar regla: si subtotal > 0 y menor a 60000 => envío 2500, si >= 60000 => gratis
+                            const shipping = (subtotal > 0 && subtotal < FREE_THRESHOLD) ? SHIPPING_COST : 0;
+                            shippingEl.textContent = shipping === 0 ? 'Gratis' : formatCurrency(shipping);
+                            totalEl.textContent = formatCurrency(subtotal + shipping);
+                        }
+
+                        // Ejecutar al cargar
+                        document.addEventListener('DOMContentLoaded', updateOrderTotals);
+                        // Exponer por si otros scripts (ej. cart.js) quieren forzar la actualización
+                        window.updateOrderTotals = updateOrderTotals;
+                        // Observar cambios en el subtotal (si cart.js actualiza solo el texto)
+                        if (subtotalEl){
+                            const observer = new MutationObserver(updateOrderTotals);
+                            observer.observe(subtotalEl, { childList: true, characterData: true, subtree: true });
+                        }
+                        // También escuchar un evento personalizado "cartUpdated"
+                        window.addEventListener('cartUpdated', updateOrderTotals);
+                    })();
+                    </script>
+
+                    <div class="order-note">
+                        <i class="fas fa-info-circle"></i>
+                        <p>Tu pedido será procesado dentro de las próximas 24 horas.</p>
+                    </div>
+                </div>
+
+                <!-- Columna derecha: Formulario de checkout -->
+                <div class="checkout-form">
+                    <form id="checkoutForm">
+                        <!-- Paso 1: Información de contacto -->
+                        <div class="form-step active" id="step1">
+                            <h3><i class="fas fa-user"></i> Información de Contacto</h3>
+                            
+                            <div class="form-group">
+                                <label for="customerName">Nombre completo *</label>
+                                <input type="text" id="customerName" required>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="customerEmail">Email *</label>
+                                    <input type="email" id="customerEmail" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="customerPhone">Teléfono *</label>
+                                    <input type="tel" id="customerPhone" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="customerNotes">Notas adicionales (opcional)</label>
+                                <textarea id="customerNotes" rows="3" placeholder="Instrucciones especiales, comentarios, etc."></textarea>
+                            </div>
+
+                            <button type="button" class="btn-next" onclick="nextStep(2)">
+                                Continuar a envío <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+
+                        <!-- Paso 2: Método de entrega -->
+                        <div class="form-step" id="step2">
+                            <h3><i class="fas fa-truck"></i> Método de Entrega</h3>
+                            
+                            <div class="delivery-options">
+                                <label class="option-card">
+                                    <input type="radio" name="delivery" value="pickup" checked>
+                                    <div class="option-content">
+                                        <i class="fas fa-store"></i>
+                                        <div>
+                                            <h4>Retiro en local</h4>
+                                            <p>Av. Sarmiento 318, Resistencia, Chaco</p>
+                                            <small>Horario: Lunes a Viernes 8-12:30hs y de 17-21hs</small>
+                                            <span class="option-price">Gratis</span>
+                                        </div>
+                                    </div>
+                                </label>
+
+                                <label class="option-card">
+                                    <input type="radio" name="delivery" value="shipping">
+                                    <div class="option-content">
+                                        <i class="fas fa-shipping-fast"></i>
+                                        <div>
+                                            <h4>Envío a domicilio</h4>
+                                            <p>Entrega en 3-5 días hábiles</p>
+                                            <small>Cobertura en toda la ciudad</small>
+                                            <span class="option-price">A coordinar</span>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <!-- Dirección de envío (solo si selecciona envío) -->
+                            <div id="shippingAddress" style="display: none; margin-top: 20px;">
+                                <h4>Dirección de envío</h4>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="shippingStreet">Calle *</label>
+                                        <input type="text" id="shippingStreet">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="shippingNumber">Número *</label>
+                                        <input type="text" id="shippingNumber">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="shippingCity">Ciudad *</label>
+                                        <input type="text" id="shippingCity">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="shippingZip">CP *</label>
+                                        <input type="text" id="shippingZip">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="step-buttons">
+                                <button type="button" class="btn-back" onclick="prevStep(1)">
+                                    <i class="fas fa-arrow-left"></i> Volver
+                                </button>
+                                <button type="button" class="btn-next" onclick="nextStep(3)">
+                                    Continuar a pago <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Paso 3: Método de pago -->
+                        <div class="form-step" id="step3">
+                            <h3><i class="fas fa-credit-card"></i> Método de Pago</h3>
+                            
+                            <div class="payment-options">
+                                <!-- Opción: Mercado Pago -->
+                                <label class="option-card">
+                                    <input type="radio" name="payment" value="mercadopago" id="mercadoPagoOption">
+                                    <div class="option-content">
+                                        <i class="fas fa-bolt"></i>
+                                        <div>
+                                            <h4>Mercado Pago</h4>
+                                            <p>Pago online seguro con tarjeta</p>
+                                            <small>Tarjetas de crédito/débito</small>
+                                            <img src="https://http2.mlstatic.com/frontend-assets/ui-navigation/5.14.5/mercadopago/logo__small.png" 
+                                                 alt="Mercado Pago" style="height: 20px; margin-top: 5px;">
+                                        </div>
+                                    </div>
+                                </label>
+
+                                <!-- Opción: Transferencia -->
+                                <label class="option-card">
+                                    <input type="radio" name="payment" value="transfer">
+                                    <div class="option-content">
+                                        <i class="fas fa-university"></i>
+                                        <div>
+                                            <h4>Transferencia bancaria</h4>
+                                            <p>Pago por transferencia o depósito</p>
+                                            <small>Envíanos el comprobante</small>
+                                        </div>
+                                    </div>
+                                </label>
+
+                                <!-- Opción: Efectivo en local -->
+                                <label class="option-card">
+                                    <input type="radio" name="payment" value="cash">
+                                    <div class="option-content">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                        <div>
+                                            <h4>Efectivo en local</h4>
+                                            <p>Paga cuando retiras tu pedido</p>
+                                            <small>Solo para retiro en local</small>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <!-- Información para transferencia -->
+                            <div id="transferInfo" style="display: none; margin-top: 20px; padding: 15px; background: #f0f4ff; border-radius: 8px;">
+                                <h4><i class="fas fa-info-circle"></i> Datos para transferencia:</h4>
+                                <p><strong>Banco:</strong> Banco Nacional</p>
+                                <p><strong>Titular:</strong> Bliss S.R.L.</p>
+                                <p><strong>CBU:</strong> 1234567890123456789012</p>
+                                <p><strong>Alias:</strong> BLISS.AROMAS</p>
+                                <p class="small">Una vez realizada la transferencia, envía el comprobante a blissrcia@gmail.com</p>
+                            </div>
+
+                            <div class="step-buttons">
+                                <button type="button" class="btn-back" onclick="prevStep(2)">
+                                    <i class="fas fa-arrow-left"></i> Volver
+                                </button>
+                                <button type="button" class="btn-primary" onclick="processPayment()">
+                                    <i class="fas fa-lock"></i> Confirmar y Pagar
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Paso 4: Confirmación -->
+                        <div class="form-step" id="step4" style="display: none;">
+                            <div class="confirmation-content">
+                                <div class="confirmation-icon success">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <h2>¡Pedido Confirmado!</h2>
+                                <p id="confirmationMessage">Tu pedido ha sido procesado exitosamente.</p>
+                                
+                                <div class="order-details-summary">
+                                    <p><strong>N° de orden:</strong> <span id="orderNumber">BLISS-001</span></p>
+                                    <p><strong>Total:</strong> <span id="finalTotal">$0.00</span></p>
+                                    <p><strong>Método:</strong> <span id="paymentMethod">-</span></p>
+                                    <p><strong>Entrega:</strong> <span id="deliveryMethod">-</span></p>
+                                </div>
+
+                                <div class="confirmation-actions">
+                                    <a href="index.html" class="btn-primary">
+                                        <i class="fas fa-home"></i> Volver al inicio
+                                    </a>
+                                    <button type="button" class="btn-secondary" onclick="printOrder()">
+                                        <i class="fas fa-print"></i> Imprimir comprobante
+                                    </button>
+                                </div>
+
+                                <div class="confirmation-note">
+                                    <i class="fas fa-envelope"></i>
+                                    <p>Te enviamos un email con los detalles de tu compra. Si no lo ves, revisa tu carpeta de spam.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="checkout-footer">
+        <div class="container">
+            <p><i class="fas fa-lock"></i> Compra 100% segura | <i class="fas fa-shield-alt"></i> Datos protegidos</p>
+            <p class="small">© 2024 Bliss. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/cart.js"></script>
+    <script src="js/checkout.js"></script>
+    <script src="js/emailService.js"></script>
+    
+    <!-- Mercado Pago SDK (opcional) -->
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+    <script src="js/mercadoPago.js"></script>
+</body>
+</html>

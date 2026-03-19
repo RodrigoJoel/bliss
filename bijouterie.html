@@ -3,12 +3,14 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Bijouterie - Bliss</title>
+    <title>Productos Aromáticos - Bliss</title>
     
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <!-- En el <head>, DESPUÉS de tus otros scripts -->
+    <script src="js/cart.js" defer></script>
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -16,7 +18,7 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="css/styles-bijouterie.css">
+    <link rel="stylesheet" href="css/styles-aromaticos.css">
 </head>
 <body>
     <!-- Header similar al index -->
@@ -26,6 +28,7 @@
             <div class="header-left">
                 <div class="logo-section">
                     <img src="imagenes/logo-bliss.png" alt="Bliss Logo" class="logo-img">
+                    <!--<span class="logo-name">Bliss</span>-->
                 </div>
                 
                 <!-- Dropdown Catálogo -->

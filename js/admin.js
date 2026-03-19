@@ -187,6 +187,26 @@ const SECTIONS = {
     3: { key: 'admin_products_section_3', name: 'Productos Humidificadores' }
 };
 
+// Función para formatear precios al formato argentino (ej: $1.000,95)
+function formatPrice(price) {
+    if (price === undefined || price === null) return '$0,00';
+    
+    // Convertir a número si es string
+    const numPrice = typeof price === 'string' ? parseFloat(price) : price;
+    
+    // Verificar que sea un número válido
+    if (isNaN(numPrice)) return '$0,00';
+    
+    // Separar parte entera y decimal
+    const [integerPart, decimalPart] = numPrice.toFixed(2).split('.');
+    
+    // Aplicar separador de miles a la parte entera (de derecha a izquierda)
+    const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    
+    // Combinar con la parte decimal usando coma
+    return '$' + formattedInteger + ',' + decimalPart;
+}
+
 // Inicializar la aplicación
 document.addEventListener('DOMContentLoaded', () => {
     // Inicializar navegación
@@ -359,7 +379,7 @@ function renderProductCard(item, section) {
              onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"80\" height=\"80\"><rect width=\"100%\" height=\"100%\" fill=\"%23f0f4ff\"/><text x=\"50%\" y=\"50%\" font-family=\"Montserrat\" font-size=\"10\" fill=\"%2394a3b8\" text-anchor=\"middle\" dy=\".3em\">Sin imagen</text></svg>'">
         <div class="product-info">
             <h4>${escapeHtml(item.name)}</h4>
-            <div class="product-price">$${Number(item.price).toFixed(2)}</div>
+            <div class="product-price">${formatPrice(item.price)}</div> // sad
             <div class="product-description">${escapeHtml(item.features || item.descripcion || '')}</div>
             <div class="product-meta">
                 <span>Stock: ${item.qty || 0}</span>

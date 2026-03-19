@@ -48,16 +48,16 @@
                             <span>Productos Aromáticos</span>
                         </a>
                     </li>
-                    <li class="nav-item" data-view="productos-humidificadores">
-                        <a href="#">
-                            <i class="fas fa-wind"></i>
-                            <span>Productos Humidificadores</span>
-                        </a>
-                    </li>
                     <li class="nav-item" data-view="productos-bijouterie">
                         <a href="#">
                             <i class="fas fa-gem"></i>
                             <span>Productos Bijouterie</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-view="productos-humidificadores">
+                        <a href="#">
+                            <i class="fas fa-wind"></i>
+                            <span>Productos Humidificadores</span>
                         </a>
                     </li>
                     <li class="nav-section">Gestión de Imágenes</li>
@@ -128,16 +128,6 @@
                                     </button>
                                 </div>
 
-                                <div class="dashboard-card">
-                                    <div class="card-icon accent">
-                                        <i class="fas fa-wind"></i>
-                                    </div>
-                                    <h3>Humidificadores</h3>
-                                    <p>Gestiona tu línea de humidificadores y aromatizadores</p>
-                                    <button class="card-action" data-view="productos-humidificadores">
-                                        Administrar <i class="fas fa-arrow-right"></i>
-                                    </button>
-                                </div>
                                 
                                 <div class="dashboard-card">
                                     <div class="card-icon secondary">
@@ -146,6 +136,17 @@
                                     <h3>Productos Bijouterie</h3>
                                     <p>Administra tu colección de accesorios y joyería fina</p>
                                     <button class="card-action" data-view="productos-bijouterie">
+                                        Administrar <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                </div>
+
+                                <div class="dashboard-card">
+                                    <div class="card-icon accent">
+                                        <i class="fas fa-wind"></i>
+                                    </div>
+                                    <h3>Humidificadores</h3>
+                                    <p>Gestiona tu línea de humidificadores y aromatizadores</p>
+                                    <button class="card-action" data-view="productos-humidificadores">
                                         Administrar <i class="fas fa-arrow-right"></i>
                                     </button>
                                 </div>
@@ -190,7 +191,7 @@
                         <h2><i class="fas fa-gem"></i> Productos Bijouterie</h2>
                         <p>Gestiona tu colección de bijouterie y accesorios</p>
                     </div>
-                    <div class="products-section" data-section="3">
+                    <div class="products-section" data-section="2">
                         <div class="section-actions">
                             <button class="btn-primary" onclick="openProductForm(2)">
                                 <i class="fas fa-plus"></i> Agregar Producto
@@ -199,7 +200,7 @@
                                 <i class="fas fa-trash"></i> Limpiar Sección
                             </button>
                         </div>
-                        <div class="products-list" id="list-3"></div>
+                        <div class="products-list" id="list-2"></div>
                     </div>
                 </div>
 
@@ -209,7 +210,7 @@
                         <h2><i class="fas fa-wind"></i> Productos Humidificadores</h2>
                         <p>Gestiona tu catálogo de humidificadores</p>
                     </div>
-                    <div class="products-section" data-section="2">
+                    <div class="products-section" data-section="3">
                         <div class="section-actions">
                             <button class="btn-primary" onclick="openProductForm(3)">
                                 <i class="fas fa-plus"></i> Agregar Producto
@@ -218,7 +219,7 @@
                                 <i class="fas fa-trash"></i> Limpiar Sección
                             </button>
                         </div>
-                        <div class="products-list" id="list-2"></div>
+                        <div class="products-list" id="list-3"></div>
                     </div>
                 </div>
 
@@ -236,7 +237,7 @@
                             </div>
                             <div class="preview-content">
                                 <img id="welcome-image-preview" src="" alt="Imagen de bienvenida" 
-                                     onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"400\" height=\"200\"><rect width=\"100%\" height=\"100%\" fill=\"%23f0f4ff\"/><text x=\"50%\" y=\"50%\" font-family=\"Montserrat\" font-size=\"14\" fill=\"%2394a3b8\" text-anchor=\"middle\" dy=\".3em\">Sin imagen configurada</text></svg>'">
+                                    onerror="this.src='data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22200%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%23f0f4ff%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-family=%22Montserrat%22 font-size=%2214%22 fill=%22%2394a3b8%22 text-anchor=%22middle%22 dy=%22.3em%22%3ESin imagen configurada%3C/text%3E%3C/svg%3E'">
                                 <div class="preview-info">
                                     <p><strong>Tamaño recomendado:</strong> 1200x600px</p>
                                     <p><strong>Formato:</strong> JPG, PNG o WebP</p>
@@ -270,11 +271,11 @@
                             </div>
                             <div class="card-preview">
                                 <img id="logo-preview" src="imagenes/logo-bliss.png" alt="Logo" 
-                                     onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"200\" height=\"100\"><rect width=\"100%\" height=\"100%\" fill=\"%23f0f4ff\"/><text x=\"50%\" y=\"50%\" font-family=\"Montserrat\" font-size=\"12\" fill=\"%2394a3b8\" text-anchor=\"middle\" dy=\".3em\">Sin logo</text></svg>'">
+                                    onerror="this.src='data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22100%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%23f0f4ff%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-family=%22Montserrat%22 font-size=%2212%22 fill=%22%2394a3b8%22 text-anchor=%22middle%22 dy=%22.3em%22%3ESin logo%3C/text%3E%3C/svg%3E'">
                             </div>
                             <div class="card-actions">
                                 <input type="file" class="section-image-upload" data-section="logo" accept="image/*" style="display: none;">
-                                <button class="btn-outline" onclick="document.querySelector('[data-section=\"logo\"]').click()">
+                                <button class="btn-outline" onclick="document.querySelector('[data-section=logo]').click()">
                                     <i class="fas fa-sync"></i> Cambiar
                                 </button>
                             </div>
@@ -321,7 +322,7 @@
                         <label for="productPrice">Precio *</label>
                         <div class="price-input">
                             <span class="currency">$</span>
-                            <input type="number" id="productPrice" min="0" step="0.01" required placeholder="0.00">
+                            <input type="number" id="productPrice" min="0" step="0.01" required placeholder="0,00">
                         </div>
                     </div>
                 </div>
