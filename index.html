@@ -18,8 +18,60 @@
 
   <link rel="stylesheet" href="css/styles.css">
   <script src="js/script.js" defer></script>
-  <!-- En el head, después de script.js -->
   <script src="js/cart.js" defer></script>
+
+  <style>
+    /* ===== MENÚ DESPLEGABLE DE USUARIO ===== */
+    .user-dropdown-wrapper { position: relative; }
+
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .user-dropdown-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      min-width: 190px;
+      z-index: 1000;
+      overflow: hidden;
+      border: 1px solid #f0f0f0;
+      animation: fadeIn 0.15s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .user-dropdown-menu.open { display: block; }
+
+    .user-dropdown-menu a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      color: #374151;
+      text-decoration: none;
+      font-size: 14px;
+      font-family: 'Montserrat', sans-serif;
+      transition: background 0.15s;
+    }
+
+    .user-dropdown-menu a:hover { background: #f9fafb; }
+    .user-dropdown-menu a i { color: #667eea; width: 16px; text-align: center; }
+    .user-dropdown-divider { height: 1px; background: #f3f4f6; margin: 4px 0; }
+    .logout-option i { color: #dc2626 !important; }
+    .logout-option { color: #dc2626 !important; }
+  </style>
 </head>
 <body>
   <header>
@@ -32,7 +84,6 @@
             <button class="dropdown-button" aria-expanded="false" id="catalog-btn" type="button" aria-controls="catalog-menu">
               Catálogo <i class="fa fa-caret-down" aria-hidden="true"></i>
             </button>
-
             <ul class="dropdown-menu" role="menu" aria-label="Productos" id="catalog-menu">
               <li role="none"><a role="menuitem" href="productosAromaticos.html"><i class="fas fa-spa"></i> Productos Aromáticos</a></li>
               <li role="none"><a role="menuitem" href="humidificadores.html"><i class="fas fa-wind"></i> Humidificadores</a></li>
@@ -47,24 +98,35 @@
           <li><a href="#bienvenidos" class="nav-link">Inicio</a></li>
           <li><a href="#footer" class="nav-link">Contacto</a></li>
           
-          <!-- Estado de usuario: No logueado -->
+          <!-- Estado: No logueado -->
           <li id="loginState">
             <a href="registro.html">Iniciar Sesión</a>
           </li>
           
-          <!-- Estado de usuario: Logueado -->
-          <li id="userState" style="display:none;">
-            <div class="user-menu">
+          <!-- Estado: Logueado -->
+          <li id="userState" style="display:none;" class="user-dropdown-wrapper">
+            <div class="user-menu" onclick="toggleUserMenu()">
               <div class="user-avatar" id="userAvatar">U</div>
-              <button class="logout-btn" onclick="handleLogout()">Salir</button>
+              <i class="fas fa-caret-down" style="font-size:11px; color:#666; margin-left:2px;"></i>
+            </div>
+            <div class="user-dropdown-menu" id="userDropdownMenu">
+              <a href="mi-cuenta.html">
+                <i class="fas fa-user"></i> Mi cuenta
+              </a>
+              <a href="mi-cuenta.html">
+                <i class="fas fa-history"></i> Mis compras
+              </a>
+              <div class="user-dropdown-divider"></div>
+              <a href="#" onclick="handleLogout(); return false;" class="logout-option">
+                <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+              </a>
             </div>
           </li>
           
           <li>
             <a href="carrito.html" class="cart-link" aria-label="Ver carrito de compras">
-              <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-              <span></span>
-              <span id="cart-count" aria-hidden="true">0</span>
+            <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+            <span id="cart-count" aria-hidden="true">0</span>
             </a>
           </li>
         </ul>
@@ -106,7 +168,7 @@
           </div>
         </figure>
         <div class="feature-content">
-          <h3><a href="productosAromaticos.html" class="feature-link" aria-label="Ver Productos Aromáticos">Productos Aromáticos </a></h3>
+          <h3><a href="productosAromaticos.html" class="feature-link" aria-label="Ver Productos Aromáticos">Productos Aromáticos</a></h3>
           <p>
             Descubrí nuestra selección de fragancias para el hogar, pensadas para transformar cada ambiente con personalidad y calidez. Contamos con aromatizantes y aceites esenciales que aportan equilibrio, bienestar y una atmósfera armoniosa. Nuestras esencias están formuladas para ser suaves pero duraderas, ideales para acompañar tus rutinas y crear momentos de relax. Cada aroma está diseñado para influir positivamente en el ánimo y embellecer tus espacios. Elegí la fragancia que mejor te identifique y llená tu hogar de sensaciones únicas.
           </p>
@@ -178,7 +240,7 @@
           Creemos en la importancia de los detalles, en la belleza de lo simple y en cómo un buen aroma o un accesorio especial pueden mejorar cualquier momento. Trabajamos con pasión para ofrecer productos de calidad, siempre buscando que cada visita sea una experiencia cálida, cercana y auténtica.
         </p>
         <p class="about-text">
-          En Bliss, no solo vendemos productos: compartimos un espacio pensado para vos. 
+          En Bliss, no solo vendemos productos: compartimos un espacio pensado para vos.
         </p>
       </div>
     </div>
@@ -228,7 +290,6 @@
             <input id="subscribe-email" type="email" placeholder="Tu email" required>
             <button type="submit">Suscribirse</button>
           </form>
-
           <div id="subscribe-confirm">
             <div>¿Querés suscribirte con <strong id="confirm-email"></strong>?</div>
             <div class="confirm-buttons">
@@ -236,7 +297,6 @@
               <button id="confirm-no" type="button">Cancelar</button>
             </div>
           </div>
-
           <div id="subscribe-thanks">¡Gracias! Te enviaremos novedades.</div>
         </div>
       </div>
@@ -251,18 +311,32 @@
       <span class="wa-icon" aria-hidden="true"><i class="fab fa-whatsapp"></i></span>
       <span class="wa-label">Chatear por WhatsApp</span>
     </a>
+
     <div class="footer-bottom">
-        <div class="footer-links">
-            <span class="separator">|</span>
-            <!-- Enlace de administrador -->
-            <a href="admin-login.html" class="admin-access-link" title="Acceso administrador">
-                <i class="fas fa-user-shield"></i>
-                <span class="access-text">Área de Administración</span>
-            </a>
-        </div>
+      <div class="footer-links">
+        <span class="separator">|</span>
+        <a href="admin-login.html" class="admin-access-link" title="Acceso administrador">
+          <i class="fas fa-user-shield"></i>
+          <span class="access-text">Área de Administración</span>
+        </a>
+      </div>
     </div>
   </footer>
-  
-</body>
 
+  <script>
+    function toggleUserMenu() {
+      document.getElementById('userDropdownMenu').classList.toggle('open');
+    }
+
+    // Cerrar menú al hacer clic afuera
+    document.addEventListener('click', function(e) {
+      const wrapper = document.querySelector('.user-dropdown-wrapper');
+      if (wrapper && !wrapper.contains(e.target)) {
+        const menu = document.getElementById('userDropdownMenu');
+        if (menu) menu.classList.remove('open');
+      }
+    });
+  </script>
+
+</body>
 </html>

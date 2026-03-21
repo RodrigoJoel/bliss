@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Cuenta - Bliss</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #f8f9fb;
+            color: #1a1a2e;
+            min-height: 100vh;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            background: white;
+            border-bottom: 1px solid #f0f0f0;
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .header .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #1a1a2e;
+            font-weight: 700;
+            font-size: 20px;
+        }
+
+        .logo i { color: #667eea; }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-outline {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-outline:hover { background: #f3f0ff; }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        .btn-primary:hover { opacity: 0.9; }
+
+        /* ===== MAIN ===== */
+        .main {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 32px 20px;
+        }
+
+        /* ===== PERFIL ===== */
+        .profile-card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+
+        .profile-avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .profile-info h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .profile-info p {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        /* ===== STATS ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+
+        .stat-card .stat-value {
+            font-size: 26px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 4px;
+        }
+
+        .stat-card .stat-label {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        /* ===== HISTORIAL ===== */
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title i { color: #667eea; }
+
+        .order-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border-left: 4px solid #667eea;
+            transition: transform 0.2s;
+        }
+
+        .order-card:hover { transform: translateY(-2px); }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .order-number {
+            font-weight: 700;
+            font-size: 15px;
+            color: #1a1a2e;
+        }
+
+        .order-date {
+            font-size: 13px;
+            color: #6b7280;
+            margin-top: 2px;
+        }
+
+        .order-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-approved {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-cancelled {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .order-items-list {
+            border-top: 1px solid #f3f4f6;
+            border-bottom: 1px solid #f3f4f6;
+            padding: 12px 0;
+            margin-bottom: 12px;
+        }
+
+        .order-item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 0;
+            font-size: 14px;
+        }
+
+        .order-item-name {
+            color: #374151;
+            flex: 1;
+        }
+
+        .order-item-qty {
+            color: #6b7280;
+            margin: 0 12px;
+            font-size: 13px;
+        }
+
+        .order-item-price {
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .order-meta {
+            font-size: 13px;
+            color: #6b7280;
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .order-meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .order-total {
+            font-size: 16px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        /* ===== EMPTY / LOADING ===== */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            color: #d1d5db;
+            margin-bottom: 16px;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            color: #6b7280;
+            margin-bottom: 24px;
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ===== NO AUTH ===== */
+        .no-auth {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .no-auth i {
+            font-size: 56px;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .no-auth h2 {
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+
+        .no-auth p {
+            color: #6b7280;
+            margin-bottom: 28px;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 600px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .profile-card { flex-direction: column; text-align: center; }
+            .order-meta { flex-direction: column; gap: 4px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-spa"></i>
+                <span>Bliss</span>
+            </a>
+            <div class="header-actions">
+                <a href="index.html" class="btn-outline">
+                    <i class="fas fa-shopping-bag"></i> Seguir comprando
+                </a>
+                <button class="btn-outline" onclick="cerrarSesion()" id="btnLogout" style="display:none">
+                    <i class="fas fa-sign-out-alt"></i> Salir
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main -->
+    <main class="main" id="mainContent">
+        <div class="loading-state">
+            <div class="spinner"></div>
+            <p style="color:#6b7280">Cargando tu cuenta...</p>
+        </div>
+    </main>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBm_eFEYlE-GOpSp8PzRvUzGPEl2pIsWz0",
+            authDomain: "bliss-ffad9.firebaseapp.com",
+            projectId: "bliss-ffad9",
+            storageBucket: "bliss-ffad9.firebasestorage.app",
+            messagingSenderId: "863864024902",
+            appId: "1:863864024902:web:02cb9dd6997a0fa7353f47"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        function formatPrice(value) {
+            return Number(value || 0).toLocaleString('es-AR', {
+                style: 'currency',
+                currency: 'ARS',
+                minimumFractionDigits: 2
+            });
+        }
+
+        function formatDate(timestamp) {
+            if (!timestamp) return 'Fecha no disponible';
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            return date.toLocaleDateString('es-AR', {
+                day: '2-digit', month: 'long', year: 'numeric'
+            });
+        }
+
+        function getStatusLabel(status) {
+            const map = {
+                pending: { label: 'Pendiente', class: 'status-pending' },
+                approved: { label: 'Aprobado', class: 'status-approved' },
+                cancelled: { label: 'Cancelado', class: 'status-cancelled' }
+            };
+            return map[status] || { label: 'Pendiente', class: 'status-pending' };
+        }
+
+        function getPaymentLabel(method) {
+            const map = {
+                mercadopago: 'Mercado Pago',
+                transfer: 'Transferencia',
+                cash: 'Efectivo'
+            };
+            return map[method] || method || '-';
+        }
+
+        function renderNoAuth() {
+            document.getElementById('mainContent').innerHTML = `
+                <div class="no-auth">
+                    <i class="fas fa-user-lock"></i>
+                    <h2>Iniciá sesión para ver tu cuenta</h2>
+                    <p>Necesitás estar logueado para ver tu historial de compras.</p>
+                    <a href="login.html" class="btn-primary" style="display:inline-flex;align-items:center;gap:8px;padding:12px 28px;font-size:15px;">
+                        <i class="fas fa-sign-in-alt"></i> Iniciar sesión
+                    </a>
+                </div>
+            `;
+        }
+
+        function renderOrders(user, userData, orders) {
+            document.getElementById('btnLogout').style.display = 'inline-flex';
+
+            const totalGastado = orders.reduce((sum, o) => sum + (Number(o.total) || 0), 0);
+            const inicial = (userData?.firstName || user.email || '?')[0].toUpperCase();
+            const nombreCompleto = userData
+                ? `${userData.firstName || ''} ${userData.lastName || ''}`.trim()
+                : user.email;
+
+            let ordersHTML = '';
+
+            if (orders.length === 0) {
+                ordersHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-shopping-bag"></i>
+                        <h3>Todavía no realizaste ninguna compra</h3>
+                        <p>Cuando hagas tu primera compra, aparecerá acá.</p>
+                        <a href="index.html" class="btn-primary" style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;">
+                            <i class="fas fa-store"></i> Ir a la tienda
+                        </a>
+                    </div>
+                `;
+            } else {
+                ordersHTML = orders.map(order => {
+                    const status = getStatusLabel(order.status);
+                    const itemsHTML = (order.items || []).map(item => `
+                        <div class="order-item-row">
+                            <span class="order-item-name">${item.name || '-'}</span>
+                            <span class="order-item-qty">x${item.quantity || 1}</span>
+                            <span class="order-item-price">${formatPrice(item.price * item.quantity)}</span>
+                        </div>
+                    `).join('');
+
+                    return `
+                        <div class="order-card">
+                            <div class="order-header">
+                                <div>
+                                    <div class="order-number">${order.orderNumber || 'Sin número'}</div>
+                                    <div class="order-date"><i class="fas fa-calendar-alt" style="margin-right:4px"></i>${formatDate(order.createdAt)}</div>
+                                </div>
+                                <span class="order-status ${status.class}">${status.label}</span>
+                            </div>
+
+                            <div class="order-items-list">
+                                ${itemsHTML || '<p style="color:#6b7280;font-size:14px">Sin detalle de productos</p>'}
+                            </div>
+
+                            <div class="order-footer">
+                                <div class="order-meta">
+                                    <span><i class="fas fa-credit-card"></i> ${getPaymentLabel(order.paymentMethod)}</span>
+                                    <span><i class="fas fa-truck"></i> ${order.deliveryMethod || '-'}</span>
+                                    ${order.shippingAddress ? `<span><i class="fas fa-map-marker-alt"></i> ${order.shippingAddress}</span>` : ''}
+                                </div>
+                                <div class="order-total">${formatPrice(order.total)}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            document.getElementById('mainContent').innerHTML = `
+                <div class="profile-card">
+                    <div class="profile-avatar">${inicial}</div>
+                    <div class="profile-info">
+                        <h2>${nombreCompleto}</h2>
+                        <p><i class="fas fa-envelope" style="margin-right:6px;color:#667eea"></i>${user.email}</p>
+                        ${userData?.phone ? `<p><i class="fas fa-phone" style="margin-right:6px;color:#667eea"></i>${userData.phone}</p>` : ''}
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">${orders.length}</div>
+                        <div class="stat-label">Compras realizadas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${formatPrice(totalGastado)}</div>
+                        <div class="stat-label">Total gastado</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${orders.filter(o => o.status === 'approved').length}</div>
+                        <div class="stat-label">Pedidos aprobados</div>
+                    </div>
+                </div>
+
+                <div class="section-title">
+                    <i class="fas fa-history"></i> Historial de compras
+                </div>
+                ${ordersHTML}
+            `;
+        }
+
+        async function loadAccount(user) {
+            try {
+                // Cargar datos del usuario
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                const userData = userDoc.exists ? userDoc.data() : null;
+
+                // Cargar órdenes del usuario
+                const ordersSnap = await db.collection('orders')
+                    .where('userId', '==', user.uid)
+                    .orderBy('createdAt', 'desc')
+                    .get();
+
+                // Si no hay órdenes por uid, buscar por email como fallback
+                let orders = ordersSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+                if (orders.length === 0) {
+                    const emailSnap = await db.collection('orders')
+                        .where('email', '==', user.email)
+                        .orderBy('createdAt', 'desc')
+                        .get();
+                    orders = emailSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                }
+
+                renderOrders(user, userData, orders);
+
+            } catch (error) {
+                console.error('Error cargando cuenta:', error);
+                document.getElementById('mainContent').innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-circle" style="color:#dc2626"></i>
+                        <h3>Error al cargar tu cuenta</h3>
+                        <p>Intentá recargar la página.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function cerrarSesion() {
+            auth.signOut().then(() => {
+                window.location.href = 'index.html';
+            });
+        }
+
+        // Escuchar estado de autenticación
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                loadAccount(user);
+            } else {
+                renderNoAuth();
+            }
+        });
+    </script>
+</body>
+</html>

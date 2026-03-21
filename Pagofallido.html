@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pago Fallido - Bliss</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/checkout.css">
+
+    <style>
+        .result-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .result-main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 16px;
+            padding: 50px 40px;
+            max-width: 520px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        }
+
+        .result-icon {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+            background: #fee2e2;
+            color: #dc2626;
+            animation: popIn 0.5s ease;
+        }
+
+        @keyframes popIn {
+            0%   { transform: scale(0); opacity: 0; }
+            70%  { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .result-card h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 12px;
+        }
+
+        .result-card p {
+            color: #6b7280;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .reasons-box {
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 24px 0;
+            text-align: left;
+        }
+
+        .reasons-box h4 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: #92400e;
+            margin-bottom: 10px;
+        }
+
+        .reasons-box ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .reasons-box ul li {
+            font-size: 13px;
+            color: #78350f;
+            padding: 4px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .reasons-box ul li::before {
+            content: '•';
+            color: #f97316;
+            font-weight: bold;
+        }
+
+        .result-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: opacity 0.2s;
+        }
+
+        .btn-primary:hover { opacity: 0.9; }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover { background: #f3f0ff; }
+
+        .help-note {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #f3f4f6;
+            color: #9ca3af;
+            font-size: 13px;
+        }
+
+        .help-note a {
+            color: #667eea;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body class="result-page">
+
+    <header class="checkout-header">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-spa"></i>
+                <span>Bliss</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="result-main">
+        <div class="result-card">
+            <div class="result-icon">
+                <i class="fas fa-times"></i>
+            </div>
+
+            <h1>El pago no se completó</h1>
+            <p>No pudimos procesar tu pago. Tu carrito sigue guardado, podés intentarlo de nuevo.</p>
+
+            <div class="reasons-box">
+                <h4><i class="fas fa-exclamation-triangle"></i> Posibles motivos:</h4>
+                <ul>
+                    <li>Fondos insuficientes en la tarjeta</li>
+                    <li>Datos de la tarjeta incorrectos</li>
+                    <li>La tarjeta no está habilitada para compras online</li>
+                    <li>El pago fue cancelado manualmente</li>
+                </ul>
+            </div>
+
+            <div class="result-actions">
+                <a href="checkout.html" class="btn-primary">
+                    <i class="fas fa-redo"></i> Intentar de nuevo
+                </a>
+                <a href="index.html" class="btn-secondary">
+                    <i class="fas fa-home"></i> Volver al inicio
+                </a>
+            </div>
+
+            <div class="help-note">
+                <p>¿Necesitás ayuda? Contactanos a <a href="mailto:blissrcia@gmail.com">blissrcia@gmail.com</a></p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="checkout-footer">
+        <div class="container">
+            <p><i class="fas fa-lock"></i> Compra 100% segura | <i class="fas fa-shield-alt"></i> Datos protegidos</p>
+            <p class="small">© 2024 Bliss. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

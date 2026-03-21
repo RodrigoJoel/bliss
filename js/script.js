@@ -412,18 +412,40 @@ function initializeCarousels() {
 // Funciones del carrito
 function initializeCart() {
   function updateCount() {
-    var count = parseInt(localStorage.getItem('cartCount')) || 0;
     var el = document.getElementById('cart-count');
     if (!el) return;
-    el.textContent = count;
-    el.style.display = count ? 'flex' : 'none';
+
+    // Usar cart.js si está disponible
+    if (typeof cart !== 'undefined') {
+      var count = cart.getTotalItems();
+      el.textContent = count;
+      el.style.display = count ? 'flex' : 'none';
+      return;
+    }
+
+    // Fallback: leer del localStorage directamente
+    try {
+      var stored = localStorage.getItem('bliss_cart') || localStorage.getItem('cart') || '[]';
+      var items = JSON.parse(stored);
+      var count = Array.isArray(items)
+        ? items.reduce(function(sum, i) { return sum + (Number(i.quantity) || 1); }, 0)
+        : 0;
+      el.textContent = count;
+      el.style.display = count ? 'flex' : 'none';
+    } catch(e) {
+      el.textContent = 0;
+      el.style.display = 'none';
+    }
   }
-  
-  updateCount();
-  
-  window.addEventListener('storage', function(e) {
-    if (e.key === 'cartCount') updateCount();
-  });
+
+  // Esperar a que cart.js cargue antes de leer
+  setTimeout(updateCount, 100);
+
+  // Actualizar cuando cambie el localStorage
+  window.addEventListener('storage', updateCount);
+
+  // Actualizar cuando cart dispare evento
+  window.addEventListener('cartUpdated', updateCount);
 }
 
 // Año en footer

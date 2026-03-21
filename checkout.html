@@ -15,9 +15,11 @@
     <link rel="stylesheet" href="css/checkout.css">
     
     <!-- Firebase -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="js/emailService.js"></script>
 </head>
 <body>
     <!-- Header -->
@@ -80,8 +82,8 @@
                         const shippingEl = document.getElementById('orderShipping');
                         const totalEl = document.getElementById('orderTotal');
 
-                       // const FREE_THRESHOLD = 60.000;
-                       // const SHIPPING_COST = 2500;
+                        const FREE_THRESHOLD = 60.000;
+                        const SHIPPING_COST = 2500;
 
                         function parseCurrency(text){
                             if(!text) return 0;
@@ -336,12 +338,26 @@
     </footer>
 
     <!-- Scripts -->
+     <script>
+    const firebaseConfig = {
+    apiKey: "AIzaSyBm_eFEYlE-GOpSp8PzRvUzGPEl2pIsWz0",
+    authDomain: "bliss-ffad9.firebaseapp.com",
+    projectId: "bliss-ffad9",
+    storageBucket: "bliss-ffad9.firebasestorage.app",
+    messagingSenderId: "863864024902",
+    appId: "1:863864024902:web:02cb9dd6997a0fa7353f47"
+};
+
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+    </script>
     <script src="js/cart.js"></script>
     <script src="js/checkout.js"></script>
-    <script src="js/emailService.js"></script>
+ <!--   <script src="js/emailService.js"></script>-->
     
     <!-- Mercado Pago SDK (opcional) -->
     <script src="https://sdk.mercadopago.com/js/v2"></script>
-    <script src="js/mercadoPago.js"></script>
+ <!--   <script src="js/mercadoPago.js"></script>-->
 </body>
 </html>

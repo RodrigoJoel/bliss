@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pago Exitoso - Bliss</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/checkout.css">
+
+    <style>
+        .result-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .result-main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 16px;
+            padding: 50px 40px;
+            max-width: 520px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        }
+
+        .result-icon {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+            background: #dcfce7;
+            color: #16a34a;
+            animation: popIn 0.5s ease;
+        }
+
+        @keyframes popIn {
+            0%   { transform: scale(0); opacity: 0; }
+            70%  { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .result-card h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 12px;
+        }
+
+        .result-card p {
+            color: #6b7280;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .order-info {
+            background: #f9fafb;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 24px 0;
+            text-align: left;
+        }
+
+        .order-info p {
+            margin: 6px 0;
+            font-size: 14px;
+            color: #374151;
+        }
+
+        .order-info p strong {
+            color: #1a1a2e;
+        }
+
+        .result-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: opacity 0.2s;
+        }
+
+        .btn-primary:hover { opacity: 0.9; }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: #f3f0ff;
+        }
+
+        .secure-note {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #f3f4f6;
+            color: #9ca3af;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+    </style>
+</head>
+<body class="result-page">
+
+    <header class="checkout-header">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-spa"></i>
+                <span>Bliss</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="result-main">
+        <div class="result-card">
+            <div class="result-icon">
+                <i class="fas fa-check"></i>
+            </div>
+
+            <h1>¡Pago exitoso!</h1>
+            <p>Tu pedido fue confirmado y está siendo procesado.</p>
+            <p>Te enviaremos un email con todos los detalles de tu compra.</p>
+
+            <div class="order-info" id="orderInfo">
+                <p><strong>N° de orden:</strong> <span id="orderNumber">-</span></p>
+                <p><strong>Estado:</strong> <span style="color: #16a34a; font-weight: 600;">✓ Aprobado</span></p>
+                <p><strong>Método de pago:</strong> Mercado Pago</p>
+            </div>
+
+            <div class="result-actions">
+                <a href="index.html" class="btn-primary">
+                    <i class="fas fa-home"></i> Volver al inicio
+                </a>
+                <button class="btn-secondary" onclick="window.print()">
+                    <i class="fas fa-print"></i> Imprimir comprobante
+                </button>
+            </div>
+
+            <div class="secure-note">
+                <i class="fas fa-lock"></i>
+                Compra 100% segura — Bliss © 2024
+            </div>
+        </div>
+    </main>
+
+    <footer class="checkout-footer">
+        <div class="container">
+            <p><i class="fas fa-lock"></i> Compra 100% segura | <i class="fas fa-shield-alt"></i> Datos protegidos</p>
+            <p class="small">© 2024 Bliss. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Leer parámetros que manda MP en la URL
+        const params = new URLSearchParams(window.location.search);
+        const externalRef = params.get('external_reference');
+        const paymentId = params.get('payment_id');
+
+        if (externalRef) {
+            document.getElementById('orderNumber').textContent = externalRef;
+        }
+
+        // Limpiar el carrito
+        try {
+            localStorage.removeItem('bliss_cart');
+            localStorage.removeItem('cart');
+        } catch(e) {}
+    </script>
+
+</body>
+</html>
