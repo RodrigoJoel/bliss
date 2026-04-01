@@ -9,6 +9,7 @@ class CartSystem {
 
     /* ==================== CORE ==================== */
 
+    
     loadCart() {
         try {
             const saved = localStorage.getItem(this.CART_KEY);
@@ -83,21 +84,34 @@ class CartSystem {
     }
 
     updateQuantity(productId, section, newQuantity) {
-        section = Number(section);
+    section = Number(section);
 
-        const item = this.items.find(i =>
-            i.id === productId && Number(i.section) === section
+    const item = this.items.find(i =>
+        i.id === productId && Number(i.section) === section
+    );
+
+    if (!item) return;
+
+    if (newQuantity < 1) {
+        // ❌ Eliminar producto
+        this.items = this.items.filter(i =>
+            !(i.id === productId && Number(i.section) === section)
         );
 
-        if (!item) return;
+        this.saveCart();
 
-        if (newQuantity < 1) {
-            this.removeProduct(productId, section);
-        } else {
-            item.quantity = newQuantity;
-            this.saveCart();
+        // 🔥 SI EL CARRITO QUEDA VACÍO → FORZAR UI VACÍA
+        if (this.items.length === 0) {
+            this.updateCartUI(); // fuerza render correcto
         }
+
+        return;
     }
+
+    // ✅ Actualizar normalmente
+    item.quantity = newQuantity;
+    this.saveCart();
+}
 
     clearCart() {
         this.items = [];
@@ -138,6 +152,7 @@ class CartSystem {
         if (checkoutBtn) checkoutBtn.style.display = 'block';
 
         container.innerHTML = this.items.map(item => `
+
             <div class="cart-item">
                 <img src="${item.image || 'imagenes/default-product.jpg'}" class="item-image">
 

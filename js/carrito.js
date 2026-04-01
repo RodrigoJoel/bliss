@@ -1,4 +1,6 @@
-// Configuración de Firebase
+// ==========================================
+// 1. CONFIGURACIÓN E INICIALIZACIÓN FIREBASE
+// ==========================================
 const firebaseConfig = {
     apiKey: "AIzaSyBm_eFEYlE-GOpSp8PzRvUzGPEl2pIsWz0",
     authDomain: "bliss-ffad9.firebaseapp.com",
@@ -8,245 +10,138 @@ const firebaseConfig = {
     appId: "1:863864024902:web:02cb9dd6997a0fa7353f47"
 };
 
-// Inicializar Firebase
 let auth, db;
 if (typeof firebase !== 'undefined') {
     try {
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         auth = firebase.auth();
         db = firebase.firestore();
         console.log('✅ Firebase inicializado');
-    } catch (error) {
-        console.error('Error Firebase:', error);
-    }
+    } catch (error) { console.error('Error Firebase:', error); }
 }
 
-// FUNCIÓN DE FORMATEO
-function formatPrice(value) {
-    if (value === undefined || value === null) return '$0,00';
-    const numValue = typeof value === 'string' ? parseFloat(value) : value;
-    if (isNaN(numValue)) return '$0,00';
-    
-    return '$' + numValue.toFixed(2)
-        .replace(/\B(?=(\d{3})+(?!\d))/g, '.')
-        .replace('.', ',');
+const stockCache = new Map();
+
+async function getProductStock(productId) {
+    if (stockCache.has(productId)) return stockCache.get(productId);
+    try {
+        const doc = await db.collection('products').doc(productId).get();
+        if (doc.exists) {
+            const stock = doc.data().qty || 0;
+            stockCache.set(productId, stock);
+            return stock;
+        }
+        return 0;
+    } catch (e) { return 0; }
 }
 
-// Verificar autenticación
+// ==========================================
+// 2. LÓGICA DE INTERFAZ Y EVENTOS
+// ==========================================
 document.addEventListener('DOMContentLoaded', () => {
     if (auth) {
         auth.onAuthStateChanged((user) => {
-            if (user) {
-                showUserState(user);
-            } else {
-                showLoginState();
-            }
+            user ? showUserState(user) : showLoginState();
         });
     }
 
     initCatalogDropdown();
-    loadAndRenderProducts();
-    updateCartCount();
-    updateTotalCartCount();
+    
+    if (typeof cart !== 'undefined') {
+        cart.loadCart();
+    }
+
+    // ✅ VACIAR CARRITO CON RECARGA EN 1ms
+    const clearBtn = document.getElementById('clear-cart-btn');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            if (confirm('¿Vaciar todo el carrito?')) {
+                cart.items = [];
+                localStorage.setItem(cart.CART_KEY, JSON.stringify([]));
+                setTimeout(() => { window.location.reload(); }, 1);
+            }
+        });
+    }
 });
 
-// Inicializar dropdown del catálogo
-function initCatalogDropdown() {
-    const dropdown = document.getElementById('catalog-dropdown');
-    const button = document.getElementById('catalog-btn');
-    const menu = document.getElementById('catalog-menu');
+// ✅ CAMBIO DE CANTIDAD
+async function changeQuantity(productId, sectionId, newQuantity) {
+    const item = cart.items.find(i => i.id === productId && i.section === sectionId);
+    if (!item) return;
     
-    if (!dropdown || !button || !menu) return;
-    
-    let closeTimer = null;
-    
-    function openDropdown() {
-        if (closeTimer) {
-            clearTimeout(closeTimer);
-            closeTimer = null;
-        }
-        dropdown.classList.add('open');
-        button.setAttribute('aria-expanded', 'true');
+    if (newQuantity < item.quantity) {
+        cart.updateQuantity(productId, sectionId, newQuantity);
+        await renderCartPage(); 
+        return;
     }
     
-    function closeDropdown() {
-        dropdown.classList.remove('open');
-        button.setAttribute('aria-expanded', 'false');
-    }
+    const stock = await getProductStock(productId);
+    if (newQuantity > stock) return; // Bloqueo de seguridad extra
     
-    dropdown.addEventListener('mouseenter', openDropdown);
-    
-    dropdown.addEventListener('mouseleave', function() {
-        closeTimer = setTimeout(closeDropdown, 200);
-    });
-    
-    button.addEventListener('click', function(e) {
-        e.stopPropagation();
-        const isOpen = button.getAttribute('aria-expanded') === 'true';
-        if (isOpen) {
-            closeDropdown();
-        } else {
-            openDropdown();
-        }
-    });
-    
-    document.addEventListener('click', function(e) {
-        if (!dropdown.contains(e.target)) {
-            closeDropdown();
-        }
-    });
-    
-    menu.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', closeDropdown);
-    });
+    cart.updateQuantity(productId, sectionId, newQuantity);
+    await renderCartPage();
 }
 
-// Mostrar usuario logueado
-async function showUserState(user) {
-
-    const loginState = document.getElementById('loginState');
-    const userState = document.getElementById('userState');
+// ✅ RENDERIZADO CON BLOQUEO DE BOTÓN +
+async function renderCartPage() {
+    const container = document.getElementById('cart-items-container');
+    const emptyMsg = document.getElementById('empty-cart-message');
+    const summary = document.getElementById('cart-summary');
     
-    if (loginState) loginState.style.display = 'none';
-    if (userState) userState.style.display = 'block';
+    if (!container || !cart) return;
     
-    try {
-        const userDoc = await db.collection('users').doc(user.uid).get();
-        let initial = '';
-        
-        if (userDoc.exists) {
-            const userData = userDoc.data();
-            const firstName = (userData.firstName || '').trim();
-            if (firstName) {
-                initial = firstName.charAt(0).toUpperCase();
-            }
-        }
-        
-        if (!initial) {
-            initial = user.email.charAt(0).toUpperCase();
-        }
-        
-        const userAvatar = document.getElementById('userAvatar');
-        if (userAvatar) userAvatar.textContent = initial;
-
-    } catch (error) {
-        console.error('Error obteniendo datos usuario:', error);
+    if (!cart.items || cart.items.length === 0) {
+        container.innerHTML = '';
+        if (emptyMsg) emptyMsg.style.display = 'block';
+        if (summary) summary.style.display = 'none';
+        return;
     }
+
+    if (emptyMsg) emptyMsg.style.display = 'none';
+    if (summary) summary.style.display = 'block';
+
+    // Generamos el HTML asíncronamente para verificar stock de cada item
+    const itemsHTML = await Promise.all(cart.items.map(async (item) => {
+        const stockDisponible = await getProductStock(item.id);
+        const isMax = item.quantity >= stockDisponible;
+
+        return `
+            <div class="cart-item">
+                <img src="${item.image || 'imagenes/default-product.jpg'}" class="item-image">
+                <div class="item-details">
+                    <h4>${item.name}</h4>
+                    <p>${cart.formatPrice(item.price)}</p>
+                </div>
+                <div class="quantity-controls">
+                    <button class="qty-btn" onclick="changeQuantity('${item.id}', ${item.section}, ${item.quantity - 1})">-</button>
+                    <span class="qty-value">${item.quantity}</span>
+                    <button class="qty-btn" 
+                        ${isMax ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''} 
+                        onclick="changeQuantity('${item.id}', ${item.section}, ${item.quantity + 1})">
+                        ${isMax ? 'MAX' : '+'}
+                    </button>
+                </div>
+            </div>
+        `;
+    }));
+
+    container.innerHTML = itemsHTML.join('');
+}
+
+// ✅ HELPERS
+function showUserState(user) {
+    const l = document.getElementById('loginState'), u = document.getElementById('userState');
+    if (l) l.style.display = 'none';
+    if (u) u.style.display = 'block';
 }
 
 function showLoginState() {
-
-    const loginState = document.getElementById('loginState');
-    const userState = document.getElementById('userState');
-    
-    if (loginState) loginState.style.display = 'block';
-    if (userState) userState.style.display = 'none';
+    const l = document.getElementById('loginState'), u = document.getElementById('userState');
+    if (l) l.style.display = 'block';
+    if (u) u.style.display = 'none';
 }
 
-function handleLogout() {
-    if (auth) {
-        auth.signOut();
-    }
+function initCatalogDropdown() {
+    const btn = document.getElementById('catalog-btn'), menu = document.getElementById('catalog-dropdown');
+    if (btn && menu) btn.onclick = () => menu.classList.toggle('open');
 }
-
-// Renderizar carrito
-function renderCartPage() {
-
-    const container = document.getElementById('cart-items-container');
-    const emptyMsg = document.getElementById('empty-cart-message');
-    const clearBtn = document.getElementById('clear-cart-btn');
-    const checkoutBtn = document.getElementById('go-to-checkout-btn');
-    
-    if (!cart.items || cart.items.length === 0) {
-        emptyMsg.style.display = 'block';
-        clearBtn.style.display = 'none';
-        checkoutBtn.style.display = 'none';
-        updateSummary(0);
-        return;
-    }
-    
-    emptyMsg.style.display = 'none';
-    clearBtn.style.display = 'inline-block';
-    checkoutBtn.style.display = 'block';
-    
-    container.innerHTML = cart.items.map(item => `
-        <div class="cart-item">
-            
-            <img src="${item.image || 'imagenes/default-product.jpg'}" class="item-image">
-
-            <div class="item-details">
-                <h4>${item.name}</h4>
-                <p>${formatPrice(item.price)} c/u</p>
-            </div>
-            
-            <div class="quantity-controls">
-                <button onclick="changeQuantity('${item.id}', ${item.section}, ${item.quantity - 1})">-</button>
-                <span>${item.quantity}</span>
-                <button onclick="changeQuantity('${item.id}', ${item.section}, ${item.quantity + 1})">+</button>
-            </div>
-            
-            <div class="item-total">
-                ${formatPrice(item.price * item.quantity)}
-            </div>
-
-        </div>
-    `).join('');
-
-    const subtotal = cart.getSubtotal();
-    updateSummary(subtotal);
-}
-
-function changeQuantity(productId, sectionId, newQuantity) {
-    cart.updateQuantity(productId, sectionId, newQuantity);
-    renderCartPage();
-}
-
-function removeFromCart(productId, sectionId) {
-    cart.removeProduct(productId, sectionId);
-    renderCartPage();
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-
-    const clearCartBtn = document.getElementById('clear-cart-btn');
-
-    if (clearCartBtn) {
-        clearCartBtn.addEventListener('click', function() {
-
-            cart.clearCart();
-            renderCartPage();
-
-        });
-    }
-
-});
-
-// ENVÍO DESACTIVADO (A coordinar)
-function calculateShipping() {
-    return 0;
-}
-
-// ACTUALIZAR RESUMEN
-function updateSummary(subtotal) {
-
-    document.getElementById('summary-subtotal').textContent = formatPrice(subtotal);
-    document.getElementById('summary-shipping').textContent = "A coordinar";
-    document.getElementById('summary-total').textContent = formatPrice(subtotal);
-
-}
-
-// INICIALIZAR
-document.addEventListener('DOMContentLoaded', function() {
-
-    if (typeof cart === 'undefined') {
-        console.error('Error carrito no cargado');
-        return;
-    }
-
-    renderCartPage();
-
-    document.getElementById('current-year').textContent = new Date().getFullYear();
-
-});

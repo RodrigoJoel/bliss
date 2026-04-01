@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
@@ -27,7 +26,7 @@
         .header {
             background: white;
             border-bottom: 1px solid #f0f0f0;
-            padding: 16px 0;
+            padding: 14px 0;
             position: sticky;
             top: 0;
             z-index: 100;
@@ -41,6 +40,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 12px;
         }
 
         .logo {
@@ -50,7 +50,8 @@
             text-decoration: none;
             color: #1a1a2e;
             font-weight: 700;
-            font-size: 20px;
+            font-size: 18px;
+            flex-shrink: 0;
         }
 
         .logo i { color: #667eea; }
@@ -58,14 +59,14 @@
         .header-actions {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
         }
 
         .btn-outline {
             background: white;
             color: #667eea;
             border: 2px solid #667eea;
-            padding: 8px 16px;
+            padding: 7px 14px;
             border-radius: 8px;
             font-family: 'Montserrat', sans-serif;
             font-size: 13px;
@@ -73,6 +74,10 @@
             cursor: pointer;
             text-decoration: none;
             transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
         }
 
         .btn-outline:hover { background: #f3f0ff; }
@@ -81,7 +86,7 @@
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             border: none;
-            padding: 8px 16px;
+            padding: 7px 14px;
             border-radius: 8px;
             font-family: 'Montserrat', sans-serif;
             font-size: 13px;
@@ -89,6 +94,9 @@
             cursor: pointer;
             text-decoration: none;
             transition: opacity 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .btn-primary:hover { opacity: 0.9; }
@@ -97,15 +105,15 @@
         .main {
             max-width: 1000px;
             margin: 0 auto;
-            padding: 32px 20px;
+            padding: 28px 20px;
         }
 
         /* ===== PERFIL ===== */
         .profile-card {
             background: white;
             border-radius: 16px;
-            padding: 28px;
-            margin-bottom: 24px;
+            padding: 24px;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
             gap: 20px;
@@ -113,64 +121,65 @@
         }
 
         .profile-avatar {
-            width: 72px;
-            height: 72px;
+            width: 68px;
+            height: 68px;
             border-radius: 50%;
             background: linear-gradient(135deg, #667eea, #764ba2);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 700;
             flex-shrink: 0;
         }
 
-        .profile-info h2 {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
+        .profile-info h2 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
 
         .profile-info p {
             color: #6b7280;
-            font-size: 14px;
+            font-size: 13px;
             margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         /* ===== STATS ===== */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-bottom: 28px;
+            gap: 14px;
+            margin-bottom: 24px;
         }
 
         .stat-card {
             background: white;
             border-radius: 12px;
-            padding: 20px;
+            padding: 18px 12px;
             text-align: center;
             box-shadow: 0 2px 12px rgba(0,0,0,0.06);
         }
 
         .stat-card .stat-value {
-            font-size: 26px;
+            font-size: 22px;
             font-weight: 700;
             color: #667eea;
             margin-bottom: 4px;
+            word-break: break-all;
         }
 
         .stat-card .stat-label {
-            font-size: 13px;
+            font-size: 12px;
             color: #6b7280;
+            line-height: 1.4;
         }
 
         /* ===== HISTORIAL ===== */
         .section-title {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 700;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -181,8 +190,8 @@
         .order-card {
             background: white;
             border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 16px;
+            padding: 18px;
+            margin-bottom: 14px;
             box-shadow: 0 2px 12px rgba(0,0,0,0.06);
             border-left: 4px solid #667eea;
             transition: transform 0.2s;
@@ -194,49 +203,30 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             flex-wrap: wrap;
             gap: 8px;
         }
 
-        .order-number {
-            font-weight: 700;
-            font-size: 15px;
-            color: #1a1a2e;
-        }
-
-        .order-date {
-            font-size: 13px;
-            color: #6b7280;
-            margin-top: 2px;
-        }
+        .order-number { font-weight: 700; font-size: 14px; color: #1a1a2e; }
+        .order-date   { font-size: 12px; color: #6b7280; margin-top: 3px; }
 
         .order-status {
-            padding: 4px 12px;
+            padding: 4px 10px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: 600;
+            white-space: nowrap;
         }
 
-        .status-pending {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .status-approved {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .status-cancelled {
-            background: #fee2e2;
-            color: #991b1b;
-        }
+        .status-pending   { background: #fef3c7; color: #92400e; }
+        .status-approved  { background: #dcfce7; color: #166534; }
+        .status-cancelled { background: #fee2e2; color: #991b1b; }
 
         .order-items-list {
             border-top: 1px solid #f3f4f6;
             border-bottom: 1px solid #f3f4f6;
-            padding: 12px 0;
+            padding: 10px 0;
             margin-bottom: 12px;
         }
 
@@ -245,24 +235,21 @@
             justify-content: space-between;
             align-items: center;
             padding: 4px 0;
-            font-size: 14px;
+            font-size: 13px;
+            gap: 8px;
         }
 
         .order-item-name {
             color: #374151;
             flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
-        .order-item-qty {
-            color: #6b7280;
-            margin: 0 12px;
-            font-size: 13px;
-        }
-
-        .order-item-price {
-            font-weight: 600;
-            color: #1a1a2e;
-        }
+        .order-item-qty   { color: #6b7280; font-size: 12px; flex-shrink: 0; }
+        .order-item-price { font-weight: 600; color: #1a1a2e; flex-shrink: 0; }
 
         .order-footer {
             display: flex;
@@ -273,104 +260,96 @@
         }
 
         .order-meta {
-            font-size: 13px;
+            font-size: 12px;
             color: #6b7280;
             display: flex;
-            gap: 16px;
+            gap: 12px;
             flex-wrap: wrap;
         }
 
-        .order-meta span {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
+        .order-meta span { display: flex; align-items: center; gap: 4px; }
+        .order-total { font-size: 15px; font-weight: 700; color: #667eea; white-space: nowrap; }
 
-        .order-total {
-            font-size: 16px;
-            font-weight: 700;
-            color: #667eea;
-        }
-
-        /* ===== EMPTY / LOADING ===== */
+        /* ===== STATES ===== */
         .empty-state {
             text-align: center;
-            padding: 60px 20px;
+            padding: 56px 20px;
             background: white;
             border-radius: 12px;
             box-shadow: 0 2px 12px rgba(0,0,0,0.06);
         }
 
-        .empty-state i {
-            font-size: 48px;
-            color: #d1d5db;
-            margin-bottom: 16px;
-        }
+        .empty-state i    { font-size: 44px; color: #d1d5db; margin-bottom: 14px; display: block; }
+        .empty-state h3   { font-size: 17px; color: #374151; margin-bottom: 8px; }
+        .empty-state p    { color: #6b7280; margin-bottom: 22px; }
 
-        .empty-state h3 {
-            font-size: 18px;
-            color: #374151;
-            margin-bottom: 8px;
-        }
-
-        .empty-state p {
-            color: #6b7280;
-            margin-bottom: 24px;
-        }
-
-        .loading-state {
-            text-align: center;
-            padding: 60px 20px;
-        }
+        .loading-state    { text-align: center; padding: 60px 20px; }
 
         .spinner {
             border: 3px solid #f3f4f6;
             border-top: 3px solid #667eea;
             border-radius: 50%;
-            width: 36px;
-            height: 36px;
+            width: 36px; height: 36px;
             animation: spin 0.8s linear infinite;
             margin: 0 auto 16px;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .no-auth { text-align: center; padding: 72px 20px; }
+        .no-auth i  { font-size: 52px; color: #667eea; margin-bottom: 18px; display: block; }
+        .no-auth h2 { font-size: 20px; margin-bottom: 8px; }
+        .no-auth p  { color: #6b7280; margin-bottom: 24px; }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+
+        @media (max-width: 768px) {
+            .main { padding: 20px 16px; }
+            .stats-grid { gap: 10px; }
+            .stat-card { padding: 14px 10px; }
+            .stat-card .stat-value { font-size: 18px; }
+            .order-card { padding: 14px; }
         }
 
-        /* ===== NO AUTH ===== */
-        .no-auth {
-            text-align: center;
-            padding: 80px 20px;
-        }
-
-        .no-auth i {
-            font-size: 56px;
-            color: #667eea;
-            margin-bottom: 20px;
-        }
-
-        .no-auth h2 {
-            font-size: 22px;
-            margin-bottom: 8px;
-        }
-
-        .no-auth p {
-            color: #6b7280;
-            margin-bottom: 28px;
-        }
-
-        /* ===== RESPONSIVE ===== */
         @media (max-width: 600px) {
+            .header .container { padding: 0 14px; }
+            .logo { font-size: 16px; }
+
+            /* Ocultar texto de botones en mobile */
+            .btn-outline .btn-text { display: none; }
+            .btn-outline { padding: 8px 10px; }
+
+            .profile-card { flex-direction: column; text-align: center; padding: 20px 16px; }
+            .profile-info p { justify-content: center; }
+
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
-            .profile-card { flex-direction: column; text-align: center; }
+
             .order-meta { flex-direction: column; gap: 4px; }
+            .order-item-name { white-space: normal; }
+        }
+
+        @media (max-width: 420px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .stat-card {
+                padding: 14px;
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                text-align: left;
+            }
+            .stat-card .stat-value { font-size: 20px; margin-bottom: 0; }
+
+            .order-header { flex-direction: column; }
+            .order-status { align-self: flex-start; }
+            .order-footer { flex-direction: column; align-items: flex-start; }
+            .order-total  { font-size: 16px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
     <header class="header">
         <div class="container">
             <a href="index.html" class="logo">
@@ -379,16 +358,17 @@
             </a>
             <div class="header-actions">
                 <a href="index.html" class="btn-outline">
-                    <i class="fas fa-shopping-bag"></i> Seguir comprando
+                    <i class="fas fa-shopping-bag"></i>
+                    <span class="btn-text">Seguir comprando</span>
                 </a>
                 <button class="btn-outline" onclick="cerrarSesion()" id="btnLogout" style="display:none">
-                    <i class="fas fa-sign-out-alt"></i> Salir
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="btn-text">Salir</span>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Main -->
     <main class="main" id="mainContent">
         <div class="loading-state">
             <div class="spinner"></div>
@@ -398,211 +378,374 @@
 
     <script>
         const firebaseConfig = {
-            apiKey: "AIzaSyBm_eFEYlE-GOpSp8PzRvUzGPEl2pIsWz0",
-            authDomain: "bliss-ffad9.firebaseapp.com",
-            projectId: "bliss-ffad9",
-            storageBucket: "bliss-ffad9.firebasestorage.app",
-            messagingSenderId: "863864024902",
-            appId: "1:863864024902:web:02cb9dd6997a0fa7353f47"
-        };
+    apiKey: "AIzaSyBm_eFEYlE-GOpSp8PzRvUzGPEl2pIsWz0",
+    authDomain: "bliss-ffad9.firebaseapp.com",
+    projectId: "bliss-ffad9",
+    storageBucket: "bliss-ffad9.firebasestorage.app",
+    messagingSenderId: "863864024902",
+    appId: "1:863864024902:web:02cb9dd6997a0fa7353f47"
+};
 
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+// Variable para almacenar el unsubscribe de las órdenes
+let ordersUnsubscribe = null;
 
-        function formatPrice(value) {
-            return Number(value || 0).toLocaleString('es-AR', {
-                style: 'currency',
-                currency: 'ARS',
-                minimumFractionDigits: 2
-            });
-        }
+function formatPrice(v) {
+    const num = Number(v || 0);
+    if (isNaN(num)) return '$0,00';
+    const [int, dec] = num.toFixed(2).split('.');
+    return '$' + int.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ',' + dec;
+}
 
-        function formatDate(timestamp) {
-            if (!timestamp) return 'Fecha no disponible';
-            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-            return date.toLocaleDateString('es-AR', {
-                day: '2-digit', month: 'long', year: 'numeric'
-            });
-        }
+function formatDate(ts) {
+    if (!ts) return 'Fecha no disponible';
+    const d = ts.toDate ? ts.toDate() : new Date(ts);
+    return d.toLocaleDateString('es-AR', { day: '2-digit', month: 'long', year: 'numeric' });
+}
 
-        function getStatusLabel(status) {
-            const map = {
-                pending: { label: 'Pendiente', class: 'status-pending' },
-                approved: { label: 'Aprobado', class: 'status-approved' },
-                cancelled: { label: 'Cancelado', class: 'status-cancelled' }
-            };
-            return map[status] || { label: 'Pendiente', class: 'status-pending' };
-        }
+function getStatusLabel(s) {
+    const statuses = {
+        pending:   { label: 'Pendiente',   cls: 'status-pending',   icon: 'fa-clock' },
+        approved:  { label: 'Confirmado',  cls: 'status-approved',  icon: 'fa-check-circle' },
+        shipped:   { label: 'Enviado',     cls: 'status-shipped',   icon: 'fa-shipping-fast' },
+        delivered: { label: 'Entregado',   cls: 'status-delivered', icon: 'fa-box-open' },
+        cancelled: { label: 'Cancelado',   cls: 'status-cancelled', icon: 'fa-times-circle' }
+    };
+    return statuses[s] || statuses.pending;
+}
 
-        function getPaymentLabel(method) {
-            const map = {
-                mercadopago: 'Mercado Pago',
-                transfer: 'Transferencia',
-                cash: 'Efectivo'
-            };
-            return map[method] || method || '-';
-        }
+function getPaymentLabel(m) {
+    const methods = {
+        mercadopago: 'Mercado Pago',
+        transfer: 'Transferencia bancaria',
+        cash: 'Efectivo en local'
+    };
+    return methods[m] || m || '-';
+}
 
-        function renderNoAuth() {
-            document.getElementById('mainContent').innerHTML = `
-                <div class="no-auth">
-                    <i class="fas fa-user-lock"></i>
-                    <h2>Iniciá sesión para ver tu cuenta</h2>
-                    <p>Necesitás estar logueado para ver tu historial de compras.</p>
-                    <a href="login.html" class="btn-primary" style="display:inline-flex;align-items:center;gap:8px;padding:12px 28px;font-size:15px;">
-                        <i class="fas fa-sign-in-alt"></i> Iniciar sesión
-                    </a>
-                </div>
-            `;
-        }
+function renderNoAuth() {
+    document.getElementById('mainContent').innerHTML = `
+        <div class="no-auth">
+            <i class="fas fa-user-lock"></i>
+            <h2>Iniciá sesión para ver tu cuenta</h2>
+            <p>Necesitás estar logueado para ver tu historial de compras.</p>
+            <a href="login.html" class="btn-primary" style="display:inline-flex;align-items:center;gap:8px;padding:12px 28px;font-size:15px;">
+                <i class="fas fa-sign-in-alt"></i> Iniciar sesión
+            </a>
+        </div>`;
+}
 
-        function renderOrders(user, userData, orders) {
-            document.getElementById('btnLogout').style.display = 'inline-flex';
+function renderOrders(user, userData, orders) {
+    document.getElementById('btnLogout').style.display = 'inline-flex';
 
-            const totalGastado = orders.reduce((sum, o) => sum + (Number(o.total) || 0), 0);
-            const inicial = (userData?.firstName || user.email || '?')[0].toUpperCase();
-            const nombreCompleto = userData
-                ? `${userData.firstName || ''} ${userData.lastName || ''}`.trim()
-                : user.email;
+    const totalGastado = orders.reduce((s, o) => s + (Number(o.total) || 0), 0);
+    const inicial = (userData?.firstName || user.email || '?')[0].toUpperCase();
+    const nombreCompleto = userData
+        ? `${userData.firstName || ''} ${userData.lastName || ''}`.trim()
+        : user.email;
 
-            let ordersHTML = '';
-
-            if (orders.length === 0) {
-                ordersHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-shopping-bag"></i>
-                        <h3>Todavía no realizaste ninguna compra</h3>
-                        <p>Cuando hagas tu primera compra, aparecerá acá.</p>
-                        <a href="index.html" class="btn-primary" style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;">
-                            <i class="fas fa-store"></i> Ir a la tienda
-                        </a>
-                    </div>
-                `;
-            } else {
-                ordersHTML = orders.map(order => {
-                    const status = getStatusLabel(order.status);
-                    const itemsHTML = (order.items || []).map(item => `
-                        <div class="order-item-row">
-                            <span class="order-item-name">${item.name || '-'}</span>
-                            <span class="order-item-qty">x${item.quantity || 1}</span>
-                            <span class="order-item-price">${formatPrice(item.price * item.quantity)}</span>
-                        </div>
-                    `).join('');
-
-                    return `
-                        <div class="order-card">
-                            <div class="order-header">
-                                <div>
-                                    <div class="order-number">${order.orderNumber || 'Sin número'}</div>
-                                    <div class="order-date"><i class="fas fa-calendar-alt" style="margin-right:4px"></i>${formatDate(order.createdAt)}</div>
-                                </div>
-                                <span class="order-status ${status.class}">${status.label}</span>
+    const ordersHTML = orders.length === 0
+        ? `<div class="empty-state">
+               <i class="fas fa-shopping-bag"></i>
+               <h3>Todavía no realizaste ninguna compra</h3>
+               <p>Cuando hagas tu primera compra, aparecerá acá.</p>
+               <a href="index.html" class="btn-primary" style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;">
+                   <i class="fas fa-store"></i> Ir a la tienda
+               </a>
+           </div>`
+        : orders.map(o => {
+            const st = getStatusLabel(o.status);
+            const items = (o.items || []).map(i => `
+                <div class="order-item-row">
+                    <span class="order-item-name">${escapeHtml(i.name || '-')}</span>
+                    <span class="order-item-qty">x${i.quantity || 1}</span>
+                    <span class="order-item-price">${formatPrice(i.price * i.quantity)}</span>
+                </div>`).join('');
+            
+            return `
+                <div class="order-card" data-order-id="${o.id}">
+                    <div class="order-header">
+                        <div>
+                            <div class="order-number">
+                                <i class="fas fa-receipt"></i> ${o.orderNumber || 'Sin número'}
                             </div>
-
-                            <div class="order-items-list">
-                                ${itemsHTML || '<p style="color:#6b7280;font-size:14px">Sin detalle de productos</p>'}
-                            </div>
-
-                            <div class="order-footer">
-                                <div class="order-meta">
-                                    <span><i class="fas fa-credit-card"></i> ${getPaymentLabel(order.paymentMethod)}</span>
-                                    <span><i class="fas fa-truck"></i> ${order.deliveryMethod || '-'}</span>
-                                    ${order.shippingAddress ? `<span><i class="fas fa-map-marker-alt"></i> ${order.shippingAddress}</span>` : ''}
-                                </div>
-                                <div class="order-total">${formatPrice(order.total)}</div>
+                            <div class="order-date">
+                                <i class="fas fa-calendar-alt" style="margin-right:4px"></i>${formatDate(o.createdAt)}
                             </div>
                         </div>
-                    `;
-                }).join('');
-            }
+                        <span class="order-status ${st.cls}">
+                            <i class="fas ${st.icon}" style="font-size:10px"></i>
+                            ${st.label}
+                        </span>
+                    </div>
+                    <div class="order-items-list">
+                        ${items || '<p style="color:#6b7280;font-size:13px">Sin detalle de productos</p>'}
+                    </div>
+                    <div class="order-footer">
+                        <div class="order-meta">
+                            <span><i class="fas fa-credit-card"></i> ${getPaymentLabel(o.paymentMethod)}</span>
+                            <span><i class="fas fa-truck"></i> ${o.deliveryMethod || '-'}</span>
+                            ${o.shippingAddress ? `<span><i class="fas fa-map-marker-alt"></i> ${escapeHtml(o.shippingAddress)}</span>` : ''}
+                        </div>
+                        <div class="order-total">${formatPrice(o.total)}</div>
+                    </div>
+                </div>`;
+        }).join('');
 
-            document.getElementById('mainContent').innerHTML = `
-                <div class="profile-card">
-                    <div class="profile-avatar">${inicial}</div>
-                    <div class="profile-info">
-                        <h2>${nombreCompleto}</h2>
-                        <p><i class="fas fa-envelope" style="margin-right:6px;color:#667eea"></i>${user.email}</p>
-                        ${userData?.phone ? `<p><i class="fas fa-phone" style="margin-right:6px;color:#667eea"></i>${userData.phone}</p>` : ''}
-                    </div>
-                </div>
+    document.getElementById('mainContent').innerHTML = `
+        <div class="profile-card">
+            <div class="profile-avatar">${inicial}</div>
+            <div class="profile-info">
+                <h2>${escapeHtml(nombreCompleto)}</h2>
+                <p><i class="fas fa-envelope" style="color:#667eea"></i>${user.email}</p>
+                ${userData?.phone ? `<p><i class="fas fa-phone" style="color:#667eea"></i>${escapeHtml(userData.phone)}</p>` : ''}
+            </div>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">${orders.length}</div>
+                <div class="stat-label">Compras realizadas</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">${formatPrice(totalGastado)}</div>
+                <div class="stat-label">Total gastado</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">${orders.filter(o => o.status === 'approved' || o.status === 'shipped' || o.status === 'delivered').length}</div>
+                <div class="stat-label">Pedidos procesados</div>
+            </div>
+        </div>
+        <div class="section-title"><i class="fas fa-history"></i> Historial de compras</div>
+        ${ordersHTML}`;
+}
 
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-value">${orders.length}</div>
-                        <div class="stat-label">Compras realizadas</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">${formatPrice(totalGastado)}</div>
-                        <div class="stat-label">Total gastado</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">${orders.filter(o => o.status === 'approved').length}</div>
-                        <div class="stat-label">Pedidos aprobados</div>
-                    </div>
-                </div>
+// Función de escape para evitar XSS
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
 
-                <div class="section-title">
-                    <i class="fas fa-history"></i> Historial de compras
-                </div>
-                ${ordersHTML}
-            `;
+// Función para escuchar cambios en tiempo real
+function subscribeToOrders(user) {
+    // Si ya hay una suscripción activa, la cancelamos
+    if (ordersUnsubscribe) {
+        ordersUnsubscribe();
+        ordersUnsubscribe = null;
+    }
+
+    // Creamos una consulta para escuchar órdenes del usuario
+    let query = db.collection('orders')
+        .where('userId', '==', user.uid)
+        .orderBy('createdAt', 'desc');
+
+    // Escuchamos cambios en tiempo real
+    ordersUnsubscribe = query.onSnapshot(async (snapshot) => {
+        let orders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        // Si no hay órdenes con userId, buscar por email
+        if (orders.length === 0) {
+            const emailQuery = db.collection('orders')
+                .where('email', '==', user.email)
+                .orderBy('createdAt', 'desc');
+            
+            const emailSnapshot = await emailQuery.get();
+            orders = emailSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         }
 
-        async function loadAccount(user) {
-            try {
-                // Cargar datos del usuario
-                const userDoc = await db.collection('users').doc(user.uid).get();
-                const userData = userDoc.exists ? userDoc.data() : null;
+        // Obtener datos del usuario
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        const userData = userDoc.exists ? userDoc.data() : null;
 
-                // Cargar órdenes del usuario
-                const ordersSnap = await db.collection('orders')
-                    .where('userId', '==', user.uid)
-                    .orderBy('createdAt', 'desc')
-                    .get();
+        // Renderizar con los datos actualizados
+        renderOrders(user, userData, orders);
 
-                // Si no hay órdenes por uid, buscar por email como fallback
-                let orders = ordersSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-                if (orders.length === 0) {
-                    const emailSnap = await db.collection('orders')
-                        .where('email', '==', user.email)
-                        .orderBy('createdAt', 'desc')
-                        .get();
-                    orders = emailSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                }
-
-                renderOrders(user, userData, orders);
-
-            } catch (error) {
-                console.error('Error cargando cuenta:', error);
-                document.getElementById('mainContent').innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-exclamation-circle" style="color:#dc2626"></i>
-                        <h3>Error al cargar tu cuenta</h3>
-                        <p>Intentá recargar la página.</p>
-                    </div>
-                `;
+        // Mostrar notificación si hay cambios (opcional)
+        if (window.lastOrdersCount !== orders.length) {
+            // Solo mostrar notificación si es una actualización (no la primera carga)
+            if (window.lastOrdersCount !== undefined) {
+                showToast('El estado de tus órdenes ha sido actualizado');
             }
+            window.lastOrdersCount = orders.length;
         }
 
-        function cerrarSesion() {
-            auth.signOut().then(() => {
-                window.location.href = 'index.html';
-            });
+    }, (error) => {
+        console.error('Error escuchando órdenes:', error);
+        // Si hay error, cargar de forma normal
+        loadOrdersNormal(user);
+    });
+}
+
+// Función de respaldo si falla el realtime
+async function loadOrdersNormal(user) {
+    try {
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        const userData = userDoc.exists ? userDoc.data() : null;
+
+        const snap = await db.collection('orders')
+            .where('userId', '==', user.uid)
+            .orderBy('createdAt', 'desc').get();
+
+        let orders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+        if (orders.length === 0) {
+            const snap2 = await db.collection('orders')
+                .where('email', '==', user.email)
+                .orderBy('createdAt', 'desc').get();
+            orders = snap2.docs.map(d => ({ id: d.id, ...d.data() }));
         }
 
-        // Escuchar estado de autenticación
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                loadAccount(user);
-            } else {
-                renderNoAuth();
+        renderOrders(user, userData, orders);
+    } catch (e) {
+        console.error(e);
+        document.getElementById('mainContent').innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-exclamation-circle" style="color:#dc2626"></i>
+                <h3>Error al cargar tu cuenta</h3>
+                <p>Intentá recargar la página.</p>
+                <button onclick="location.reload()" class="btn-primary" style="margin-top:16px">
+                    <i class="fas fa-sync-alt"></i> Recargar
+                </button>
+            </div>`;
+    }
+}
+
+// Función para mostrar notificaciones
+function showToast(message) {
+    // Verificar si ya existe un toast
+    let toast = document.querySelector('.custom-toast');
+    if (toast) toast.remove();
+
+    toast = document.createElement('div');
+    toast.className = 'custom-toast';
+    toast.innerHTML = `
+        <i class="fas fa-bell"></i>
+        <span>${message}</span>
+    `;
+    toast.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #667eea;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 1000;
+        animation: slideInUp 0.3s ease;
+        cursor: pointer;
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.animation = 'slideOutDown 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+    }, 4000);
+    
+    // Agregar estilos de animación si no existen
+    if (!document.querySelector('#toast-styles')) {
+        const style = document.createElement('style');
+        style.id = 'toast-styles';
+        style.textContent = `
+            @keyframes slideInUp {
+                from { transform: translateY(100px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
             }
-        });
+            @keyframes slideOutDown {
+                from { transform: translateY(0); opacity: 1; }
+                to { transform: translateY(100px); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+}
+
+// Agregar estilos para nuevos estados
+function addStatusStyles() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .status-shipped {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .status-delivered {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .status-cancelled {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .order-card {
+            transition: all 0.3s ease;
+        }
+        .order-card .order-status {
+            transition: all 0.2s ease;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+async function loadAccount(user) {
+    // Mostrar loading
+    document.getElementById('mainContent').innerHTML = `
+        <div class="loading-state">
+            <div class="spinner"></div>
+            <p style="color:#6b7280">Cargando tu cuenta...</p>
+        </div>`;
+
+    try {
+        // Agregar estilos para nuevos estados
+        addStatusStyles();
+        
+        // Suscribirse a cambios en tiempo real
+        subscribeToOrders(user);
+        
+    } catch (e) {
+        console.error(e);
+        document.getElementById('mainContent').innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-exclamation-circle" style="color:#dc2626"></i>
+                <h3>Error al cargar tu cuenta</h3>
+                <p>Intentá recargar la página.</p>
+            </div>`;
+    }
+}
+
+function cerrarSesion() {
+    // Cancelar suscripción antes de cerrar sesión
+    if (ordersUnsubscribe) {
+        ordersUnsubscribe();
+        ordersUnsubscribe = null;
+    }
+    auth.signOut().then(() => {
+        window.location.href = 'index.html';
+    });
+}
+
+// Escuchar cambios de autenticación
+auth.onAuthStateChanged(user => {
+    if (user) {
+        loadAccount(user);
+    } else {
+        // Cancelar suscripción si existe
+        if (ordersUnsubscribe) {
+            ordersUnsubscribe();
+            ordersUnsubscribe = null;
+        }
+        renderNoAuth();
+    }
+});
     </script>
 </body>
 </html>

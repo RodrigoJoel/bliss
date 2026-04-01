@@ -247,9 +247,33 @@ class CheckoutSystem {
         }
     }
 
+    // ==================== DESCONTAR STOCK ====================
+    async descontarStock(items) {
+        if (!firebase.apps.length) return;
+        const db = firebase.firestore();
+        await db.runTransaction(async transaction => {
+            for (const item of items) {
+                if (!item.id) continue;
+                const ref = db.collection('products').doc(item.id);
+                const doc = await transaction.get(ref);
+                if (!doc.exists) continue;
+                const stockActual = Number(doc.data().qty ?? 0);
+                const cantidad = Number(item.quantity || 1);
+                if (stockActual < cantidad) {
+                    throw new Error('Stock insuficiente para "' + item.name + '". Solo quedan ' + stockActual + ' unidades.');
+                }
+                transaction.update(ref, {
+                    qty: stockActual - cantidad,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }
+        });
+    }
+
     // ==================== PROCESAR ORDEN ====================
     async processOrder() {
         try {
+            await this.descontarStock(this.orderData.items);
             const orderId = await this.saveOrderToFirebase();
             await emailService.sendOrderConfirmation(this.orderData, this.customerData);
             await emailService.sendAdminNotification(this.orderData, this.customerData);
@@ -257,7 +281,11 @@ class CheckoutSystem {
             this.showConfirmation(orderId);
         } catch (error) {
             console.error('Error procesando orden:', error);
-            this.showError('Error al procesar la orden. Intenta nuevamente.');
+            if (error.message && error.message.includes('Stock insuficiente')) {
+                this.showError(error.message);
+            } else {
+                this.showError('Error al procesar la orden. Intenta nuevamente.');
+            }
         } finally {
             this.hideLoading();
         }

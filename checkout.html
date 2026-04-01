@@ -83,7 +83,7 @@
                         const totalEl = document.getElementById('orderTotal');
 
                         const FREE_THRESHOLD = 60.000;
-                        const SHIPPING_COST = 2500;
+                        const SHIPPING_COST = 'A coordinar (puede ser un valor fijo o calculado según la ubicación)';
 
                         function parseCurrency(text){
                             if(!text) return 0;
@@ -101,7 +101,7 @@
                             const subtotal = parseCurrency(subtotalEl.textContent);
                             // Aplicar regla: si subtotal > 0 y menor a 60000 => envío 2500, si >= 60000 => gratis
                             const shipping = (subtotal > 0 && subtotal < FREE_THRESHOLD) ? SHIPPING_COST : 0;
-                            shippingEl.textContent = shipping === 0 ? 'Gratis' : formatCurrency(shipping);
+                            shippingEl.textContent = shipping === 0 ? 'A coordinar' : formatCurrency(shipping);
                             totalEl.textContent = formatCurrency(subtotal + shipping);
                         }
 
