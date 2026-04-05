@@ -1,376 +1,158 @@
-// Credenciales de administrador
-// IMPORTANTE: Cambia estas credenciales antes de subir a producción
-const ADMIN_CREDENTIALS = [
-    {
-        username: 'admin',
-        password: 'BlissAdmin2024!', // Contraseña fuerte por defecto
-        name: 'Administrador Principal'
-    },
-    {
-        username: 'staff',
-        password: 'BlissStaff2024!', // Para personal autorizado
-        name: 'Miembro del Staff'
-    }
-];
+/**
+ * Bliss - Panel de Administración
+ * Lógica de Autenticación con Firebase
+ */
 
-// Configuración de seguridad
 const SECURITY_CONFIG = {
     maxAttempts: 5,
-    lockTime: 15 * 60 * 1000, // 15 minutos en milisegundos
-    sessionDuration: 8 * 60 * 60 * 1000 // 8 horas
+    lockTime: 15 * 60 * 1000,
+    sessionDuration: 8 * 60 * 60 * 1000
 };
 
-// Estado de login
 let loginAttempts = 0;
 let isLocked = false;
 let lockUntil = 0;
 
-// Inicializar
-document.addEventListener('DOMContentLoaded', function() {
-    // Verificar si ya está logueado
-   // checkExistingSession();
-    
-    // Cargar intentos previos desde localStorage
-   // loadLoginState();
-
-    // Configurar formulario
+document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('adminLoginForm');
-    const loginButton = document.getElementById('loginButton');
-    
-    loginForm.addEventListener('submit', handleLogin);
-    
-    // Configurar recordarme
-    const rememberMe = document.getElementById('rememberMe');
-    const savedRemember = localStorage.getItem('admin_remember') === 'true';
-    if (rememberMe) {
-        rememberMe.checked = savedRemember;
-        if (savedRemember) {
-            const savedUser = localStorage.getItem('admin_saved_user');
-            if (savedUser) {
-                document.getElementById('adminUsername').value = savedUser;
-            }
-        }
-    }
-    
-    // Configurar autocompletar con Enter
-    document.getElementById('adminUsername').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            document.getElementById('adminPassword').focus();
-        }
-    });
-    
-    document.getElementById('adminPassword').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            loginForm.dispatchEvent(new Event('submit'));
-        }
-    });
+    loadLoginState();
+    if (loginForm) loginForm.addEventListener('submit', handleLogin);
+    checkRememberMe();
 });
 
-// Cargar estado de login desde localStorage
-function loadLoginState() {
-    const savedAttempts = localStorage.getItem('admin_login_attempts');
-    const savedLockUntil = localStorage.getItem('admin_lock_until');
-    const savedIsLocked = localStorage.getItem('admin_is_locked');
-    
-    if (savedAttempts) {
-        loginAttempts = parseInt(savedAttempts);
-    }
-    
-    if (savedLockUntil) {
-        lockUntil = parseInt(savedLockUntil);
-        if (Date.now() < lockUntil) {
-            isLocked = true;
-        } else {
-            // Si el tiempo de bloqueo ya pasó, limpiar
-            clearLock();
-        }
-    }
-    
-    if (savedIsLocked === 'true' && Date.now() < lockUntil) {
-        isLocked = true;
-    }
+// --- FUNCIONES DEL MODAL (Lo que faltaba) ---
+
+function showForgotPassword(e) {
+    if(e) e.preventDefault();
+    const modal = document.getElementById('forgotModal');
+    modal.style.display = 'flex';
 }
 
-// Guardar estado de login
-function saveLoginState() {
-    localStorage.setItem('admin_login_attempts', loginAttempts.toString());
-    localStorage.setItem('admin_lock_until', lockUntil.toString());
-    localStorage.setItem('admin_is_locked', isLocked.toString());
+function closeForgotModal() {
+    const modal = document.getElementById('forgotModal');
+    modal.style.display = 'none';
+    document.getElementById('resetMessage').innerText = "";
 }
 
-// Limpiar bloqueo
-function clearLock() {
-    loginAttempts = 0;
-    isLocked = false;
-    lockUntil = 0;
-    saveLoginState();
-}
+async function sendResetEmail() {
+    const emailInput = document.getElementById('resetEmail');
+    const msg = document.getElementById('resetMessage');
+    const email = emailInput.value.trim();
+    const targetEmail = email ? email : "blissrcia@gmail.com";
 
-// Verificar sesión existente
-function checkExistingSession() {
-    const sessionToken = localStorage.getItem('admin_session_token');
-    const sessionExpiry = localStorage.getItem('admin_session_expiry');
-    
-    if (sessionToken && sessionExpiry) {
-        const now = Date.now();
-        const expiry = parseInt(sessionExpiry);
-        
-        if (now < expiry) {
-            // Sesión válida, redirigir al panel
-            window.location.href = 'admin.html';
-        } else {
-            // Sesión expirada, limpiar
-            localStorage.removeItem('admin_session_token');
-            localStorage.removeItem('admin_session_expiry');
-            localStorage.removeItem('admin_user_name');
-        }
+    try {
+        await firebase.auth().sendPasswordResetEmail(targetEmail);
+        msg.innerText = `Enlace enviado a ${targetEmail}`;
+        msg.style.color = "#009900";
+        setTimeout(closeForgotModal, 3000);
+    } catch (error) {
+        msg.innerText = "Error: " + error.message;
+        msg.style.color = "red";
     }
 }
 
-// Manejar login
+// --- LÓGICA DE LOGIN ---
+
 async function handleLogin(e) {
     e.preventDefault();
     
     if (isLocked) {
-        const remainingTime = Math.ceil((lockUntil - Date.now()) / 60000); // En minutos
-        showError(`Cuenta bloqueada. Intenta nuevamente en ${remainingTime} minutos.`);
-        return;
+        const remainingTime = Math.ceil((lockUntil - Date.now()) / 60000);
+        if (remainingTime > 0) {
+            showError(`Bloqueado. Intenta en ${remainingTime} min.`);
+            return;
+        } else {
+            clearLock();
+        }
     }
     
-    const username = document.getElementById('adminUsername').value.trim();
+    const email = document.getElementById('adminUsername').value.trim();
     const password = document.getElementById('adminPassword').value;
     const rememberMe = document.getElementById('rememberMe').checked;
-    const loginButton = document.getElementById('loginButton');
     
-    // Validaciones básicas
-    if (!username || !password) {
-        showError('Por favor completa todos los campos');
-        return;
+    setLoadingState(true);
+
+    try {
+        const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+        handleSuccessfulLogin(userCredential.user, rememberMe);
+    } catch (error) {
+        let message = 'Correo o contraseña incorrectos';
+        if (error.code === 'auth/too-many-requests') message = 'Demasiados intentos. Bloqueado.';
+        handleFailedLogin(message);
     }
-    
-    // Mostrar loading
-    loginButton.classList.add('loading');
-    loginButton.disabled = true;
-    loginButton.querySelector('span').style.opacity = '0.5';
-    loginButton.querySelector('.loading-spinner').style.display = 'block';
-    
-    // Simular delay de red (en producción esto sería una petición real)
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    // Buscar usuario
-    const user = ADMIN_CREDENTIALS.find(u => u.username === username);
-    
-    if (!user) {
-        handleFailedLogin('Usuario no encontrado');
-        return;
-    }
-    
-    if (user.password !== password) {
-        handleFailedLogin('Contraseña incorrecta');
-        return;
-    }
-    
-    // Login exitoso
-    handleSuccessfulLogin(user, rememberMe);
 }
 
-// Manejar login exitoso
 function handleSuccessfulLogin(user, rememberMe) {
-    // Limpiar intentos fallidos
     clearLock();
-    
-    // Guardar preferencia de "recordarme"
     localStorage.setItem('admin_remember', rememberMe.toString());
-    if (rememberMe) {
-        localStorage.setItem('admin_saved_user', user.username);
-    } else {
-        localStorage.removeItem('admin_saved_user');
-    }
+    if (rememberMe) localStorage.setItem('admin_saved_user', user.email);
     
-    // Crear sesión
-    const sessionToken = generateSessionToken();
-    const sessionExpiry = Date.now() + SECURITY_CONFIG.sessionDuration;
+    localStorage.setItem('admin_session_token', 'fb_' + user.uid);
+    localStorage.setItem('admin_session_expiry', (Date.now() + SECURITY_CONFIG.sessionDuration).toString());
+    localStorage.setItem('admin_user_name', user.email.split('@')[0]);
     
-    localStorage.setItem('admin_session_token', sessionToken);
-    localStorage.setItem('admin_session_expiry', sessionExpiry.toString());
-    localStorage.setItem('admin_user_name', user.name);
-    localStorage.setItem('admin_last_login', new Date().toISOString());
-    
-    // Mostrar mensaje de éxito
-    showSuccess('¡Acceso exitoso! Redirigiendo...');
-    
-    // Redirigir después de 1.5 segundos
-    setTimeout(() => {
-        window.location.href = 'admin.html';
-    }, 1500);
+    showSuccess('¡Acceso concedido!');
+    setTimeout(() => { window.location.href = 'admin.html'; }, 1500);
 }
 
-// Manejar login fallido
 function handleFailedLogin(message) {
-    const loginButton = document.getElementById('loginButton');
-    
-    // Restaurar botón
-    loginButton.classList.remove('loading');
-    loginButton.disabled = false;
-    loginButton.querySelector('span').style.opacity = '1';
-    loginButton.querySelector('.loading-spinner').style.display = 'none';
-    
-    // Incrementar intentos
+    setLoadingState(false);
     loginAttempts++;
-    
+    saveLoginState();
     if (loginAttempts >= SECURITY_CONFIG.maxAttempts) {
-        // Bloquear cuenta
         isLocked = true;
         lockUntil = Date.now() + SECURITY_CONFIG.lockTime;
         saveLoginState();
-        
-        const remainingTime = Math.ceil(SECURITY_CONFIG.lockTime / 60000);
-        showError(`Demasiados intentos fallidos. Cuenta bloqueada por ${remainingTime} minutos.`);
+        showError("Máximos intentos alcanzados.");
     } else {
-        const remainingAttempts = SECURITY_CONFIG.maxAttempts - loginAttempts;
-        showError(`${message}. Intentos restantes: ${remainingAttempts}`);
-        saveLoginState();
+        showError(`${message}. Quedan ${SECURITY_CONFIG.maxAttempts - loginAttempts}`);
     }
 }
 
-// Generar token de sesión
-function generateSessionToken() {
-    return 'admin_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+// --- UTILIDADES ---
+
+function setLoadingState(isLoading) {
+    const btn = document.getElementById('loginButton');
+    btn.disabled = isLoading;
+    btn.querySelector('.loading-spinner').style.display = isLoading ? 'block' : 'none';
+    btn.querySelector('span').style.opacity = isLoading ? '0.5' : '1';
 }
 
-// Mostrar error
-function showError(message) {
-    // Crear elemento de error
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'error-message';
-    errorDiv.innerHTML = `
-        <i class="fas fa-exclamation-circle"></i>
-        <span>${message}</span>
-    `;
-    
-    // Estilos
-    errorDiv.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: #ffe6e6;
-        border: 1px solid #ff9999;
-        border-radius: 8px;
-        padding: 15px 20px;
-        color: #cc0000;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        z-index: 10000;
-        animation: slideInRight 0.3s ease, slideOutRight 0.3s ease 2.7s;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    `;
-    
-    document.body.appendChild(errorDiv);
-    
-    // Remover después de 3 segundos
-    setTimeout(() => {
-        if (errorDiv.parentNode) {
-            errorDiv.parentNode.removeChild(errorDiv);
-        }
-    }, 3000);
-}
-
-// Mostrar éxito
-function showSuccess(message) {
-    const successDiv = document.createElement('div');
-    successDiv.className = 'success-message';
-    successDiv.innerHTML = `
-        <i class="fas fa-check-circle"></i>
-        <span>${message}</span>
-    `;
-    
-    successDiv.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: #e6ffe6;
-        border: 1px solid #99ff99;
-        border-radius: 8px;
-        padding: 15px 20px;
-        color: #009900;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        z-index: 10000;
-        animation: slideInRight 0.3s ease;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    `;
-    
-    document.body.appendChild(successDiv);
-    
-    setTimeout(() => {
-        if (successDiv.parentNode) {
-            successDiv.parentNode.removeChild(successDiv);
-        }
-    }, 3000);
-}
-
-// Alternar visibilidad de contraseña
 function togglePassword() {
-    const passwordInput = document.getElementById('adminPassword');
-    const toggleIcon = document.querySelector('.toggle-password i');
-    
-    if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        toggleIcon.className = 'fas fa-eye-slash';
-        toggleIcon.title = 'Ocultar contraseña';
-    } else {
-        passwordInput.type = 'password';
-        toggleIcon.className = 'fas fa-eye';
-        toggleIcon.title = 'Mostrar contraseña';
+    const input = document.getElementById('adminPassword');
+    input.type = input.type === 'password' ? 'text' : 'password';
+}
+
+function checkRememberMe() {
+    if (localStorage.getItem('admin_remember') === 'true') {
+        document.getElementById('rememberMe').checked = true;
+        document.getElementById('adminUsername').value = localStorage.getItem('admin_saved_user') || "";
     }
 }
 
-// Mostrar modal de contraseña olvidada
-function showForgotPassword() {
-    const modal = document.getElementById('forgotModal');
-    modal.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
+function saveLoginState() {
+    localStorage.setItem('admin_login_attempts', loginAttempts);
+    localStorage.setItem('admin_lock_until', lockUntil);
 }
 
-// Cerrar modal
-function closeForgotModal() {
-    const modal = document.getElementById('forgotModal');
-    modal.style.display = 'none';
-    document.body.style.overflow = 'auto';
+function loadLoginState() {
+    loginAttempts = parseInt(localStorage.getItem('admin_login_attempts') || "0");
+    lockUntil = parseInt(localStorage.getItem('admin_lock_until') || "0");
+    if (lockUntil && Date.now() < lockUntil) isLocked = true;
 }
 
-// Cerrar modal al hacer clic fuera
-document.addEventListener('click', function(e) {
-    const modal = document.getElementById('forgotModal');
-    if (e.target === modal) {
-        closeForgotModal();
-    }
-});
+function clearLock() {
+    loginAttempts = 0; isLocked = false; lockUntil = 0;
+    saveLoginState();
+}
 
-// Cerrar modal con Escape
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        closeForgotModal();
-    }
-});
+function showError(m) { createToast(m, '#ffe6e6', '#cc0000', 'fa-exclamation-circle'); }
+function showSuccess(m) { createToast(m, '#e6ffe6', '#009900', 'fa-check-circle'); }
 
-// Agregar estilos de animación
-if (!document.querySelector('#notification-styles')) {
-    const style = document.createElement('style');
-    style.id = 'notification-styles';
-    style.textContent = `
-        @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        @keyframes slideOutRight {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
-        }
-    `;
-    document.head.appendChild(style);
+function createToast(message, bgColor, textColor, icon) {
+    const toast = document.createElement('div');
+    toast.style.cssText = `position: fixed; top: 20px; right: 20px; background: ${bgColor}; color: ${textColor}; padding: 15px 25px; border-radius: 8px; z-index: 9999; display: flex; align-items: center; gap: 10px; animation: slideIn 0.4s ease forwards;`;
+    toast.innerHTML = `<i class="fas ${icon}"></i> <span>${message}</span>`;
+    document.body.appendChild(toast);
+    setTimeout(() => { toast.remove(); }, 3000);
 }

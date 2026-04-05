@@ -64,7 +64,12 @@
         <div class="header-container">
             <div class="header-left">
                 <div class="logo-section">
-                    <img src="imagenes/logo-bliss.png" alt="Bliss Logo" class="logo-img">
+                    <img id="header-logo" 
+                        src="imagenes/logo-bliss.png" 
+                        alt="Bliss Logo" 
+                        class="logo-img" 
+                        onclick="window.location.href='index.html'" 
+                        style="cursor: pointer; object-fit: contain;">
                 </div>
                 
                 <div class="catalog-dropdown" id="catalog-dropdown">
@@ -122,9 +127,21 @@
             <p class="page-subtitle">Descubrí nuestra exclusiva selección de bijouterie para realzar tu estilo. Cada pieza está pensada para acompañarte en cada momento.</p>
         </div>
         
-        <div class="cart-indicator" onclick="window.location.href='carrito.html'">
-            <i class="fas fa-shopping-cart"></i>
-            <span id="total-cart-count">0</span> productos en el carrito
+        <div class="products-toolbar">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Buscar joyas, collares, pulseras...">
+            </div>
+            
+            <div class="filter-sort">
+                <label for="sortSelect"><i class="fas fa-sort-amount-down"></i> Ordenar por:</label>
+                <select id="sortSelect">
+                    <option value="default">Relevancia</option>
+                    <option value="price-asc">Menor precio</option>
+                    <option value="price-desc">Mayor precio</option>
+                    <option value="name-asc">Nombre (A-Z)</option>
+                </select>
+            </div>
         </div>
         
         <div id="productsGrid" class="products-grid"></div>

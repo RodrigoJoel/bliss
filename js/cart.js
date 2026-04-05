@@ -1,4 +1,4 @@
-// js/cart.js - SISTEMA UNIFICADO DEL CARRITO (VERSIÓN MEJORADA)
+// js/cart.js - SISTEMA UNIFICADO DEL CARRITO (VERSIÓN FINAL CORREGIDA)
 
 class CartSystem {
     constructor() {
@@ -9,7 +9,6 @@ class CartSystem {
 
     /* ==================== CORE ==================== */
 
-    
     loadCart() {
         try {
             const saved = localStorage.getItem(this.CART_KEY);
@@ -84,34 +83,33 @@ class CartSystem {
     }
 
     updateQuantity(productId, section, newQuantity) {
-    section = Number(section);
+        section = Number(section);
 
-    const item = this.items.find(i =>
-        i.id === productId && Number(i.section) === section
-    );
-
-    if (!item) return;
-
-    if (newQuantity < 1) {
-        // ❌ Eliminar producto
-        this.items = this.items.filter(i =>
-            !(i.id === productId && Number(i.section) === section)
+        const item = this.items.find(i =>
+            i.id === productId && Number(i.section) === section
         );
 
-        this.saveCart();
+        if (!item) return;
 
-        // 🔥 SI EL CARRITO QUEDA VACÍO → FORZAR UI VACÍA
-        if (this.items.length === 0) {
-            this.updateCartUI(); // fuerza render correcto
+        // 🔥 SI LLEGA A 0 → ELIMINAR
+        if (newQuantity < 1) {
+            this.items = this.items.filter(i =>
+                !(i.id === productId && Number(i.section) === section)
+            );
+
+            this.saveCart();
+
+            // 🔥 SI QUEDA VACÍO → MISMO EFECTO QUE VACIAR
+            if (this.items.length === 0) {
+                this.clearCart();
+            }
+
+            return;
         }
 
-        return;
+        item.quantity = newQuantity;
+        this.saveCart();
     }
-
-    // ✅ Actualizar normalmente
-    item.quantity = newQuantity;
-    this.saveCart();
-}
 
     clearCart() {
         this.items = [];
@@ -126,12 +124,12 @@ class CartSystem {
     }
 
     calculateShipping() {
-    return 0; // el envío se coordina luego
-}
+        return 0;
+    }
 
     /* ==================== RENDER ==================== */
 
-    renderCartPage() {
+    async renderCartPage() {
         const container = document.getElementById('cart-items-container');
         const empty = document.getElementById('empty-cart-message');
         const clearBtn = document.getElementById('clear-cart-btn');
@@ -144,6 +142,7 @@ class CartSystem {
             if (clearBtn) clearBtn.style.display = 'none';
             if (checkoutBtn) checkoutBtn.style.display = 'none';
             this.updateSummary(0, 0);
+            container.innerHTML = '';
             return;
         }
 
@@ -152,7 +151,6 @@ class CartSystem {
         if (checkoutBtn) checkoutBtn.style.display = 'block';
 
         container.innerHTML = this.items.map(item => `
-
             <div class="cart-item">
                 <img src="${item.image || 'imagenes/default-product.jpg'}" class="item-image">
 
@@ -160,18 +158,21 @@ class CartSystem {
                     <h4>${this.escapeHtml(item.name)}</h4>
                     <p class="item-category">${this.getCategoryName(item.section)}</p>
                     <p class="item-price">${this.formatPrice(item.price)} c/u</p>
+                    <small id="stock-msg-${item.id}-${item.section}" style="color:#e74c3c; display:none;">
+                        Stock máximo alcanzado
+                    </small>
                 </div>
 
                 <div class="quantity-controls">
                     <button class="qty-btn"
-                        onclick="cart.changeQuantity('${item.id}', ${item.section}, ${item.quantity - 1})"
-                        ${item.quantity <= 1 ? 'disabled' : ''}>
+                        onclick="cart.changeQuantity('${item.id}', ${item.section}, ${item.quantity - 1})">
                         <i class="fas fa-minus"></i>
                     </button>
 
                     <span class="qty-value">${item.quantity}</span>
 
                     <button class="qty-btn"
+                        id="plus-${item.id}-${item.section}"
                         onclick="cart.changeQuantity('${item.id}', ${item.section}, ${item.quantity + 1})">
                         <i class="fas fa-plus"></i>
                     </button>
@@ -187,34 +188,55 @@ class CartSystem {
             </div>
         `).join('');
 
+        // 🔒 CONTROL DE STOCK
+        this.items.forEach(async (item) => {
+            if (typeof getProductStock === 'function') {
+                const stock = await getProductStock(item.id);
+
+                const btn = document.getElementById(`plus-${item.id}-${item.section}`);
+                const msg = document.getElementById(`stock-msg-${item.id}-${item.section}`);
+
+                if (!btn) return;
+
+                if (item.quantity >= stock && stock > 0) {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.5';
+                    btn.style.cursor = 'not-allowed';
+
+                    if (msg) msg.style.display = 'block';
+                } else {
+                    btn.disabled = false;
+                    if (msg) msg.style.display = 'none';
+                }
+            }
+        });
+
         const subtotal = this.getSubtotal();
-        const shipping = "A coordinar";
-        this.updateSummary(subtotal, shipping);
+        this.updateSummary(subtotal, "A coordinar");
     }
 
     updateSummary(subtotal, shipping) {
+        const total = subtotal;
 
-    const total = subtotal; // 👈 el total es solo el subtotal
+        const s = document.getElementById('summary-subtotal');
+        const sh = document.getElementById('summary-shipping');
+        const t = document.getElementById('summary-total');
 
-    const s = document.getElementById('summary-subtotal');
-    const sh = document.getElementById('summary-shipping');
-    const t = document.getElementById('summary-total');
-
-    if (s) s.textContent = this.formatPrice(subtotal);
-    if (sh) sh.textContent = shipping;
-    if (t) t.textContent = this.formatPrice(total);
-}
+        if (s) s.textContent = this.formatPrice(subtotal);
+        if (sh) sh.textContent = shipping;
+        if (t) t.textContent = this.formatPrice(total);
+    }
 
     /* ==================== HELPERS ==================== */
 
     formatPrice(value) {
-    const number = Number(value) || 0;
+        const number = Number(value) || 0;
 
-    return number.toLocaleString('es-AR', {
-        style: 'currency',
-        currency: 'ARS'
-    });
-}
+        return number.toLocaleString('es-AR', {
+            style: 'currency',
+            currency: 'ARS'
+        });
+    }
 
     getCategoryName(section) {
         return {
@@ -239,7 +261,7 @@ class CartSystem {
         setTimeout(() => toast.classList.remove('show'), 2000);
     }
 
-    /* ==================== API PÚBLICA ==================== */
+    /* ==================== API ==================== */
 
     changeQuantity(id, section, qty) {
         this.updateQuantity(id, section, qty);
@@ -248,6 +270,12 @@ class CartSystem {
     removeItem(id, section) {
         if (confirm('¿Eliminar este producto del carrito?')) {
             this.removeProduct(id, section);
+
+            if (this.items.length === 0) {
+                this.clearCart();
+            } else {
+                this.updateCartUI();
+            }
         }
     }
 

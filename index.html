@@ -77,8 +77,13 @@
   <header>
     <div class="container top-bar">
       <div class="header-left">
-        <img src="imagenes/logo-bliss.png" alt="Bliss Logo" class="logo-small">
-        
+        <img id="header-logo" 
+            src="imagenes/logosinfondo.png" 
+            alt="Bliss Logo" 
+            class="logo-small" 
+            onclick="window.location.href='index.html'" 
+            style="cursor: pointer; object-fit: contain;">
+
         <nav class="main-nav">
           <div class="dropdown" aria-haspopup="true">
             <button class="dropdown-button" aria-expanded="false" id="catalog-btn" type="button" aria-controls="catalog-menu">
@@ -110,9 +115,9 @@
               <i class="fas fa-caret-down" style="font-size:11px; color:#666; margin-left:2px;"></i>
             </div>
             <div class="user-dropdown-menu" id="userDropdownMenu">
-              <a href="mi-cuenta.html">
+             <!-- <a href="mi-cuenta.html">
                 <i class="fas fa-user"></i> Mi cuenta
-              </a>
+              </a> -->
               <a href="mi-cuenta.html">
                 <i class="fas fa-history"></i> Mis compras
               </a>
@@ -137,10 +142,10 @@
   <!-- WELCOME -->
   <section class="welcome-section" id="bienvenidos">
     <div class="welcome-bg">
-      <img src="imagenes/fondop.png" alt="Fondo Bliss" aria-hidden="true">
+      <img id="main-banner" src="imagenes/fondop.png" alt="Fondo Bliss" aria-hidden="true">
     </div>
     <div class="container">
-      <div class="welcome-label">Novedades • Aromas & Bijou</div>
+      <!-- <div class="welcome-label">Novedades • Aromas & Bijou</div> -->
       <h1 class="welcome-title">Placeres para tu hogar y tu estilo</h1>
       <p class="welcome-sub">
         Un espacio donde los aromas se vuelven emociones y los accesorios realzan tu esencia. En Bliss creamos experiencias que equilibran tu energía y transforman cada rincón en un momento único. Conectá con lo que te inspira, dejá que cada fragancia te envuelva y descubrí piezas que acompañan tu estilo. Bliss: tu espacio, tu energía, tus sentidos.
@@ -152,9 +157,9 @@
   <section class="features-section" id="productos" aria-label="Productos destacados">
     <div class="container">
       <!-- Item 1 -->
-      <article class="feature-row feature-1">
+      <article class="feature-row feature-1" >
         <figure>
-          <div class="simple-carousel" aria-roledescription="carousel" aria-label="Galería de imágenes de aromatizantes" id="carouselAromas">
+          <div class="simple-carousel" aria-roledescription="carousel" aria-label="Galería de imágenes de aromatizantes" id="carouselAromas" onclick="window.location.href='productosAromaticos.html'">
             <div class="slide active" role="group" aria-roledescription="slide" aria-label="1 de 3">
               <img src="imagenes/Aromatizantedeambiente.png" alt="Frasco de aromatizante" loading="lazy">
             </div>
@@ -178,7 +183,7 @@
       <!-- Item 2 -->
       <article class="feature-row feature-2">
         <figure>
-          <div class="simple-carousel" aria-roledescription="carousel" aria-label="Galería de imágenes de bijou" id="carouselBijou">
+          <div class="simple-carousel" aria-roledescription="carousel" aria-label="Galería de imágenes de bijou" id="carouselBijou" onclick="window.location.href='bijouterie.html'">
             <div class="slide active" role="group" aria-roledescription="slide" aria-label="1 de 3">
               <img src="imagenes/Aros dorados.png" alt="Aros dorados" loading="lazy">
             </div>
@@ -202,7 +207,7 @@
       <!-- Item 3 -->
       <article class="feature-row feature-3">
         <figure>
-          <div class="simple-carousel" aria-roledescription="carousel" aria-label="Galería de humidificadores" id="carouselHumid">
+          <div class="simple-carousel" aria-roledescription="carousel" aria-label="Galería de humidificadores" id="carouselHumid" onclick="window.location.href='humidificadores.html'">
             <div class="slide active" role="group" aria-roledescription="slide" aria-label="1 de 3">
               <img src="imagenes/Humificadoraromáticoled(flame).png" alt="Humidificador aromático LED" loading="lazy">
             </div>

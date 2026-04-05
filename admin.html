@@ -20,7 +20,7 @@
     <div class="admin-container">
         <!-- Sidebar / Menú lateral -->
         <aside class="admin-sidebar">
-            <div class="sidebar-header">
+            <div class="sidebar-header"> 
                 <div class="admin-logo">
                     <i class="fas fa-spa"></i>
                     <span>Bliss Admin</span>
@@ -245,7 +245,7 @@
                 <!-- Vista Imagen de Bienvenida -->
                 <div class="content-view" id="imagen-bienvenida">
                     <div class="view-header">
-                        <h2><i class="fas fa-image"></i> Imagen de Bienvenida</h2>
+                        <h2><i class="fas fa-image"></i> Imagen del panel central</h2>
                         <p>Actualiza la imagen principal de la página de inicio</p>
                     </div>
                     <div class="image-management">
@@ -257,20 +257,28 @@
                             <div class="preview-content">
                                 <img id="welcome-image-preview" src="" alt="Imagen de bienvenida" 
                                     onerror="this.src='data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22200%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%23f0f4ff%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-family=%22Montserrat%22 font-size=%2214%22 fill=%22%2394a3b8%22 text-anchor=%22middle%22 dy=%22.3em%22%3ESin imagen configurada%3C/text%3E%3C/svg%3E'">
+                                
                                 <div class="preview-info">
                                     <p><strong>Tamaño recomendado:</strong> 1200x600px</p>
                                     <p><strong>Formato:</strong> JPG, PNG o WebP</p>
                                     <p><strong>Peso máximo:</strong> 2MB</p>
                                 </div>
                             </div>
+
                             <div class="preview-actions">
-                                <input type="file" id="welcome-image-upload" accept="image/*" style="display: none;">
+                                <input type="file" 
+                                    id="welcome-image-upload" 
+                                    class="section-image-upload" 
+                                    data-section="welcome" 
+                                    accept="image/*" 
+                                    style="display: none;">
+
                                 <button class="btn-primary" onclick="document.getElementById('welcome-image-upload').click()">
                                     <i class="fas fa-upload"></i> Subir Nueva Imagen
                                 </button>
-                                <button class="btn-secondary" onclick="resetWelcomeImage()">
+                              <!--  <button class="btn-secondary" onclick="resetWelcomeImage()">
                                     <i class="fas fa-undo"></i> Restaurar Original
-                                </button>
+                                </button>-->
                             </div>
                         </div>
                     </div>
@@ -279,8 +287,8 @@
                 <!-- Vista Imágenes de Secciones -->
                 <div class="content-view" id="imagen-secciones">
                     <div class="view-header">
-                        <h2><i class="fas fa-images"></i> Imágenes de Secciones</h2>
-                        <p>Gestiona las imágenes de las diferentes secciones del sitio</p>
+                        <h2><i class="fas fa-images"></i> imagen logo</h2>
+                        <p>Gestiona la imagen del logo principal</p>
                     </div>
                     <div class="sections-grid">
                         <div class="section-image-card">
@@ -295,7 +303,7 @@
                             <div class="card-actions">
                                 <input type="file" class="section-image-upload" data-section="logo" accept="image/*" style="display: none;">
                                 <button class="btn-outline" onclick="document.querySelector('[data-section=logo]').click()">
-                                    <i class="fas fa-sync"></i> Cambiar
+                                    <i class="fas fa-upload"></i> Subir Nueva Imagen
                                 </button>
                             </div>
                             
@@ -442,6 +450,8 @@
     <!-- Scripts -->
     <script src="js/admin.js"></script>
     <script>
+        
+        
     // Si tenés productos en localStorage, ejecutá esto UNA sola vez:
     // migrateFromLocalStorage();
     </script>

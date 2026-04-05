@@ -522,3 +522,39 @@ function initializeSubscription() {
     confirmDiv.style.display = 'none';
   });
 }
+// Función para cargar contenido dinámico desde Firebase
+function loadDynamicContent() {
+    const bannerImg = document.getElementById('main-banner');
+    const aboutImg = document.getElementById('about-img');
+    const logoImg = document.getElementById('header-logo');
+    
+    if (typeof firebase === 'undefined') return;
+    const db = firebase.firestore();
+    
+    db.collection('settings').doc('appearance').get()
+        .then(doc => {
+            if (doc.exists) {
+                const data = doc.data();
+                console.log("Datos de apariencia recuperados:", data); // Esto te avisará en consola si funciona
+                
+                // Carga el Banner Principal (el de Bienvenidos)
+                if (data.welcomeBanner && bannerImg) {
+                    bannerImg.src = data.welcomeBanner;
+                }
+                
+                // Carga la Imagen de "Acerca de" (¡Descomentado!)
+                if (data.aboutImageUrl && aboutImg) {
+                    aboutImg.src = data.aboutImageUrl;
+                }
+
+                // Carga el Logo
+                if (data.logoUrl && logoImg) {
+                    logoImg.src = data.logoUrl;
+                }
+            }
+        })
+        .catch(err => console.error("Error cargando contenido dinámico:", err));
+}
+
+// ESTA LÍNEA ES CLAVE: Ejecuta la función apenas carga la web
+document.addEventListener('DOMContentLoaded', loadDynamicContent);

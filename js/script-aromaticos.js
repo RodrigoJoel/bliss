@@ -22,8 +22,49 @@ document.addEventListener('DOMContentLoaded', () => {
     if (auth) auth.onAuthStateChanged(user => user ? showUserState(user) : showLoginState());
     initCatalogDropdown();
     loadAndRenderProducts();
+    setupSearchAndFilters();
     if (typeof cart !== 'undefined') { cart.updateCartUI(); updateCartCount(); }
 });
+// ==================== BUSCADOR Y FILTROS (NUEVO) ====================
+function setupSearchAndFilters() {
+    const searchInput = document.getElementById('searchInput');
+    const sortSelect = document.getElementById('sortSelect');
+
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            applyFiltersAndSort();
+        });
+    }
+
+    if (sortSelect) {
+        sortSelect.addEventListener('change', () => {
+            applyFiltersAndSort();
+        });
+    }
+}
+
+function applyFiltersAndSort() {
+    const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
+    const sortBy = document.getElementById('sortSelect')?.value || 'default';
+
+    // 1. Filtrar por nombre o descripción
+    let filtered = cachedProducts.filter(p => {
+        return p.nombre.toLowerCase().includes(searchTerm) || 
+               p.descripcion.toLowerCase().includes(searchTerm);
+    });
+
+    // 2. Ordenar
+    if (sortBy === 'price-asc') {
+        filtered.sort((a, b) => a.precio - b.precio);
+    } else if (sortBy === 'price-desc') {
+        filtered.sort((a, b) => b.precio - a.precio);
+    } else if (sortBy === 'name-asc') {
+        filtered.sort((a, b) => a.nombre.localeCompare(b.nombre));
+    }
+
+    // 3. Renderizar solo los resultados procesados
+    renderProducts(filtered);
+}
 
 // ==================== AUTH ====================
 async function showUserState(user) {
@@ -192,3 +233,24 @@ function openLightbox(src, alt) {
 
     document.body.appendChild(overlay);
 }
+function loadDynamicContent() {
+    const logoImg = document.getElementById('header-logo');
+    
+    if (typeof firebase === 'undefined') return;
+    const db = firebase.firestore();
+    
+    db.collection('settings').doc('appearance').get()
+        .then(doc => {
+            if (doc.exists) {
+                const data = doc.data();
+                // Si hay una URL de logo guardada, la aplica a todas las páginas que tengan el ID
+                if (data.logoUrl && logoImg) {
+                    logoImg.src = data.logoUrl;
+                }
+            }
+        })
+        .catch(err => console.error("Error cargando logo dinámico:", err));
+}
+
+// Esto hace que se ejecute en cada página al entrar
+document.addEventListener('DOMContentLoaded', loadDynamicContent);

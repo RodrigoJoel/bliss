@@ -145,3 +145,24 @@ function initCatalogDropdown() {
     const btn = document.getElementById('catalog-btn'), menu = document.getElementById('catalog-dropdown');
     if (btn && menu) btn.onclick = () => menu.classList.toggle('open');
 }
+function loadDynamicContent() {
+    const logoImg = document.getElementById('header-logo');
+    
+    if (typeof firebase === 'undefined') return;
+    const db = firebase.firestore();
+    
+    db.collection('settings').doc('appearance').get()
+        .then(doc => {
+            if (doc.exists) {
+                const data = doc.data();
+                // Si hay una URL de logo guardada, la aplica a todas las páginas que tengan el ID
+                if (data.logoUrl && logoImg) {
+                    logoImg.src = data.logoUrl;
+                }
+            }
+        })
+        .catch(err => console.error("Error cargando logo dinámico:", err));
+}
+
+// Esto hace que se ejecute en cada página al entrar
+document.addEventListener('DOMContentLoaded', loadDynamicContent);

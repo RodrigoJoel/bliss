@@ -1,3 +1,12 @@
+// ==================== INIT ====================
+document.addEventListener('DOMContentLoaded', () => {
+    initNavigation();
+    loadAllProducts();
+    setupFormEvents();
+    setupImageEvents(); // ✅ activar eventos de imágenes
+    updateStats();
+});
+
 // ==================== CONFIGURACIÓN ====================
 const CLOUDINARY_CLOUD_NAME = 'dlvj0hkyu';
 const CLOUDINARY_UPLOAD_PRESET = 'yqppbyoz';
@@ -17,6 +26,7 @@ const firebaseConfig = {
     storageBucket: "bliss-ffad9.firebasestorage.app",
     messagingSenderId: "863864024902",
     appId: "1:863864024902:web:02cb9dd6997a0fa7353f47"
+    
 };
 
 let db;
@@ -26,6 +36,7 @@ if (typeof firebase !== 'undefined') {
     console.log('✅ Firebase inicializado en admin');
 }
 
+
 // ==================== SESIÓN ADMIN ====================
 function checkAdminSession() {
     const token  = localStorage.getItem('admin_session_token');
@@ -34,6 +45,26 @@ function checkAdminSession() {
     if (Date.now() >= parseInt(expiry)) { clearAdminSession(); showSessionExpired(); return false; }
     updateAdminInfo();
     return true;
+}
+// Evento para el Logo
+const logoInput = document.getElementById('logo-upload');
+if (logoInput) {
+    logoInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        try {
+            showNotification('Subiendo nuevo logo...', 'info');
+            const url = await uploadImage(file); // Tu función de Cloudinary
+            
+            await db.collection('settings').doc('appearance').set({ 
+                logoUrl: url 
+            }, { merge: true });
+            
+            showNotification('Logo actualizado correctamente ✓', 'success');
+        } catch (err) { 
+            showNotification('Error al subir el logo', 'danger'); 
+        }
+    });
 }
 
 function redirectToLogin() {
@@ -492,40 +523,82 @@ async function updateStats() {
 
 // ==================== IMÁGENES ====================
 function setupImageEvents() {
-    const welcomeUpload  = document.getElementById('welcome-image-upload');
-    const welcomePreview = document.getElementById('welcome-image-preview');
-    if (!welcomeUpload) return;
+    const sectionUploads = document.querySelectorAll('.section-image-upload');
 
-    welcomeUpload.addEventListener('change', async e => {
-        const file = e.target.files[0];
-        if (!file) return;
-        if (file.size > 2 * 1024 * 1024) {
-            alert('La imagen es demasiado grande. El máximo es 2MB.');
-            welcomeUpload.value = '';
-            return;
-        }
-        try {
-            const url = await uploadImageToCloudinary(file);
-            welcomePreview.src = url;
-            await db.collection('settings').doc('welcome_image').set({ url });
-            showNotification('Imagen de bienvenida actualizada ✓', 'success');
-        } catch (e) {
-            showNotification('Error subiendo la imagen', 'danger');
-        }
+    sectionUploads.forEach(input => {
+        input.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            const sectionType = input.getAttribute('data-section'); 
+            if (!file) return;
+
+            try {
+                showNotification(`Subiendo ${sectionType}...`, 'info');
+                const url = await uploadImage(file); 
+
+                let updateData = {};
+                
+                if (sectionType === 'logo') {
+                    updateData = { logoUrl: url };
+                    const preview = document.getElementById('logo-preview');
+                    if (preview) preview.src = url;
+                } 
+                else if (sectionType === 'welcome') {
+                    updateData = { welcomeBanner: url };
+                    // --- NUEVO: Actualiza la preview de bienvenida ---
+                    const preview = document.getElementById('welcome-image-preview');
+                    if (preview) preview.src = url;
+                } 
+                else if (sectionType === 'about') {
+                    updateData = { aboutImageUrl: url };
+                    // Si tenés un ID para la preview de "Nosotros", lo ponés acá
+                }
+
+                await db.collection('settings').doc('appearance').set({
+                    ...updateData,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+
+                showNotification(`${sectionType.charAt(0).toUpperCase() + sectionType.slice(1)} actualizado ✓`, 'success');
+
+            } catch (error) {
+                console.error("Error al actualizar sección:", error);
+                showNotification('Error al subir la imagen', 'danger');
+            } finally {
+                input.value = ''; 
+            }
+        });
     });
 
-    // Cargar imagen guardada
-    db.collection('settings').doc('welcome_image').get().then(doc => {
-        if (doc.exists) welcomePreview.src = doc.data().url;
-    });
+    loadInitialPreviews();
 }
 
-function resetWelcomeImage() {
-    if (!confirm('¿Restaurar la imagen de bienvenida por defecto?')) return;
-    db.collection('settings').doc('welcome_image').delete().then(() => {
-        document.getElementById('welcome-image-preview').src = '';
-        showNotification('Imagen restaurada', 'info');
-    });
+async function loadInitialPreviews() {
+    try {
+        const doc = await db.collection('settings').doc('appearance').get();
+        if (doc.exists) {
+            const data = doc.data();
+            
+            // Cargar preview del Logo
+            if (data.logoUrl) {
+                const logoPrev = document.getElementById('logo-preview');
+                if (logoPrev) logoPrev.src = data.logoUrl;
+            }
+            
+            // --- NUEVO: Cargar preview de Bienvenida ---
+            if (data.welcomeBanner) {
+                const welcomePrev = document.getElementById('welcome-image-preview');
+                if (welcomePrev) welcomePrev.src = data.welcomeBanner;
+            }
+
+            // Cargar preview de About (si tenés el elemento en el HTML)
+            if (data.aboutImageUrl) {
+                const aboutPrev = document.getElementById('about-preview');
+                if (aboutPrev) aboutPrev.src = data.aboutImageUrl;
+            }
+        }
+    } catch (e) {
+        console.error("Error cargando previsualizaciones:", e);
+    }
 }
 
 // ==================== HELPERS ====================
@@ -988,3 +1061,21 @@ function exportOrdersToCSV() {
     
     showNotification('Órdenes exportadas correctamente', 'success');
 }
+
+// Función para subir imágenes a Cloudinary
+async function uploadImage(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+    const response = await fetch(CLOUDINARY_URL, {
+        method: 'POST',
+        body: formData
+    });
+
+    if (!response.ok) throw new Error('Fallo en Cloudinary');
+    const data = await response.json();
+    return data.secure_url;
+}
+
+

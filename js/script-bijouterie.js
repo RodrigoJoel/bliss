@@ -16,14 +16,57 @@ if (typeof firebase !== 'undefined') {
 }
 
 const SECTION_KEY = 'products_bijouterie';
-let cachedProducts = [];
+let cachedProducts = []; // Aquí guardamos la copia original de Firebase
 
 document.addEventListener('DOMContentLoaded', () => {
     if (auth) auth.onAuthStateChanged(user => user ? showUserState(user) : showLoginState());
     initCatalogDropdown();
     loadAndRenderProducts();
+    setupSearchAndFilters(); // <--- NUEVA FUNCIÓN INICIALIZADORA
     if (typeof cart !== 'undefined') { cart.updateCartUI(); updateCartCount(); }
+    loadDynamicContent();
 });
+
+// ==================== BUSCADOR Y FILTROS (NUEVO) ====================
+function setupSearchAndFilters() {
+    const searchInput = document.getElementById('searchInput');
+    const sortSelect = document.getElementById('sortSelect');
+
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            applyFiltersAndSort();
+        });
+    }
+
+    if (sortSelect) {
+        sortSelect.addEventListener('change', () => {
+            applyFiltersAndSort();
+        });
+    }
+}
+
+function applyFiltersAndSort() {
+    const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
+    const sortBy = document.getElementById('sortSelect')?.value || 'default';
+
+    // 1. Filtrar por nombre o descripción
+    let filtered = cachedProducts.filter(p => {
+        return p.nombre.toLowerCase().includes(searchTerm) || 
+               p.descripcion.toLowerCase().includes(searchTerm);
+    });
+
+    // 2. Ordenar
+    if (sortBy === 'price-asc') {
+        filtered.sort((a, b) => a.precio - b.precio);
+    } else if (sortBy === 'price-desc') {
+        filtered.sort((a, b) => b.precio - a.precio);
+    } else if (sortBy === 'name-asc') {
+        filtered.sort((a, b) => a.nombre.localeCompare(b.nombre));
+    }
+
+    // 3. Renderizar solo los resultados procesados
+    renderProducts(filtered);
+}
 
 // ==================== AUTH ====================
 async function showUserState(user) {
@@ -93,10 +136,10 @@ async function loadAndRenderProducts() {
 }
 
 function renderProducts(products) {
-    
     const grid  = document.getElementById('productsGrid');
     const empty = document.getElementById('empty');
     if (!grid) return;
+    
     grid.innerHTML = '';
     if (!products.length) { if (empty) empty.style.display = 'block'; return; }
     if (empty) empty.style.display = 'none';
@@ -130,9 +173,7 @@ function renderProducts(products) {
                 </div>
             </div>`;
         grid.appendChild(card);
-        
     });
-    
 }
 
 // ==================== CARRITO ====================
@@ -171,6 +212,7 @@ function showToast(msg) {
     t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 2500);
 }
+
 // ===== LIGHTBOX =====
 function openLightbox(src, alt) {
     const overlay = document.createElement('div');
@@ -190,4 +232,21 @@ function openLightbox(src, alt) {
     });
 
     document.body.appendChild(overlay);
+}
+
+function loadDynamicContent() {
+    const logoImg = document.getElementById('header-logo');
+    if (typeof firebase === 'undefined') return;
+    const db = firebase.firestore();
+    
+    db.collection('settings').doc('appearance').get()
+        .then(doc => {
+            if (doc.exists) {
+                const data = doc.data();
+                if (data.logoUrl && logoImg) {
+                    logoImg.src = data.logoUrl;
+                }
+            }
+        })
+        .catch(err => console.error("Error cargando logo dinámico:", err));
 }
