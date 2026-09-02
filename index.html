@@ -4,11 +4,32 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Bliss Aromas & Bijouterie</title>
-  
+  <meta name="description" content="Aromas, aceites esenciales, humidificadores y bijouterie en Resistencia, Chaco. Descubrí fragancias para el hogar y accesorios que combinan bienestar y estilo en Bliss.">
+  <link rel="canonical" href="https://rodrigojoel.github.io/bliss/">
+
+  <!-- Favicon -->
+  <link rel="icon" href="imagenes/logo-bliss.png" type="image/png">
+  <link rel="apple-touch-icon" href="imagenes/logo-bliss.png">
+
+  <!-- Open Graph / redes sociales -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Bliss Aromas & Bijouterie">
+  <meta property="og:locale" content="es_AR">
+  <meta property="og:title" content="Bliss Aromas & Bijouterie">
+  <meta property="og:description" content="Aromas, aceites esenciales, humidificadores y bijouterie en Resistencia, Chaco. Descubrí fragancias para el hogar y accesorios que combinan bienestar y estilo.">
+  <meta property="og:image" content="https://rodrigojoel.github.io/bliss/imagenes/logo-bliss.png">
+  <meta property="og:url" content="https://rodrigojoel.github.io/bliss/">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Bliss Aromas & Bijouterie">
+  <meta name="twitter:description" content="Aromas, aceites esenciales, humidificadores y bijouterie en Resistencia, Chaco.">
+  <meta name="twitter:image" content="https://rodrigojoel.github.io/bliss/imagenes/logo-bliss.png">
+
   <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js" defer></script>
 
   <!-- Font Awesome para iconos -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -19,59 +40,6 @@
   <link rel="stylesheet" href="css/styles.css">
   <script src="js/script.js" defer></script>
   <script src="js/cart.js" defer></script>
-
-  <style>
-    /* ===== MENÚ DESPLEGABLE DE USUARIO ===== */
-    .user-dropdown-wrapper { position: relative; }
-
-    .user-menu {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .user-dropdown-menu {
-      display: none;
-      position: absolute;
-      top: calc(100% + 10px);
-      right: 0;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-      min-width: 190px;
-      z-index: 1000;
-      overflow: hidden;
-      border: 1px solid #f0f0f0;
-      animation: fadeIn 0.15s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-6px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .user-dropdown-menu.open { display: block; }
-
-    .user-dropdown-menu a {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 16px;
-      color: #374151;
-      text-decoration: none;
-      font-size: 14px;
-      font-family: 'Montserrat', sans-serif;
-      transition: background 0.15s;
-    }
-
-    .user-dropdown-menu a:hover { background: #f9fafb; }
-    .user-dropdown-menu a i { color: #667eea; width: 16px; text-align: center; }
-    .user-dropdown-divider { height: 1px; background: #f3f4f6; margin: 4px 0; }
-    .logout-option i { color: #dc2626 !important; }
-    .logout-option { color: #dc2626 !important; }
-  </style>
 </head>
 <body>
   <header>
@@ -164,7 +132,7 @@
               <img src="imagenes/Aromatizantedeambiente.png" alt="Frasco de aromatizante" loading="lazy">
             </div>
             <div class="slide" role="group" aria-roledescription="slide" aria-label="2 de 3">
-              <img src="imagenes/aceite esencial 10ml.png" alt="Detalle aromatizante 2" loading="lazy">
+              <img src="imagenes/aceite-esencial-10ml.png" alt="Detalle aromatizante 2" loading="lazy">
             </div>
             <div class="slide" role="group" aria-roledescription="slide" aria-label="3 de 3">
               <img src="imagenes/shapirus parfum 60ml.png" alt="Detalle aromatizante 3" loading="lazy">
@@ -185,13 +153,13 @@
         <figure>
           <div class="simple-carousel" aria-roledescription="carousel" aria-label="Galería de imágenes de bijou" id="carouselBijou" onclick="window.location.href='bijouterie.html'">
             <div class="slide active" role="group" aria-roledescription="slide" aria-label="1 de 3">
-              <img src="imagenes/Aros dorados.png" alt="Aros dorados" loading="lazy">
+              <img src="imagenes/aros-dorados.png" alt="Aros dorados" loading="lazy">
             </div>
             <div class="slide" role="group" aria-roledescription="slide" aria-label="2 de 3">
-              <img src="imagenes/Carterabaguetteisabellanegro.jpeg" alt="Cartera baguette" loading="lazy">
+              <img src="imagenes/cartera-baguette-isabella-negro.jpeg" alt="Cartera baguette" loading="lazy">
             </div>
             <div class="slide" role="group" aria-roledescription="slide" aria-label="3 de 3">
-              <img src="imagenes/Gorravintageneneyork.png" alt="Gorra vintage" loading="lazy">
+              <img src="imagenes/gorra-vintage-new-york.png" alt="Gorra vintage" loading="lazy">
             </div>
             <span class="visually-hidden" id="carouselBijouStatus" aria-live="polite">Imagen 1 de 3</span>
           </div>
@@ -209,7 +177,7 @@
         <figure>
           <div class="simple-carousel" aria-roledescription="carousel" aria-label="Galería de humidificadores" id="carouselHumid" onclick="window.location.href='humidificadores.html'">
             <div class="slide active" role="group" aria-roledescription="slide" aria-label="1 de 3">
-              <img src="imagenes/Humificadoraromáticoled(flame).png" alt="Humidificador aromático LED" loading="lazy">
+              <img src="imagenes/humidificador-aromatico-led-flame.png" alt="Humidificador aromático LED" loading="lazy">
             </div>
             <div class="slide" role="group" aria-roledescription="slide" aria-label="2 de 3">
               <img src="imagenes/humidificador2.png" alt="Humidificador modelo 2" loading="lazy">
@@ -234,7 +202,7 @@
   <section class="about-section" id="acerca-de">
     <div class="container about-container">
       <div class="about-image">
-        <img src="imagenes/fondobliss.png.png" alt="Nuestra tienda Bliss">
+        <img src="imagenes/fondobliss.png" alt="Nuestra tienda Bliss">
       </div>
       <div class="about-content">
         <h3 class="about-title">Acerca de Bliss</h3>

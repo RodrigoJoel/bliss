@@ -152,49 +152,61 @@ class CartSystem {
 
         container.innerHTML = this.items.map(item => `
             <div class="cart-item">
-                <img src="${item.image || 'imagenes/default-product.jpg'}" class="item-image">
+                <img src="${this.escapeAttr(item.image || 'imagenes/default-product.jpg')}" class="item-image">
 
                 <div class="item-details">
                     <h4>${this.escapeHtml(item.name)}</h4>
                     <p class="item-category">${this.getCategoryName(item.section)}</p>
                     <p class="item-price">${this.formatPrice(item.price)} c/u</p>
-                    <small id="stock-msg-${item.id}-${item.section}" style="color:#e74c3c; display:none;">
+                    <small class="stock-msg" style="color:#e74c3c; display:none;">
                         Stock máximo alcanzado
                     </small>
                 </div>
 
                 <div class="quantity-controls">
-                    <button class="qty-btn"
-                        onclick="cart.changeQuantity('${item.id}', ${item.section}, ${item.quantity - 1})">
+                    <button class="qty-btn" data-action="decrement">
                         <i class="fas fa-minus"></i>
                     </button>
 
                     <span class="qty-value">${item.quantity}</span>
 
-                    <button class="qty-btn"
-                        id="plus-${item.id}-${item.section}"
-                        onclick="cart.changeQuantity('${item.id}', ${item.section}, ${item.quantity + 1})">
+                    <button class="qty-btn plus-btn" data-action="increment">
                         <i class="fas fa-plus"></i>
                     </button>
                 </div>
 
                 <div class="item-total">
                     ${this.formatPrice(item.price * item.quantity)}
-                    <button class="remove-item"
-                        onclick="cart.removeItem('${item.id}', ${item.section})">
+                    <button class="remove-item" data-action="remove">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
             </div>
         `).join('');
 
+        // Conectar acciones por índice: item.id/section nunca se interpolan en HTML/JS inline
+        const cartItemEls = container.querySelectorAll('.cart-item');
+        cartItemEls.forEach((el, index) => {
+            const item = this.items[index];
+
+            const decBtn = el.querySelector('[data-action="decrement"]');
+            const incBtn = el.querySelector('[data-action="increment"]');
+            const rmBtn = el.querySelector('[data-action="remove"]');
+
+            if (decBtn) decBtn.addEventListener('click', () => this.changeQuantity(item.id, item.section, item.quantity - 1));
+            if (incBtn) incBtn.addEventListener('click', () => this.changeQuantity(item.id, item.section, item.quantity + 1));
+            if (rmBtn) rmBtn.addEventListener('click', () => this.removeItem(item.id, item.section));
+        });
+
         // 🔒 CONTROL DE STOCK
-        this.items.forEach(async (item) => {
+        cartItemEls.forEach(async (el, index) => {
+            const item = this.items[index];
+
             if (typeof getProductStock === 'function') {
                 const stock = await getProductStock(item.id);
 
-                const btn = document.getElementById(`plus-${item.id}-${item.section}`);
-                const msg = document.getElementById(`stock-msg-${item.id}-${item.section}`);
+                const btn = el.querySelector('.plus-btn');
+                const msg = el.querySelector('.stock-msg');
 
                 if (!btn) return;
 
@@ -250,6 +262,15 @@ class CartSystem {
         const d = document.createElement('div');
         d.textContent = text;
         return d.innerHTML;
+    }
+
+    escapeAttr(text) {
+        return String(text)
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
     }
 
     showNotification(msg) {
