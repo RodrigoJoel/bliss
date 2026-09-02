@@ -64,6 +64,7 @@ body {
     align-items: center;
     gap: 12px;
     margin-bottom: 24px;
+    font-family: 'Playfair Display', serif;
     font-size: 1.4rem;
     font-weight: 600;
 }
@@ -225,8 +226,9 @@ body {
 }
 
 .header-title h1 {
-    font-size: 1.8rem;
-    font-weight: 700;
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 600;
     margin-bottom: 6px;
     color: var(--text);
 }
@@ -298,6 +300,8 @@ body {
 }
 
 .welcome-content h2 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
     font-size: 2.2rem;
     margin-bottom: 12px;
     display: flex;

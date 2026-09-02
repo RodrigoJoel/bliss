@@ -13,10 +13,11 @@
 }
 
 .cart-header h1 {
-    font-family: 'Krona One', sans-serif;
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
     color: #2b221d;
     margin-bottom: 8px;
-    font-size: 1.8rem;
+    font-size: 2.1rem;
 }
 
 .cart-header p {
