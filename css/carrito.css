@@ -14,7 +14,7 @@
 
 .cart-header h1 {
     font-family: 'Krona One', sans-serif;
-    color: #2c3e50;
+    color: #2b221d;
     margin-bottom: 8px;
     font-size: 1.8rem;
 }
@@ -43,7 +43,7 @@
 .cart-items-section h2 {
     margin-bottom: 16px;
     font-size: 17px;
-    color: #2c3e50;
+    color: #2b221d;
 }
 
 .cart-item {
@@ -67,7 +67,7 @@
 
 .item-details h4 {
     margin: 0 0 4px;
-    color: #2c3e50;
+    color: #2b221d;
     font-size: 15px;
 }
 
@@ -79,7 +79,7 @@
 
 .item-price {
     font-weight: 700;
-    color: #4a8ef5;
+    color: #b97c6d;
     font-size: 15px;
 }
 
@@ -116,7 +116,7 @@
 .item-total {
     font-weight: 700;
     font-size: 16px;
-    color: #2c3e50;
+    color: #2b221d;
     text-align: right;
     white-space: nowrap;
 }
@@ -197,7 +197,7 @@
 .cart-summary h2 {
     margin-bottom: 16px;
     font-size: 17px;
-    color: #2c3e50;
+    color: #2b221d;
 }
 
 .summary-row {
@@ -212,7 +212,7 @@
 .summary-total {
     font-size: 1.2rem;
     font-weight: 700;
-    color: #2c3e50;
+    color: #2b221d;
     border-top: 2px solid #eee;
     padding-top: 14px;
     margin-top: 12px;
@@ -226,7 +226,7 @@
     gap: 8px;
     width: 100%;
     padding: 14px;
-    background: #4a8ef5;
+    background: #b97c6d;
     color: white;
     border: none;
     border-radius: 8px;
@@ -240,7 +240,7 @@
     transition: background 0.2s;
 }
 
-.checkout-btn:hover { background: #3a7ee5; }
+.checkout-btn:hover { background: #6e4038; }
 
 /* ===== RESPONSIVE ===== */
 

@@ -1,20 +1,20 @@
 :root {
-    --primary: #4a8ef5;
-    --primary-light: #7cc3ff;
-    --primary-dark: #2d6bc8;
-    --secondary: #6c5ce7;
-    --accent: #e91e63;
+    --primary: #b97c6d;
+    --primary-light: #d8a99a;
+    --primary-dark: #6e4038;
+    --secondary: #c7a252;
+    --accent: #b97c6d;
     --success: #00b894;
     --warning: #fdcb6e;
     --danger: #e17055;
-    --bg: #f8fafc;
+    --bg: #faf3ef;
     --card: #ffffff;
-    --sidebar: #1a2236;
-    --sidebar-light: #222d47;
+    --sidebar: #2e241e;
+    --sidebar-light: #3e322a;
     --text: #231f20;
     --text-light: #666666;
-    --text-muted: #94a3b8;
-    --border: #e2e8f0;
+    --text-muted: #96877e;
+    --border: #e8dad3;
     --radius: 12px;
     --radius-sm: 8px;
     --shadow: 0 6px 20px rgba(12, 20, 36, 0.06);
@@ -345,9 +345,9 @@ body {
     font-size: 1.5rem;
 }
 
-.card-icon.primary { background: rgba(74, 142, 245, 0.1); color: var(--primary); }
-.card-icon.secondary { background: rgba(108, 92, 231, 0.1); color: var(--secondary); }
-.card-icon.accent { background: rgba(233, 30, 99, 0.1); color: var(--accent); }
+.card-icon.primary { background: rgba(185, 124, 109, 0.1); color: var(--primary); }
+.card-icon.secondary { background: rgba(199, 162, 82, 0.1); color: var(--secondary); }
+.card-icon.accent { background: rgba(185, 124, 109, 0.1); color: var(--accent); }
 .card-icon.success { background: rgba(0, 184, 148, 0.1); color: var(--success); }
 
 .dashboard-card h3 {
@@ -437,7 +437,7 @@ body {
 .btn-primary:hover {
     background: var(--primary-dark);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(74, 142, 245, 0.3);
+    box-shadow: 0 4px 12px rgba(185, 124, 109, 0.3);
 }
 
 .btn-secondary {
@@ -561,9 +561,9 @@ body {
     gap: 4px;
 }
 
-.edit-btn { background: rgba(74, 142, 245, 0.1); color: var(--primary); }
+.edit-btn { background: rgba(185, 124, 109, 0.1); color: var(--primary); }
 .delete-btn { background: rgba(225, 112, 85, 0.1); color: var(--danger); }
-.toggle-btn { background: rgba(108, 92, 231, 0.1); color: var(--secondary); }
+.toggle-btn { background: rgba(199, 162, 82, 0.1); color: var(--secondary); }
 
 .action-btn:hover {
     transform: translateY(-1px);
@@ -758,7 +758,7 @@ input[type="number"]:focus,
 textarea:focus {
     outline: none;
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(74, 142, 245, 0.1);
+    box-shadow: 0 0 0 3px rgba(185, 124, 109, 0.1);
 }
 
 textarea {
@@ -800,7 +800,7 @@ textarea {
 
 .upload-preview:hover {
     border-color: var(--primary);
-    background: rgba(74, 142, 245, 0.02);
+    background: rgba(185, 124, 109, 0.02);
 }
 
 .upload-preview img {
@@ -969,7 +969,7 @@ textarea {
 }
 
 .role-badge.admin {
-    background: #4a8ef5;
+    background: #b97c6d;
     color: white;
 }
 
@@ -980,8 +980,8 @@ textarea {
 
 .btn-outline {
     background: transparent;
-    border: 1px solid #4a8ef5;
-    color: #4a8ef5;
+    border: 1px solid #b97c6d;
+    color: #b97c6d;
     padding: 8px 16px;
     border-radius: 6px;
     cursor: pointer;
@@ -990,17 +990,17 @@ textarea {
 }
 
 .btn-outline:hover {
-    background: #4a8ef5;
+    background: #b97c6d;
     color: white;
 }
 
 /* Overlay de sesión */
 .session-error-overlay {
-    background: linear-gradient(135deg, #f3f6fb 0%, #e9eff8 100%);
+    background: linear-gradient(135deg, #faf3ef 0%, #e9eff8 100%);
 }
 
 .session-error-card {
-    border: 1px solid #e2e8f0;
+    border: 1px solid #e8dad3;
 }
 
 .session-error-icon {
@@ -1041,10 +1041,10 @@ textarea {
     font-size: 1.5rem;
 }
 
-.order-stat-icon.total { background: rgba(74, 142, 245, 0.1); color: var(--primary); }
+.order-stat-icon.total { background: rgba(185, 124, 109, 0.1); color: var(--primary); }
 .order-stat-icon.pending { background: rgba(253, 203, 110, 0.1); color: var(--warning); }
 .order-stat-icon.approved { background: rgba(0, 184, 148, 0.1); color: var(--success); }
-.order-stat-icon.shipped { background: rgba(108, 92, 231, 0.1); color: var(--secondary); }
+.order-stat-icon.shipped { background: rgba(199, 162, 82, 0.1); color: var(--secondary); }
 
 .order-stat-info {
     display: flex;
@@ -1151,8 +1151,8 @@ textarea {
 
 .status-pending { background: rgba(253, 203, 110, 0.1); color: #fdcb6e; }
 .status-approved { background: rgba(0, 184, 148, 0.1); color: #00b894; }
-.status-shipped { background: rgba(74, 142, 245, 0.1); color: #4a8ef5; }
-.status-delivered { background: rgba(108, 92, 231, 0.1); color: #6c5ce7; }
+.status-shipped { background: rgba(185, 124, 109, 0.1); color: #b97c6d; }
+.status-delivered { background: rgba(199, 162, 82, 0.1); color: #c7a252; }
 .status-cancelled { background: rgba(225, 112, 85, 0.1); color: #e17055; }
 
 .order-customer {

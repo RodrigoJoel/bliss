@@ -1,13 +1,13 @@
 :root {
-    --primary: #4a8ef5;
-    --primary-light: #7cc3ff;
-    --accent: #e91e63;
-    --bg: #f8fafc;
+    --primary: #b97c6d;
+    --primary-light: #d8a99a;
+    --accent: #b97c6d;
+    --bg: #faf3ef;
     --card: #ffffff;
     --text: #000000;
-    --text-light: #411224;
-    --muted: #94a3b8;
-    --border: #e2e8f0;
+    --text-light: #3a2e29;
+    --muted: #96877e;
+    --border: #e8dad3;
     --radius: 12px;
     --shadow: 0 6px 20px rgba(12, 20, 36, 0.06);
     --shadow-hover: 0 12px 32px rgba(12, 20, 36, 0.12);
@@ -21,7 +21,7 @@
 
 body {
     font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: url("https://img.freepik.com/fotos-premium/diseno-fondo-abstracto-hd-color-rojo-claro-blanco_851755-151875.jpg?semt=ais_se_enriched&w=740&q=80") center/cover no-repeat fixed;
+    background: linear-gradient(180deg, #fdf5f2 0%, #faf3ef 100%) fixed;
     color: var(--text);
     line-height: 1.6;
     padding-top: 70px;
@@ -92,7 +92,7 @@ header {
 }
 
 .catalog-btn:hover {
-    background: #f4f7ff;
+    background: #fbf0ec;
     border-color: var(--primary);
     color: var(--primary);
 }
@@ -130,7 +130,7 @@ header {
 }
 
 .catalog-menu a:hover {
-    background: rgba(74, 142, 245, 0.08);
+    background: rgba(185, 124, 109, 0.08);
     color: var(--primary);
 }
 
@@ -241,7 +241,7 @@ nav a:hover { color: var(--primary); }
 }
 
 .user-dropdown-menu a:hover { background: #f9fafb; }
-.user-dropdown-menu a i { color: #667eea; width: 16px; text-align: center; }
+.user-dropdown-menu a i { color: #b97c6d; width: 16px; text-align: center; }
 .user-dropdown-divider { height: 1px; background: #f3f4f6; margin: 4px 0; }
 .logout-option i { color: #dc2626 !important; }
 .logout-option { color: #dc2626 !important; }
@@ -296,7 +296,7 @@ nav a:hover { color: var(--primary); }
 }
 
 .page-subtitle {
-    color: #2d1e2f;
+    color: #3a2e29;
     font-weight: 500;
     font-size: 1rem;
     line-height: 1.7;
@@ -372,7 +372,7 @@ nav a:hover { color: var(--primary); }
     margin: 16px auto 0;
     object-fit: contain;
     display: block;
-    background: linear-gradient(135deg, #f8faff, #ffffff);
+    background: linear-gradient(135deg, #fbf0ec, #ffffff);
     border-radius: 8px;
     padding: 8px;
 }
@@ -433,7 +433,7 @@ nav a:hover { color: var(--primary); }
     font-family: 'Montserrat', sans-serif;
 }
 
-.add-to-cart-btn:hover { background: #3a7de0; }
+.add-to-cart-btn:hover { background: #6e4038; }
 
 /* ===== EMPTY / TOAST ===== */
 .empty-message {
@@ -576,7 +576,7 @@ nav a:hover { color: var(--primary); }
     align-items: center;
     justify-content: center;
     transition: background 0.2s;
-    color: #1a1a2e;
+    color: #2b221d;
     z-index: 2001;
 }
 
@@ -610,13 +610,13 @@ nav a:hover { color: var(--primary); }
 .search-box i {
     position: absolute;
     left: 15px;
-    color: #94a3b8;
+    color: #96877e;
 }
 
 .search-box input {
     width: 100%;
     padding: 12px 12px 12px 45px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid #e8dad3;
     border-radius: 8px;
     font-family: 'Montserrat', sans-serif;
     outline: none;
@@ -624,7 +624,7 @@ nav a:hover { color: var(--primary); }
 }
 
 .search-box input:focus {
-    border-color: #667eea;
+    border-color: #b97c6d;
 }
 
 .filter-sort {
@@ -636,7 +636,7 @@ nav a:hover { color: var(--primary); }
 .filter-sort select {
     padding: 10px;
     border-radius: 8px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid #e8dad3;
     background: white;
     cursor: pointer;
     font-family: 'Montserrat', sans-serif;

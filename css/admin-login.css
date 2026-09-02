@@ -1,18 +1,18 @@
 :root {
-    --primary: #4a8ef5;
-    --primary-light: #7cc3ff;
-    --primary-dark: #2d6bc8;
-    --secondary: #6c5ce7;
-    --accent: #e91e63;
+    --primary: #b97c6d;
+    --primary-light: #d8a99a;
+    --primary-dark: #6e4038;
+    --secondary: #c7a252;
+    --accent: #b97c6d;
     --success: #00b894;
     --warning: #fdcb6e;
     --danger: #e17055;
-    --bg: #f8fafc;
+    --bg: #faf3ef;
     --card: #ffffff;
     --text: #231f20;
     --text-light: #666666;
-    --text-muted: #94a3b8;
-    --border: #e2e8f0;
+    --text-muted: #96877e;
+    --border: #e8dad3;
     --radius: 12px;
     --radius-sm: 8px;
     --shadow: 0 6px 20px rgba(12, 20, 36, 0.06);
@@ -37,8 +37,8 @@ body {
     justify-content: center;
     padding: 20px;
     background-image: 
-        radial-gradient(circle at 10% 20%, rgba(74, 142, 245, 0.05) 0%, transparent 20%),
-        radial-gradient(circle at 90% 80%, rgba(108, 92, 231, 0.05) 0%, transparent 20%);
+        radial-gradient(circle at 10% 20%, rgba(185, 124, 109, 0.05) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(199, 162, 82, 0.05) 0%, transparent 20%);
 }
 
 .login-container {
@@ -133,7 +133,7 @@ body {
     margin: 0 auto 20px;
     color: white;
     font-size: 2rem;
-    box-shadow: 0 8px 20px rgba(74, 142, 245, 0.3);
+    box-shadow: 0 8px 20px rgba(185, 124, 109, 0.3);
 }
 
 .login-header h1 {
@@ -289,7 +289,7 @@ body {
 
 .login-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(74, 142, 245, 0.4);
+    box-shadow: 0 8px 20px rgba(185, 124, 109, 0.4);
 }
 
 .login-btn:active {
@@ -357,7 +357,7 @@ body {
 .security-info {
     margin-top: 30px;
     padding: 15px;
-    background: rgba(74, 142, 245, 0.05);
+    background: rgba(185, 124, 109, 0.05);
     border-radius: var(--radius-sm);
     border-left: 4px solid var(--primary);
     display: flex;
@@ -648,7 +648,7 @@ body, html {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #f8faff;
+    background-color: #fbf0ec;
     padding: 2rem;
 }
 
