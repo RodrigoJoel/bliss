@@ -6,7 +6,8 @@
 const SECURITY_CONFIG = {
     maxAttempts: 5,
     lockTime: 15 * 60 * 1000,
-    sessionDuration: 8 * 60 * 60 * 1000
+    sessionDuration: 8 * 60 * 60 * 1000,
+    rememberDuration: 30 * 24 * 60 * 60 * 1000
 };
 
 let loginAttempts = 0;
@@ -85,12 +86,18 @@ async function handleLogin(e) {
 function handleSuccessfulLogin(user, rememberMe) {
     clearLock();
     localStorage.setItem('admin_remember', rememberMe.toString());
-    if (rememberMe) localStorage.setItem('admin_saved_user', user.email);
-    
+    if (rememberMe) {
+        localStorage.setItem('admin_saved_user', user.email);
+    } else {
+        localStorage.removeItem('admin_saved_user');
+    }
+
+    const duration = rememberMe ? SECURITY_CONFIG.rememberDuration : SECURITY_CONFIG.sessionDuration;
     localStorage.setItem('admin_session_token', 'fb_' + user.uid);
-    localStorage.setItem('admin_session_expiry', (Date.now() + SECURITY_CONFIG.sessionDuration).toString());
+    localStorage.setItem('admin_session_expiry', (Date.now() + duration).toString());
     localStorage.setItem('admin_user_name', user.email.split('@')[0]);
-    
+    localStorage.setItem('admin_last_login', Date.now().toString());
+
     showSuccess('¡Acceso concedido!');
     setTimeout(() => { window.location.href = 'admin.html'; }, 1500);
 }

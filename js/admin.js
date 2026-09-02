@@ -1,5 +1,6 @@
 // ==================== INIT ====================
 document.addEventListener('DOMContentLoaded', () => {
+    if (!checkAdminSession()) return;
     initNavigation();
     loadAllProducts();
     setupFormEvents();
@@ -97,7 +98,7 @@ function showSessionExpired() {
                 <i class="fas fa-clock" style="font-size:4rem;color:#fdcb6e;margin-bottom:20px;display:block"></i>
                 <h3 style="margin-bottom:15px">Sesión Expirada</h3>
                 <p style="color:#666;margin-bottom:25px">Tu sesión ha expirado. Por favor iniciá sesión nuevamente.</p>
-                <button onclick="redirectToLogin()" style="background:#4a8ef5;color:white;border:none;padding:12px 30px;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer">Ir al Login</button>
+                <button onclick="redirectToLogin()" style="background:#b97c6d;color:white;border:none;padding:12px 30px;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer">Ir al Login</button>
             </div>
         </div>`;
     document.body.appendChild(modal);
@@ -110,14 +111,6 @@ function handleLogout() {
         setTimeout(() => { window.location.href = 'admin-login.html'; }, 1500);
     }
 }
-
-// ==================== INIT ====================
-document.addEventListener('DOMContentLoaded', () => {
-    initNavigation();
-    loadAllProducts();
-    setupFormEvents();
-    updateStats();
-});
 
 // ==================== NAVEGACIÓN ====================
 function initNavigation() {
